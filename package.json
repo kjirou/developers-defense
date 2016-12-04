@@ -1,0 +1,50 @@
+{
+  "name": "developers-defense",
+  "description": "「画像から入力」機能のクライアント側",
+  "version": "0.0.0",
+  "author": "kjirou",
+  "bugs": {
+    "url": "https://github.com/kjirou/developers-defense/issues"
+  },
+  "devDependencies": {
+    "autoprefixer": "6.5.3",
+    "babel-core": "6.18.2",
+    "babel-plugin-espower": "2.3.1",
+    "babel-preset-es2016": "6.16.0",
+    "babel-preset-react": "6.16.0",
+    "babel-register": "6.18.0",
+    "babelify": "7.3.0",
+    "browser-sync": "2.18.2",
+    "browserify": "13.1.1",
+    "fixpack": "2.3.1",
+    "gulp": "3.9.1",
+    "gulp-concat": "2.6.1",
+    "gulp-postcss": "6.2.0",
+    "gulp-rename": "1.2.2",
+    "gulp-sass": "2.3.2",
+    "node-notifier": "4.6.1",
+    "power-assert": "1.4.2",
+    "react": "15.4.1",
+    "react-dom": "15.4.1",
+    "redux": "3.6.0",
+    "run-sequence": "1.2.2",
+    "vinyl-source-stream": "1.1.0",
+    "watchify": "3.7.0"
+  },
+  "homepage": "https://github.com/kjirou/developers-defense#readme",
+  "main": "index.js",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kjirou/developers-defense.git"
+  },
+  "scripts": {
+    "b": "npm run build",
+    "build": "gulp build",
+    "d": "npm run develop",
+    "develop": "gulp develop",
+    "s": "npm run serve",
+    "serve": "gulp serve",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}

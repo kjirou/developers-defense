@@ -22,7 +22,7 @@ const SOURCE_ROOT = path.join(ROOT, 'src');
 const PUBLIC_ROOT = path.join(ROOT, 'public');
 const PUBLIC_DIST_ROOT = path.join(PUBLIC_ROOT, 'dist');
 const JS_SOURCE_INDEX_FILE_PATH = path.join(SOURCE_ROOT, 'index.js');
-const CSS_SOURCE_INDEX_FILE_PATH = path.join(SOURCE_ROOT, 'styles/index.sass');
+const CSS_SOURCE_INDEX_FILE_PATH = path.join(SOURCE_ROOT, 'index.sass');
 const CSS_SOURCE_PATTERNS = [
   path.join(SOURCE_ROOT, '**/*.sass'),
 ];

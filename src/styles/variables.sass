@@ -4,8 +4,18 @@
  * Must sync to JS variables
  */
 
-$app-background-color: #000
-$app-color: #fff
-$app-width: 100%
-$app-height: 100%
+// device data
+$device-iphone6-width: 375px
+$device-iphone6-height: 667px
+$device-iphone6-status-bar-height: 20px
+
+// app size
+$app-width: $device-iphone6-width
+$app-height: $device-iphone6-height - $device-iphone6-status-bar-height
+
+// z-indexes
 $z-index-base: 0
+
+// other global variables
+$app-color: #fff
+$app-background-color: #000

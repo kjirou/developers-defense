@@ -1,18 +1,7 @@
 const React = require('react');
 const ReactDOM = require('react-dom');
 
-
-const STYLES = {
-  SQUARE_HEIGHT: 60,
-  SQUARE_WIDTH: 60,
-};
-
-const PARAMETERS = {
-  BATTLE_BOARD_COLUMN_LENGTH: 5,
-  BATTLE_BOARD_ROW_LENGTH: 8,
-  RECRUITMENT_BOARD_COLUMN_LENGTH: 5,
-  RECRUITMENT_BOARD_ROW_LENGTH: 1,
-};
+const { PARAMETERS, STYLES } = require('../consts');
 
 
 class Square extends React.Component {

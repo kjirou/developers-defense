@@ -1,7 +1,7 @@
 const React = require('react');
 const { connect } = require('react-redux');
 
-const Root = require('./presentational/Root');
+const Root = require('./Root');
 
 
 const mapStateToProps = (state) => {

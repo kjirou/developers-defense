@@ -1,19 +1,8 @@
 const React = require('react');
 
-const { PARAMETERS, STYLES } = require('../../consts');
+const { PARAMETERS, STYLES } = require('../consts');
+const Square = require('./presentational/Square');
 
-
-class Square extends React.Component {
-  render() {
-    const styles = {
-      top: STYLES.SQUARE_HEIGHT * this.props.rowIndex,
-      left: STYLES.SQUARE_WIDTH * this.props.columnIndex,
-    };
-
-    const text = `[${ this.props.rowIndex }, ${ this.props.columnIndex }]`;
-    return <div className="square" style={ styles }>{ text }</div>;
-  }
-}
 
 class Board extends React.Component {
   _calculateWidth() {

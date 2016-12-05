@@ -3,18 +3,23 @@ const ReactDOM = require('react-dom');
 
 
 const STYLES = {
-  SQUARE: {
-    HEIGHT: 60,
-    WIDTH: 60,
-  },
+  SQUARE_HEIGHT: 60,
+  SQUARE_WIDTH: 60,
+};
+
+const PARAMETERS = {
+  BATTLE_BOARD_COLUMN_LENGTH: 5,
+  BATTLE_BOARD_ROW_LENGTH: 8,
+  RECRUITMENT_BOARD_COLUMN_LENGTH: 5,
+  RECRUITMENT_BOARD_ROW_LENGTH: 1,
 };
 
 
 class Square extends React.Component {
   render() {
     const styles = {
-      top: STYLES.SQUARE.HEIGHT * this.props.rowIndex,
-      left: STYLES.SQUARE.WIDTH * this.props.columnIndex,
+      top: STYLES.SQUARE_HEIGHT * this.props.rowIndex,
+      left: STYLES.SQUARE_WIDTH * this.props.columnIndex,
     };
 
     const text = `[${ this.props.rowIndex }, ${ this.props.columnIndex }]`;
@@ -23,10 +28,22 @@ class Square extends React.Component {
 }
 
 class Board extends React.Component {
-}
+  _calculateWidth() {
+    return STYLES.SQUARE_WIDTH * this.props.columnLength;
+  }
 
-class BattleBoard extends Board {
-  _createSquares() {
+  _calculateHeight() {
+    return STYLES.SQUARE_HEIGHT * this.props.rowLength;
+  }
+
+  createBaseStyles() {
+    return {
+      width: this._calculateWidth(),
+      height: this._calculateHeight(),
+    };
+  }
+
+  createSquares() {
     return Array.from({ length: this.props.rowLength }).map((notUsed, rowIndex) => {
       return Array.from({ length: this.props.columnLength }).map((notUsed, columnIndex) => {
         return React.createElement(Square, {
@@ -38,21 +55,41 @@ class BattleBoard extends Board {
     });
   }
 
+}
+Object.assign(Board, {
+  propTypes: {
+    rowLength: React.PropTypes.number.isRequired,
+    columnLength: React.PropTypes.number.isRequired,
+  },
+});
+
+class BattleBoard extends Board {
   render() {
-    return <div className="battle-board">
-      { this._createSquares() }
+    const styles = this.createBaseStyles();
+    return <div className="root__battle-board" style={ styles }>
+      { this.createSquares() }
     </div>;
   }
 }
 
 class RecruitmentBoard extends Board {
   render() {
-    return <div>RecruitmentBoard</div>;
+    const styles = this.createBaseStyles();
+    return <div className="root__recruitment-board" style={ styles }>
+      { this.createSquares() }
+    </div>;
   }
 }
 
-class SquareInformation extends React.Component {
+class StatusBar extends React.Component {
   render() {
+    return <div className="root__status-bar">StatusBar</div>;
+  }
+}
+
+class SquareMonitor extends React.Component {
+  render() {
+    return <div className="root__square-monitor">SquareMonitor</div>;
   }
 }
 
@@ -60,8 +97,16 @@ class Root extends React.Component {
   render() {
     return (
       <div className="root">
-        <BattleBoard rowLength={ 8 } columnLength={ 5 } />
-        <RecruitmentBoard />
+        <StatusBar />
+        <BattleBoard
+          rowLength={ PARAMETERS.BATTLE_BOARD_ROW_LENGTH }
+          columnLength={ PARAMETERS.BATTLE_BOARD_COLUMN_LENGTH }
+        />
+        <RecruitmentBoard
+          rowLength={ PARAMETERS.RECRUITMENT_BOARD_ROW_LENGTH }
+          columnLength={ PARAMETERS.RECRUITMENT_BOARD_COLUMN_LENGTH }
+        />
+        <SquareMonitor />
       </div>
     );
   }

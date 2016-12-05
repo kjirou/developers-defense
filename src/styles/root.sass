@@ -10,11 +10,21 @@
   z-index: $z-index-base
   background-color: $app-background-color
   color: $app-color
+  &__status-bar
+    height: 24px
+  &__battle-board
+    // width/height are set from JS
+    position: relative
+    margin: 4px auto 0 auto
+  &__recruitment-board
+    position: relative
+    margin: 4px auto 0 auto
+  &__square-monitor
+    margin-top: 4px
+    height: 48px
 
 .square
   position: absolute
   width: $square-width
   height: $square-height
-
-.battle-board
-  position: relative
+  border: 1px solid $app-color

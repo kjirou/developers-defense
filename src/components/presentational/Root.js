@@ -1,7 +1,6 @@
 const React = require('react');
-const ReactDOM = require('react-dom');
 
-const { PARAMETERS, STYLES } = require('../consts');
+const { PARAMETERS, STYLES } = require('../../consts');
 
 
 class Square extends React.Component {

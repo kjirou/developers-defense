@@ -1,6 +1,18 @@
+const { objectFromKeys } = require('@kjirou/utils');
+
+
+const ACTION_TYPES = objectFromKeys([
+  'ALTER_PROGRESS',
+  'ALTER_TECHNICAL_DEBT',
+]);
+
 const PARAMETERS = {
   BATTLE_BOARD_COLUMN_LENGTH: 5,
   BATTLE_BOARD_ROW_LENGTH: 8,
+  MAX_PROGRESS: 100,
+  MAX_TECHNICAL_DEBT: 100,
+  MIN_PROGRESS: 0,
+  MIN_TECHNICAL_DEBT: 0,
   RECRUITMENT_BOARD_COLUMN_LENGTH: 5,
   RECRUITMENT_BOARD_ROW_LENGTH: 1,
 };
@@ -11,6 +23,7 @@ const STYLES = {
 };
 
 module.exports = {
+  ACTION_TYPES,
   STYLES,
   PARAMETERS,
 };

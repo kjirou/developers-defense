@@ -7,6 +7,7 @@
     "url": "https://github.com/kjirou/developers-defense/issues"
   },
   "devDependencies": {
+    "@kjirou/utils": "0.0.3",
     "autoprefixer": "6.5.3",
     "babel-core": "6.18.2",
     "babel-plugin-espower": "2.3.1",
@@ -16,16 +17,19 @@
     "babelify": "7.3.0",
     "browser-sync": "2.18.2",
     "browserify": "13.1.1",
+    "espower-loader": "1.2.0",
     "fixpack": "2.3.1",
     "gulp": "3.9.1",
     "gulp-concat": "2.6.1",
     "gulp-postcss": "6.2.0",
     "gulp-rename": "1.2.2",
     "gulp-sass": "2.3.2",
+    "mocha": "3.2.0",
     "node-notifier": "4.6.1",
     "power-assert": "1.4.2",
     "react": "15.4.1",
     "react-dom": "15.4.1",
+    "react-redux": "4.4.6",
     "redux": "3.6.0",
     "run-sequence": "1.2.2",
     "sanitize.css": "4.1.0",
@@ -41,11 +45,11 @@
   },
   "scripts": {
     "b": "npm run build",
-    "build": "gulp build",
+    "build": "$(npm bin)/gulp build",
     "d": "npm run develop",
-    "develop": "gulp develop",
+    "develop": "$(npm bin)/gulp develop",
     "s": "npm run serve",
-    "serve": "gulp serve",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "serve": "$(npm bin)/gulp serve",
+    "test": "$(npm bin)/mocha --recursive --require ./enable-power-assert.js"
   }
 }

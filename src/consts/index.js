@@ -4,6 +4,7 @@ const { objectFromKeys } = require('@kjirou/utils');
 const ACTION_TYPES = objectFromKeys([
   'ALTER_PROGRESS',
   'ALTER_TECHNICAL_DEBT',
+  'TICK',
 ]);
 
 const PARAMETERS = {

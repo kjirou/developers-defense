@@ -78,4 +78,12 @@ describe('reducers/game-status', () => {
       assert.strictEqual(state.technicalDebt, 0);
     });
   });
+
+  describe('TICK', () => {
+    it('should increment', () => {
+      const beforeState = _createInitialState();
+      const afterState = reduceGameStatus(beforeState, { type: 'TICK' });
+      assert.strictEqual(afterState.tickId, beforeState.tickId + 1);
+    });
+  });
 });

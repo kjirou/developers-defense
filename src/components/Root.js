@@ -3,12 +3,9 @@ const React = require('react');
 const { PARAMETERS, STYLES } = require('../consts');
 const BattleBoard = require('./BattleBoard');
 const RecruitmentBoard = require('./RecruitmentBoard');
+const StatusBar = require('./StatusBar');
 const Square = require('./presentational/Square');
 
-
-const StatusBar = () => {
-  return <div className="root__status-bar">StatusBar</div>;
-};
 
 const SquareMonitor = () => {
   return <div className="root__square-monitor">SquareMonitor</div>;

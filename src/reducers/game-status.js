@@ -37,11 +37,16 @@ const tick = (state) => {
 
 const initialState = _createInitialState();
 const reduceGameStatus = (state = initialState, action) => {
-  return {
-    [ACTION_TYPES.ALTER_PROGRESS]: alterProgress(state, action),
-    [ACTION_TYPES.ALTER_TECHNICAL_DEBT]: alterTechnicalDebt(state, action),
-    [ACTION_TYPES.TICK]: tick(state, action),
-  }[action.type] || state;
+  switch (action.type || '') {
+    case ACTION_TYPES.ALTER_PROGRESS:
+      return alterProgress(state, action);
+    case ACTION_TYPES.ALTER_TECHNICAL_DEBT:
+      return alterTechnicalDebt(state, action);
+    case ACTION_TYPES.TICK:
+      return tick(state, action);
+    default:
+      return state;
+  }
 };
 
 module.exports = {

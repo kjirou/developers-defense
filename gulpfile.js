@@ -28,7 +28,8 @@ const CSS_SOURCE_PATTERNS = [
 ];
 const STATIC_FILE_PATTERNS = [
   path.join(SOURCE_ROOT, '**/*.{gif,jpg,png}'),
-  path.join(SOURCE_ROOT, '**/*.{json,txt}'),
+  path.join(SOURCE_ROOT, '**/*.css'),
+  path.join(SOURCE_ROOT, '**/*.{eot,svg,ttf,woff}'),
 ];
 const DATA_URI_IMAGE_PATTERNS = [
   path.join(SOURCE_ROOT, 'images/*.png'),

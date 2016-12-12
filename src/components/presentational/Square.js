@@ -10,7 +10,10 @@ const Square = ({ rowIndex, columnIndex }) => {
   };
 
   const text = `[${ rowIndex }, ${ columnIndex }]`;
-  return <div className="square" style={ styles }>{ text }</div>;
+  return <div className="square" style={ styles }>
+    <div>{ text }</div>
+    <i className="ra ra-broadsword" />
+  </div>;
 };
 
 Object.assign(Square, {

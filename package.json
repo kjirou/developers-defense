@@ -24,6 +24,7 @@
     "gulp-postcss": "6.2.0",
     "gulp-rename": "1.2.2",
     "gulp-sass": "2.3.2",
+    "keymirror": "0.1.1",
     "mocha": "3.2.0",
     "node-notifier": "4.6.1",
     "power-assert": "1.4.2",

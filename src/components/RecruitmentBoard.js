@@ -5,10 +5,9 @@ const Board = require('./presentational/Board');
 const SquareMatrix = require('./presentational/SquareMatrix');
 
 
-class RecruitmentBoard extends Board {
+class RecruitmentBoard extends React.Component {
   render() {
-    const styles = this.createBaseStyles();
-    return <div className="root__recruitment-board" style={ styles }></div>;
+    return <div className="root__recruitment-board"></div>;
   }
 }
 

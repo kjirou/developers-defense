@@ -1,43 +1,33 @@
 const React = require('react');
 
 const { STYLES } = require('../../consts');
-const Square = require('./Square');
 
 
-class Board extends React.Component {
-  _calculateWidth() {
-    return STYLES.SQUARE_WIDTH * this.props.columnLength;
-  }
+const Board = ({ children, rowLength, columnLength, additionalClassNames }) => {
+  const styles = {
+    width: STYLES.SQUARE_WIDTH * columnLength,
+    height: STYLES.SQUARE_HEIGHT * rowLength,
+  };
 
-  _calculateHeight() {
-    return STYLES.SQUARE_HEIGHT * this.props.rowLength;
-  }
+  const classNames = ['board'].concat(additionalClassNames);
 
-  createBaseStyles() {
-    return {
-      width: this._calculateWidth(),
-      height: this._calculateHeight(),
-    };
-  }
-
-  createSquares() {
-    return Array.from({ length: this.props.rowLength }).map((notUsed, rowIndex) => {
-      return Array.from({ length: this.props.columnLength }).map((notUsed, columnIndex) => {
-        return React.createElement(Square, {
-          key: `square-${ rowIndex }-${ columnIndex }`,
-          rowIndex,
-          columnIndex,
-        });
-      });
-    });
-  }
-}
+  return React.createElement('div', {
+    style: styles,
+    className: classNames.join(' '),
+  }, children);
+};
 
 Object.assign(Board, {
   propTypes: {
+    children: React.PropTypes.element.isRequired,
     rowLength: React.PropTypes.number.isRequired,
     columnLength: React.PropTypes.number.isRequired,
+    additionalClassNames: React.PropTypes.arrayOf(React.PropTypes.string.isRequired),
+  },
+  defaultProps: {
+    additionalClassNames: [],
   },
 });
+
 
 module.exports = Board;

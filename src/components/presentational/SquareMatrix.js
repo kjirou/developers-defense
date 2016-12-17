@@ -18,7 +18,9 @@ const SquareMatrix = ({ squareMatrix }) => {
 
 Object.assign(SquareMatrix, {
   propTypes: {
-    squareMatrix: React.PropTypes.array.isRequired,
+    squareMatrix: React.PropTypes.arrayOf(
+      React.PropTypes.arrayOf(React.PropTypes.object.isRequired).isRequired,
+    ).isRequired,
   },
 });
 

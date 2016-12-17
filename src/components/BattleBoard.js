@@ -16,4 +16,5 @@ class BattleBoard extends Board {
 
 BattleBoard = connect(state => state)(BattleBoard);
 
+
 module.exports = BattleBoard;

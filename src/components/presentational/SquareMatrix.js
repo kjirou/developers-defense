@@ -13,7 +13,7 @@ const SquareMatrix = ({ squareMatrix }) => {
       });
     });
   });
-  return React.createElement('div', {}, serialSquareComponents);
+  return React.createElement('div', { className: 'square-matrix' }, serialSquareComponents);
 };
 
 Object.assign(SquareMatrix, {

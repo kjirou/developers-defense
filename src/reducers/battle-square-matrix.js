@@ -109,7 +109,7 @@ const updateAllSquares = (state, { updates }) => {
 };
 
 const initialState = createInitialState();
-const reduceBattleSquares = (state = initialState, action) => {
+const reduceBattleSquareMatrix = (state = initialState, action) => {
   switch (action.type || '') {
     case ACTION_TYPES.SET_LANDFORM_TYPE:
       return setLandformType(state, action);
@@ -124,5 +124,5 @@ module.exports = {
   _createInitialState: createInitialState,
   _findSquareByCoordinate: findSquareByCoordinate,
   parseMapText,
-  reduceBattleSquares,
+  reduceBattleSquareMatrix,
 };

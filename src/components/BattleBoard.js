@@ -13,7 +13,7 @@ class BattleBoard extends React.Component {
       columnLength={ PARAMETERS.BATTLE_BOARD_COLUMN_LENGTH }
       additionalClassNames={ ['root__battle-board'] }
     >
-      <SquareMatrix squareMatrix={ this.props.battleSquares } />
+      <SquareMatrix squareMatrix={ this.props.battleSquareMatrix } />
     </Board>;
   }
 }

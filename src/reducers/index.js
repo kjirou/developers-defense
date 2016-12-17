@@ -1,11 +1,11 @@
 const { combineReducers } = require('redux');
 
-const { reduceBattleSquares } = require('./battle-squares');
+const { reduceBattleSquareMatrix } = require('./battle-square-matrix');
 const { reduceGameStatus } = require('./game-status');
 
 
 const reduceApp = combineReducers({
-  battleSquares: reduceBattleSquares,
+  battleSquareMatrix: reduceBattleSquareMatrix,
   gameStatus: reduceGameStatus,
 });
 

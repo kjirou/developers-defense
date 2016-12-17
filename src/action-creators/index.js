@@ -1,6 +1,10 @@
-const { ACTION_TYPES } = require('../consts');
+const { ACTION_TYPES, PARAMETERS } = require('../consts');
+const { parseMapText } = require('../reducers/battle-squares');
 
 
+/**
+ * @return {Function}
+ */
 const runTicks = () => {
   const tickPerSecond = 25;
   const interval = Math.round(1000 / tickPerSecond);
@@ -26,6 +30,30 @@ const runTicks = () => {
   };
 };
 
+/**
+ * @return {Function}
+ */
+const initializeApp = () => {
+  const mapText = [
+    '..... .',
+    '.      ',
+    '. ... .',
+    '. ... .',
+    '. F.. .',
+    '. ... .',
+    '. .F. .',
+    '.C    .',
+    '.......',
+  ].join('\n');
+  const squareUpdates = parseMapText(mapText);
+
+  return (dispatch) => {
+    dispatch({ type: ACTION_TYPES.UPDATE_ALL_SQUARES, updates: squareUpdates });
+  };
+};
+
+
 module.exports = {
+  initializeApp,
   runTicks,
 };

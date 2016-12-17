@@ -7,12 +7,25 @@ const ACTION_TYPES = keymirror({
   EXCHANGE_COIN_LOCATIONS: null,
   NOOP: null,
   TICK: null,
+  SET_LANDFORM_TYPE: null,
+  UPDATE_ALL_SQUARES: null,
 });
 
 const COIN_TYPES = keymirror({
   TEN: null,
   FIFTY: null,
   HUNDRED: null,
+});
+
+const LANDFORM_TYPES = keymirror({
+  CASTLE: null,
+  DESERT: null,
+  FOREST: null,
+  FORT: null,
+  GRASSFIELD: null,
+  MOUNTAIN: null,
+  RIVER: null,
+  ROAD: null,
 });
 
 const PARAMETERS = {
@@ -33,6 +46,7 @@ const STYLES = {
 
 module.exports = {
   ACTION_TYPES,
+  LANDFORM_TYPES,
   STYLES,
   PARAMETERS,
 };

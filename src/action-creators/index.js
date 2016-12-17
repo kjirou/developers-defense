@@ -1,5 +1,5 @@
 const { ACTION_TYPES, PARAMETERS } = require('../consts');
-const { parseMapText } = require('../reducers/battle-squares');
+const { parseMapText } = require('../reducers/battle-square-matrix');
 
 
 /**

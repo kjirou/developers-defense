@@ -7,10 +7,6 @@ const StatusBar = require('./StatusBar');
 const Square = require('./presentational/Square');
 
 
-const SquareMonitor = () => {
-  return <div className="root__square-monitor">SquareMonitor</div>;
-};
-
 class Root extends React.Component {
   render() {
     return (
@@ -24,7 +20,6 @@ class Root extends React.Component {
           rowLength={ PARAMETERS.RECRUITMENT_BOARD_ROW_LENGTH }
           columnLength={ PARAMETERS.RECRUITMENT_BOARD_COLUMN_LENGTH }
         />
-        <SquareMonitor />
       </div>
     );
   }

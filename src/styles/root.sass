@@ -24,12 +24,26 @@
   &__recruitment-board
     position: relative
     margin: 8px auto 0 auto
-  &__square-monitor
-    margin-top: 4px
-    height: 48px
 
 .square
   position: absolute
   width: $square-width
   height: $square-height
-  border: 1px solid $app-color
+  background-color: #fff
+  border: 1px solid $app-background-color
+  &.square--landform-castle
+    background-color: #808000
+  &.square--landform-desert
+    background-color: #ffff00
+  &.square--landform-forest
+    background-color: #008000
+  &.square--landform-fort
+    background-color: #c0c0c0
+  &.square--landform-grassfield
+    background-color: #00ff00
+  &.square--landform-mountain
+    background-color: #808080
+  &.square--landform-river
+    background-color: #00ffff
+  &.square--landform-road
+    background-color: #efefef

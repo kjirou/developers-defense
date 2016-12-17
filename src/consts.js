@@ -1,15 +1,36 @@
-const { objectFromKeys } = require('@kjirou/utils');
+const keymirror = require('keymirror');
 
 
-const ACTION_TYPES = objectFromKeys([
-  'ALTER_PROGRESS',
-  'ALTER_TECHNICAL_DEBT',
-  'TICK',
-]);
+const ACTION_TYPES = keymirror({
+  ALTER_PROGRESS: null,
+  ALTER_TECHNICAL_DEBT: null,
+  EXCHANGE_COIN_LOCATIONS: null,
+  NOOP: null,
+  TICK: null,
+  SET_LANDFORM_TYPE: null,
+  UPDATE_ALL_SQUARES: null,
+});
+
+const COIN_TYPES = keymirror({
+  TEN: null,
+  FIFTY: null,
+  HUNDRED: null,
+});
+
+const LANDFORM_TYPES = keymirror({
+  CASTLE: null,
+  DESERT: null,
+  FOREST: null,
+  FORT: null,
+  GRASSFIELD: null,
+  MOUNTAIN: null,
+  RIVER: null,
+  ROAD: null,
+});
 
 const PARAMETERS = {
   BATTLE_BOARD_COLUMN_LENGTH: 7,
-  BATTLE_BOARD_ROW_LENGTH: 10,
+  BATTLE_BOARD_ROW_LENGTH: 9,
   MAX_PROGRESS: 100,
   MAX_TECHNICAL_DEBT: 100,
   MIN_PROGRESS: 0,
@@ -25,6 +46,7 @@ const STYLES = {
 
 module.exports = {
   ACTION_TYPES,
+  LANDFORM_TYPES,
   STYLES,
   PARAMETERS,
 };

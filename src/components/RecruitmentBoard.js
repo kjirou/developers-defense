@@ -1,13 +1,20 @@
 const React = require('react');
 const { connect } = require('react-redux');
 
+const { PARAMETERS } = require('../consts');
 const Board = require('./presentational/Board');
 const SquareMatrix = require('./presentational/SquareMatrix');
 
 
 class RecruitmentBoard extends React.Component {
   render() {
-    return <div className="root__recruitment-board"></div>;
+    return <Board
+      rowLength={ PARAMETERS.RECRUITMENT_BOARD_ROW_LENGTH }
+      columnLength={ PARAMETERS.RECRUITMENT_BOARD_COLUMN_LENGTH }
+      additionalClassNames={ ['root__recruitment-board'] }
+    >
+      <SquareMatrix squareMatrix={ [] } />
+    </Board>;
   }
 }
 

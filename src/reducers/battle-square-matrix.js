@@ -1,4 +1,4 @@
-const { ACTION_TYPES, LANDFORM_TYPES, PARAMETERS } = require('../consts');
+const { ACTION_TYPES, LANDFORM_TYPES, PARAMETERS } = require('../immutable/constants');
 const { areSameSize2DArray } = require('../lib/core');
 
 

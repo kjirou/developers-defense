@@ -1,7 +1,7 @@
 const React = require('react');
 const { connect } = require('react-redux');
 
-const { PARAMETERS } = require('../consts');
+const { PARAMETERS } = require('../immutable/constants');
 const Board = require('./presentational/Board');
 const SquareMatrix = require('./presentational/SquareMatrix');
 

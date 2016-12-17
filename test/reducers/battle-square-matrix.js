@@ -1,6 +1,6 @@
 const assert = require('power-assert');
 
-const { LANDFORM_TYPES, PARAMETERS } = require('../../src/consts');
+const { LANDFORM_TYPES, PARAMETERS } = require('../../src/immutable/constants');
 const {
   _createInitialState,
   _findSquareByCoordinate,

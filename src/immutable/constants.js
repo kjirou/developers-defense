@@ -10,6 +10,13 @@ const ACTION_TYPES = keymirror({
   UPDATE_ALL_SQUARES: null,
 });
 
+const JOB_TYPES = keymirror({
+  FIGHTER: null,
+  HEALER: null,
+  MAGE: null,
+  NONE: null,
+});
+
 const LANDFORM_TYPES = keymirror({
   CASTLE: null,
   DESERT: null,
@@ -24,8 +31,10 @@ const LANDFORM_TYPES = keymirror({
 const PARAMETERS = {
   BATTLE_BOARD_COLUMN_LENGTH: 7,
   BATTLE_BOARD_ROW_LENGTH: 9,
+  MAX_MAX_HP: 999,
   MAX_PROGRESS: 100,
   MAX_TECHNICAL_DEBT: 100,
+  MIN_MAX_HP: 1,
   MIN_PROGRESS: 0,
   MIN_TECHNICAL_DEBT: 0,
   RECRUITMENT_BOARD_COLUMN_LENGTH: 7,

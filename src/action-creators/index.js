@@ -36,10 +36,10 @@ const runTicks = () => {
 const initializeApp = () => {
   const mapText = [
     '..... .',
-    '.      ',
+    '.F     ',
     '. ... .',
     '. ... .',
-    '. F.. .',
+    '. ... .',
     '. ... .',
     '. .F. .',
     '.C    .',

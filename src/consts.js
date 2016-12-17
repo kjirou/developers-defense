@@ -4,17 +4,10 @@ const keymirror = require('keymirror');
 const ACTION_TYPES = keymirror({
   ALTER_PROGRESS: null,
   ALTER_TECHNICAL_DEBT: null,
-  EXCHANGE_COIN_LOCATIONS: null,
   NOOP: null,
   TICK: null,
   SET_LANDFORM_TYPE: null,
   UPDATE_ALL_SQUARES: null,
-});
-
-const COIN_TYPES = keymirror({
-  TEN: null,
-  FIFTY: null,
-  HUNDRED: null,
 });
 
 const LANDFORM_TYPES = keymirror({

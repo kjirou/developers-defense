@@ -10,13 +10,6 @@ const ACTION_TYPES = keymirror({
   UPDATE_ALL_SQUARES: null,
 });
 
-const JOB_TYPES = keymirror({
-  FIGHTER: null,
-  HEALER: null,
-  MAGE: null,
-  NONE: null,
-});
-
 const LANDFORM_TYPES = keymirror({
   CASTLE: null,
   DESERT: null,

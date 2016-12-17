@@ -17,6 +17,7 @@
     "babelify": "7.3.0",
     "browser-sync": "2.18.2",
     "browserify": "13.1.1",
+    "dictify": "1.1.0",
     "espower-loader": "1.2.0",
     "fixpack": "2.3.1",
     "gulp": "3.9.1",
@@ -35,6 +36,8 @@
     "redux-thunk": "2.1.0",
     "run-sequence": "1.2.2",
     "sanitize.css": "4.1.0",
+    "string": "3.3.3",
+    "uuid": "3.0.1",
     "vinyl-source-stream": "1.1.0",
     "watchify": "3.7.0"
   },

@@ -5,7 +5,7 @@ const { createStore, applyMiddleware } = require('redux');
 const thunkMiddleware = require('redux-thunk').default;
 
 const { initializeApp, runTicks } =  require('./action-creators');
-const RootContainer =  require('./components/RootContainer');
+const Root =  require('./components/Root');
 const reducer =  require('./reducers');
 
 
@@ -20,7 +20,7 @@ window.document.addEventListener('DOMContentLoaded', () => {
   const app = React.createElement(
     Provider,
     { store },
-    React.createElement(RootContainer),
+    React.createElement(Root),
   );
 
   const placement = window.document.querySelector('.js-dd-container');

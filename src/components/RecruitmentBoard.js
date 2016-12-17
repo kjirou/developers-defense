@@ -1,15 +1,24 @@
 const React = require('react');
+const { connect } = require('react-redux');
 
+const { PARAMETERS } = require('../consts');
 const Board = require('./presentational/Board');
+const SquareMatrix = require('./presentational/SquareMatrix');
 
 
-class RecruitmentBoard extends Board {
+class RecruitmentBoard extends React.Component {
   render() {
-    const styles = this.createBaseStyles();
-    return <div className="root__recruitment-board" style={ styles }>
-      { this.createSquares() }
-    </div>;
+    return <Board
+      rowLength={ PARAMETERS.RECRUITMENT_BOARD_ROW_LENGTH }
+      columnLength={ PARAMETERS.RECRUITMENT_BOARD_COLUMN_LENGTH }
+      additionalClassNames={ ['root__recruitment-board'] }
+    >
+      <SquareMatrix squareMatrix={ [] } />
+    </Board>;
   }
 }
+
+RecruitmentBoard = connect(state => state)(RecruitmentBoard);
+
 
 module.exports = RecruitmentBoard;

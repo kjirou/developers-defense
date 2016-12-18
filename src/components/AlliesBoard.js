@@ -9,11 +9,11 @@ const SquareMatrix = require('./presentational/SquareMatrix');
 class AlliesBoard extends React.Component {
   render() {
     return <Board
-      rowLength={ PARAMETERS.RECRUITMENT_BOARD_ROW_LENGTH }
-      columnLength={ PARAMETERS.RECRUITMENT_BOARD_COLUMN_LENGTH }
+      rowLength={ PARAMETERS.ALLIES_BOARD_ROW_LENGTH }
+      columnLength={ PARAMETERS.ALLIES_BOARD_COLUMN_LENGTH }
       additionalClassNames={ ['root__recruitment-board'] }
     >
-      <SquareMatrix squareMatrix={ [] } />
+      <SquareMatrix squareMatrix={ this.props.alliesSquareMatrix } />
     </Board>;
   }
 }

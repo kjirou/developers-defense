@@ -1,16 +1,12 @@
 const { ACTION_TYPES, LANDFORM_TYPES, PARAMETERS } = require('../immutable/constants');
 const { areSameSize2DArray } = require('../lib/core');
-const { createInitialSquareState } = require('../state-computers/square');
+const { createInitialSquareMatrixState } = require('../state-computers/square-matrix');
 
 
 const createInitialState = () => {
-  return Array.from({ length: PARAMETERS.BATTLE_BOARD_ROW_LENGTH }).map((notUsed, rowIndex) => {
-    return Array.from({ length: PARAMETERS.BATTLE_BOARD_COLUMN_LENGTH }).map((notUsed, columnIndex) => {
-      return createInitialSquareState(rowIndex, columnIndex);
-    });
-  });
+  return createInitialSquareMatrixState(
+    PARAMETERS.BATTLE_BOARD_ROW_LENGTH, PARAMETERS.BATTLE_BOARD_COLUMN_LENGTH);
 };
-
 
 const findSquareByCoordinate = (squares, [ rowIndex, columnIndex ]) => {
   return squares[rowIndex][columnIndex];

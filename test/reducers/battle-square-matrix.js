@@ -3,10 +3,10 @@ const assert = require('power-assert');
 const { LANDFORM_TYPES, PARAMETERS } = require('../../src/immutable/constants');
 const {
   _createInitialState,
-  _findSquareByCoordinate,
   parseMapText,
   reduceBattleSquareMatrix,
 } = require('../../src/reducers/battle-square-matrix');
+const { findSquareByCoordinate } = require('../../src/state-computers/square-matrix');
 
 
 describe('reducers/battle-square-matrix', () => {
@@ -57,23 +57,23 @@ describe('reducers/battle-square-matrix', () => {
 
     beforeEach(() => {
       state = _createInitialState();
-      _findSquareByCoordinate(state, [0, 0]).landformType = LANDFORM_TYPES.ROAD;
-      _findSquareByCoordinate(state, [1, 1]).landformType = LANDFORM_TYPES.GRASSFIELD;
+      findSquareByCoordinate(state, [0, 0]).landformType = LANDFORM_TYPES.ROAD;
+      findSquareByCoordinate(state, [1, 1]).landformType = LANDFORM_TYPES.GRASSFIELD;
     });
 
     it('can set', () => {
-      assert.strictEqual(_findSquareByCoordinate(state, [0, 0]).landformType, 'ROAD');
-      assert.strictEqual(_findSquareByCoordinate(state, [1, 1]).landformType, 'GRASSFIELD');
+      assert.strictEqual(findSquareByCoordinate(state, [0, 0]).landformType, 'ROAD');
+      assert.strictEqual(findSquareByCoordinate(state, [1, 1]).landformType, 'GRASSFIELD');
       state = reduceBattleSquareMatrix(state, { type: 'SET_LANDFORM_TYPE', coordinate: [0, 0], landformType: LANDFORM_TYPES.GRASSFIELD });
       state = reduceBattleSquareMatrix(state, { type: 'SET_LANDFORM_TYPE', coordinate: [1, 1], landformType: LANDFORM_TYPES.ROAD });
-      assert.strictEqual(_findSquareByCoordinate(state, [0, 0]).landformType, 'GRASSFIELD');
-      assert.strictEqual(_findSquareByCoordinate(state, [1, 1]).landformType, 'ROAD');
+      assert.strictEqual(findSquareByCoordinate(state, [0, 0]).landformType, 'GRASSFIELD');
+      assert.strictEqual(findSquareByCoordinate(state, [1, 1]).landformType, 'ROAD');
     });
 
     it('should not break before state', () => {
       const newState = reduceBattleSquareMatrix(state, { type: 'SET_LANDFORM_TYPE', coordinate: [0, 0], landformType: LANDFORM_TYPES.GRASSFIELD });
-      assert.strictEqual(_findSquareByCoordinate(state, [0, 0]).landformType, 'ROAD');
-      assert.strictEqual(_findSquareByCoordinate(newState, [0, 0]).landformType, 'GRASSFIELD');
+      assert.strictEqual(findSquareByCoordinate(state, [0, 0]).landformType, 'ROAD');
+      assert.strictEqual(findSquareByCoordinate(newState, [0, 0]).landformType, 'GRASSFIELD');
     });
   });
 
@@ -93,14 +93,14 @@ describe('reducers/battle-square-matrix', () => {
     });
 
     it('can extend all squares', () => {
-      assert.strictEqual(_findSquareByCoordinate(state, [0, 0]).landformType, null);
-      assert.strictEqual(_findSquareByCoordinate(state, [1, 1]).landformType, null);
+      assert.strictEqual(findSquareByCoordinate(state, [0, 0]).landformType, null);
+      assert.strictEqual(findSquareByCoordinate(state, [1, 1]).landformType, null);
 
       const updates = _createUpdates({ landformType: LANDFORM_TYPES.ROAD });
       state = reduceBattleSquareMatrix(state, { type: 'UPDATE_ALL_SQUARES', updates });
 
-      assert.strictEqual(_findSquareByCoordinate(state, [0, 0]).landformType, 'ROAD');
-      assert.strictEqual(_findSquareByCoordinate(state, [1, 1]).landformType, 'ROAD');
+      assert.strictEqual(findSquareByCoordinate(state, [0, 0]).landformType, 'ROAD');
+      assert.strictEqual(findSquareByCoordinate(state, [1, 1]).landformType, 'ROAD');
     });
 
     it('should throw a error if the squares and the updates are not the same size', () => {

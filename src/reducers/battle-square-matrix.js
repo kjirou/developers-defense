@@ -1,15 +1,11 @@
 const { ACTION_TYPES, LANDFORM_TYPES, PARAMETERS } = require('../immutable/constants');
 const { areSameSize2DArray } = require('../lib/core');
-const { createInitialSquareMatrixState } = require('../state-computers/square-matrix');
+const { createInitialSquareMatrixState, findSquareByCoordinate } = require('../state-computers/square-matrix');
 
 
 const createInitialState = () => {
   return createInitialSquareMatrixState(
     PARAMETERS.BATTLE_BOARD_ROW_LENGTH, PARAMETERS.BATTLE_BOARD_COLUMN_LENGTH);
-};
-
-const findSquareByCoordinate = (squares, [ rowIndex, columnIndex ]) => {
-  return squares[rowIndex][columnIndex];
 };
 
 const mapSquaresState = (squaresState, callback) => {
@@ -112,7 +108,6 @@ const reduceBattleSquareMatrix = (state = initialState, action) => {
 
 module.exports = {
   _createInitialState: createInitialState,
-  _findSquareByCoordinate: findSquareByCoordinate,
   parseMapText,
   reduceBattleSquareMatrix,
 };

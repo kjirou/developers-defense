@@ -1,6 +1,6 @@
 const assert = require('power-assert');
 
-const { LANDFORM_TYPES, PARAMETERS } = require('../../src/consts');
+const { LANDFORM_TYPES, PARAMETERS } = require('../../src/immutable/constants');
 const {
   _createInitialState,
   _findSquareByCoordinate,
@@ -13,7 +13,7 @@ describe('reducers/battle-square-matrix', () => {
   describe('initialState', () => {
     it('should be set at first', () => {
       const state = reduceBattleSquareMatrix(undefined, { type: 'NOOP' });
-      assert.deepStrictEqual(state, _createInitialState());
+      assert.strictEqual(Array.isArray(state), true);
     });
 
     it('should initialize coordinate properties', () => {

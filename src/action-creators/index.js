@@ -1,4 +1,4 @@
-const { ACTION_TYPES, PARAMETERS } = require('../consts');
+const { ACTION_TYPES, PARAMETERS } = require('../immutable/constants');
 const { parseMapText } = require('../reducers/battle-square-matrix');
 
 

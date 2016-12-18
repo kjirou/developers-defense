@@ -41,6 +41,7 @@ const STYLES = {
   SQUARE_WIDTH: 48,
 };
 
+
 module.exports = {
   ACTION_TYPES,
   LANDFORM_TYPES,

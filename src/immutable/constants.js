@@ -8,6 +8,8 @@ const ACTION_TYPES = keymirror({
   TICK: null,
   SET_LANDFORM_TYPE: null,
   UPDATE_ALL_SQUARES: null,
+  UPDATE_ALLIES: null,
+  UPDATE_ENEMIES: null,
 });
 
 const LANDFORM_TYPES = keymirror({

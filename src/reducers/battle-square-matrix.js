@@ -1,18 +1,12 @@
 const { ACTION_TYPES, LANDFORM_TYPES, PARAMETERS } = require('../immutable/constants');
 const { areSameSize2DArray } = require('../lib/core');
+const { createInitialSquareState } = require('../state-computers/square');
 
-
-const createSquareState = (rowIndex, columnIndex) => {
-  return {
-    coordinate: [rowIndex, columnIndex],
-    landformType: null,
-  };
-};
 
 const createInitialState = () => {
   return Array.from({ length: PARAMETERS.BATTLE_BOARD_ROW_LENGTH }).map((notUsed, rowIndex) => {
     return Array.from({ length: PARAMETERS.BATTLE_BOARD_COLUMN_LENGTH }).map((notUsed, columnIndex) => {
-      return createSquareState(rowIndex, columnIndex);
+      return createInitialSquareState(rowIndex, columnIndex);
     });
   });
 };

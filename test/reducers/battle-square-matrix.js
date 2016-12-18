@@ -13,7 +13,7 @@ describe('reducers/battle-square-matrix', () => {
   describe('initialState', () => {
     it('should be set at first', () => {
       const state = reduceBattleSquareMatrix(undefined, { type: 'NOOP' });
-      assert.deepStrictEqual(state, _createInitialState());
+      assert.strictEqual(Array.isArray(state), true);
     });
 
     it('should initialize coordinate properties', () => {

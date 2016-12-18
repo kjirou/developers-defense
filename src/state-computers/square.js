@@ -11,7 +11,22 @@ const createInitialSquareState = (rowIndex, columnIndex) => {
   };
 };
 
+/**
+ * @param {Object} square
+ * @param {Object} properties
+ * @return {Object} A shallow-copied square state
+ */
+const extendSquare = (square, properties) => {
+  Object.keys(properties).forEach(key => {
+    if (!square.hasOwnProperty(key)) {
+      throw new Error(`key="${ key }" is not defined`);
+    }
+  });
+  return Object.assign({}, square, properties);
+};
+
 
 module.exports = {
   createInitialSquareState,
+  extendSquare,
 };

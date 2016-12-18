@@ -43,9 +43,22 @@ const fixture = [
 class Job {
 }
 
+Object.assign(Job, {
+  id: null,
+  iconId: null,
+  maxHp: 0,
+  attackPower: 0,
+  defensePower: 0,
+  mattackPower: 0,
+  mdefensePower: 0,
+});
 
-const naming = ({ Resource }) => S(Resource.id).capitalize().s + Job.name
-const jobList = createClassBasedResourceList(Job, fixture, { naming });
+
+const jobList = createClassBasedResourceList(Job, fixture, {
+  naming: ({ Resource }) => {
+    return S(Resource.id).capitalize().s + Job.name;
+  },
+});
 const jobs = dictify(jobList, 'id');
 const JOB_IDS = keymirror(jobs);
 

@@ -6,7 +6,6 @@ const ACTION_TYPES = keymirror({
   ALTER_TECHNICAL_DEBT: null,
   NOOP: null,
   TICK: null,
-  SET_LANDFORM_TYPE: null,
   UPDATE_ALL_SQUARES: null,
   UPDATE_ALLIES: null,
   UPDATE_ENEMIES: null,
@@ -40,6 +39,7 @@ const STYLES = {
   SQUARE_HEIGHT: 48,
   SQUARE_WIDTH: 48,
 };
+
 
 module.exports = {
   ACTION_TYPES,

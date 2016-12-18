@@ -6,7 +6,7 @@ const Board = require('./presentational/Board');
 const SquareMatrix = require('./presentational/SquareMatrix');
 
 
-class RecruitmentBoard extends React.Component {
+class AlliesBoard extends React.Component {
   render() {
     return <Board
       rowLength={ PARAMETERS.RECRUITMENT_BOARD_ROW_LENGTH }
@@ -18,7 +18,7 @@ class RecruitmentBoard extends React.Component {
   }
 }
 
-RecruitmentBoard = connect(state => state)(RecruitmentBoard);
+AlliesBoard = connect(state => state)(AlliesBoard);
 
 
-module.exports = RecruitmentBoard;
+module.exports = AlliesBoard;

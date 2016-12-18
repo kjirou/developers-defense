@@ -1,6 +1,6 @@
 const { ACTION_TYPES, LANDFORM_TYPES, PARAMETERS } = require('../immutable/constants');
 const { areSameSize2DArray } = require('../lib/core');
-const { createInitialSquareMatrixState, findSquareByCoordinate } = require('../state-computers/square-matrix');
+const { createInitialSquareMatrixState } = require('../state-computers/square-matrix');
 
 
 const createInitialState = () => {
@@ -83,13 +83,6 @@ const parseMapText = (mapText) => {
 };
 
 
-const setLandformType = (state, { coordinate, landformType }) => {
-  const newState = cloneSquares(state);
-  const square = findSquareByCoordinate(newState, coordinate);
-  square.landformType = landformType;
-  return newState;
-};
-
 const updateAllSquares = (state, { updates }) => {
   return extendAllSquaresState(state, updates);
 };
@@ -97,8 +90,6 @@ const updateAllSquares = (state, { updates }) => {
 const initialState = createInitialState();
 const reduceBattleSquareMatrix = (state = initialState, action) => {
   switch (action.type || '') {
-    case ACTION_TYPES.SET_LANDFORM_TYPE:
-      return setLandformType(state, action);
     case ACTION_TYPES.UPDATE_ALL_SQUARES:
       return updateAllSquares(state, action);
     default:

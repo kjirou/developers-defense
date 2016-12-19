@@ -65,7 +65,7 @@ Object.assign(SquareMatrix, {
   },
   defaultProps: {
     cursorCoordinate: null,
-    handleTouchStartPad: null,
+    handleTouchStartPad: () => {},
   },
 });
 

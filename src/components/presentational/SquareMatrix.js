@@ -4,7 +4,7 @@ const { STYLES } = require('../../immutable/constants');
 const Square = require('./Square');
 
 
-const SquareMatrix = ({ squareMatrix, handleTouchStartPad }) => {
+const SquareMatrix = ({ squareMatrix, cursorCoordinate, handleTouchStartPad }) => {
   const props = {
     className: 'square-matrix',
   };
@@ -28,6 +28,17 @@ const SquareMatrix = ({ squareMatrix, handleTouchStartPad }) => {
     },
   });
 
+  let cursor = null;
+  if (cursorCoordinate) {
+    cursor = React.createElement('div', {
+      className: 'square-matrix__cursor',
+      style: {
+        top: STYLES.SQUARE_HEIGHT * cursorCoordinate[0],
+        left: STYLES.SQUARE_WIDTH * cursorCoordinate[1],
+      },
+    });
+  }
+
   const serialSquareComponents = squareMatrix.map(rowSquares => {
     return rowSquares.map(square => {
       return React.createElement(Square, {
@@ -38,17 +49,22 @@ const SquareMatrix = ({ squareMatrix, handleTouchStartPad }) => {
     });
   });
 
-  return React.createElement('div', props, touchpad, serialSquareComponents);
+  const components = [touchpad, serialSquareComponents];
+  if (cursor) components.push(cursor);
+
+  return React.createElement('div', props, ...components);
 };
 
 Object.assign(SquareMatrix, {
   propTypes: {
+    cursorCoordinate: React.PropTypes.arrayOf(React.PropTypes.number.isRequired),
     handleTouchStartPad: React.PropTypes.func,
     squareMatrix: React.PropTypes.arrayOf(
       React.PropTypes.arrayOf(React.PropTypes.object.isRequired).isRequired,
     ).isRequired,
   },
   defaultProps: {
+    cursorCoordinate: null,
     handleTouchStartPad: null,
   },
 });

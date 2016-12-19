@@ -27,7 +27,24 @@
     background-color: gray
 
 .square-matrix
+  $z-index-touchpad: 9999
+  $z-index-cursor: 3
+  $z-index-enemy: 2
+  $z-index-ally: 1
   position: relative;
+  width: 100%
+  height: 100%
+  &__touchpad
+    position: absolute;
+    width: 100%
+    height: 100%
+    z-index: $z-index-touchpad
+  &__cursor
+    position: absolute;
+    width: $square-width
+    height: $square-height
+    z-index: $z-index-cursor
+    border: 2px solid #ff5f00
 
 .square
   position: absolute

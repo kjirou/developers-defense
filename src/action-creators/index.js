@@ -2,6 +2,14 @@ const { ACTION_TYPES, PARAMETERS } = require('../immutable/constants');
 const { parseMapText } = require('../reducers/battle-square-matrix');
 
 
+const moveCursor = (cursorBelongingType, coordinate) => {
+  return {
+    type: ACTION_TYPES.MOVE_CURSOR,
+    cursorBelongingType,
+    coordinate,
+  };
+};
+
 /**
  * @return {Function}
  */
@@ -55,5 +63,6 @@ const initializeApp = () => {
 
 module.exports = {
   initializeApp,
+  moveCursor,
   runTicks,
 };

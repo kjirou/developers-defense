@@ -4,11 +4,17 @@ const keymirror = require('keymirror');
 const ACTION_TYPES = keymirror({
   ALTER_PROGRESS: null,
   ALTER_TECHNICAL_DEBT: null,
+  MOVE_CURSOR: null,
   NOOP: null,
   TICK: null,
   UPDATE_ALL_SQUARES: null,
   UPDATE_ALLIES: null,
   UPDATE_ENEMIES: null,
+});
+
+const CURSOR_BELONGING_TYPES = keymirror({
+  ALLIES_BOARD: null,
+  BATTLE_BOARD: null,
 });
 
 const LANDFORM_TYPES = keymirror({
@@ -43,6 +49,7 @@ const STYLES = {
 
 module.exports = {
   ACTION_TYPES,
+  CURSOR_BELONGING_TYPES,
   LANDFORM_TYPES,
   STYLES,
   PARAMETERS,

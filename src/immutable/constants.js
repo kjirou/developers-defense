@@ -12,9 +12,14 @@ const ACTION_TYPES = keymirror({
   UPDATE_ENEMIES: null,
 });
 
-const CURSOR_BELONGING_TYPES = keymirror({
+const BOARD_TYPES = keymirror({
   ALLIES_BOARD: null,
   BATTLE_BOARD: null,
+});
+
+const FACTION_TYPES = keymirror({
+  ALLY: null,
+  ENEMY: null,
 });
 
 const LANDFORM_TYPES = keymirror({
@@ -49,7 +54,8 @@ const STYLES = {
 
 module.exports = {
   ACTION_TYPES,
-  CURSOR_BELONGING_TYPES,
+  BOARD_TYPES,
+  FACTION_TYPES,
   LANDFORM_TYPES,
   STYLES,
   PARAMETERS,

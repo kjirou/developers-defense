@@ -25,7 +25,21 @@ const cloneSquareMatrix = (squareMatrix) => {
 };
 
 /**
- * @return {?Object} A square state
+ * @return {?Object} A square
+ */
+const findSquareByUid = (squareMatrix, uid) => {
+  for (let rowIndex = 0; rowIndex < squareMatrix.length; rowIndex += 1) {
+    const rowSquares = squareMatrix[rowIndex];
+    for (let columnIndex = 0; columnIndex < rowSquares.length; columnIndex += 1) {
+      const square = rowSquares[columnIndex];
+      if (square.uid === uid) return square;
+    }
+  }
+  return null;
+};
+
+/**
+ * @return {?Object} A square
  */
 const findSquareByCoordinate = (squareMatrix, [ rowIndex, columnIndex ]) => {
   const row = squareMatrix[rowIndex];

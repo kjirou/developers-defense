@@ -21,6 +21,7 @@ class BattleBoard extends React.Component {
       <SquareMatrix
         squareMatrix={ this.props.battleSquareMatrix }
         cursorCoordinate={ this.props.cursorCoordinate }
+        unitsOnSquares={ this.props.unitsOnSquares }
         handleTouchStartPad={ handleTouchStartPad }
       />
     </Board>;
@@ -31,8 +32,12 @@ BattleBoard = connect(state => {
   const cursorCoordinate =
     state.cursor.cursorBelongingType === BOARD_TYPES.BATTLE_BOARD ?  state.cursor.coordinate : null;
 
+  const unitsOnSquares = state.allies
+    .filter(ally => ally.placement && ally.placement.boardType === BOARD_TYPES.BATTLE_BOARD);
+
   return Object.assign({}, state, {
     cursorCoordinate,
+    unitsOnSquares,
   });
 })(BattleBoard);
 

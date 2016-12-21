@@ -21,6 +21,7 @@ class AlliesBoard extends React.Component {
       <SquareMatrix
         squareMatrix={ this.props.alliesSquareMatrix }
         cursorCoordinate={ this.props.cursorCoordinate }
+        unitsOnSquares={ this.props.unitsOnSquares }
         handleTouchStartPad={ handleTouchStartPad }
       />
     </Board>;
@@ -31,8 +32,12 @@ AlliesBoard = connect(state => {
   const cursorCoordinate =
     state.cursor.cursorBelongingType === BOARD_TYPES.ALLIES_BOARD ?  state.cursor.coordinate : null;
 
+  const unitsOnSquares = state.allies
+    .filter(ally => ally.placement && ally.placement.boardType === BOARD_TYPES.ALLIES_BOARD);
+
   return Object.assign({}, state, {
     cursorCoordinate,
+    unitsOnSquares,
   });
 })(AlliesBoard);
 

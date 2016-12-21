@@ -9,10 +9,26 @@ const Root =  require('./components/Root');
 const reducer =  require('./reducers');
 
 
+const loggerMiddleware = store => {
+  return next => {
+    return action => {
+      if ([
+        'ALTER_PROGRESS',
+        'ALTER_TECHNICAL_DEBT',
+        'TICK',
+      ].indexOf(action.type) === -1) {
+        console.log('dispatching:', action);
+      };
+      return next(action);
+    };
+  };
+}
+
+
 window.document.addEventListener('DOMContentLoaded', () => {
   const store = createStore(
     reducer,
-    applyMiddleware(thunkMiddleware)
+    applyMiddleware(thunkMiddleware, loggerMiddleware)
   );
 
   window._store = store;  // For debug

@@ -1,5 +1,8 @@
-const { ACTION_TYPES, PARAMETERS } = require('../immutable/constants');
+const { ACTION_TYPES, BOARD_TYPES, PARAMETERS } = require('../immutable/constants');
+const { JOB_IDS } = require('../immutable/jobs');
 const { parseMapText } = require('../reducers/battle-square-matrix');
+const { findSquareByCoordinate } = require('../state-computers/square-matrix');
+const { createInitialUnitState } = require('../state-computers/unit');
 
 
 const moveCursor = (cursorBelongingType, coordinate) => {
@@ -8,6 +11,14 @@ const moveCursor = (cursorBelongingType, coordinate) => {
     cursorBelongingType,
     coordinate,
   };
+};
+
+const placeUnitToSquare = (squareUid, unitUid) => {
+  dispatch({
+    type: ACTION_TYPES.PLACE_UNIT_TO_SQUARE,
+    squareUid,
+    unitUid,
+  });
 };
 
 /**
@@ -55,8 +66,24 @@ const initializeApp = () => {
   ].join('\n');
   const squareUpdates = parseMapText(mapText);
 
-  return (dispatch) => {
+  const allies = [
+    Object.assign(createInitialUnitState(), {
+      jobId: JOB_IDS.FIGHTER,
+      placement: { boardType: BOARD_TYPES.ALLIES_BOARD, coordinate: [0, 0] },
+    }),
+    Object.assign(createInitialUnitState(), {
+      jobId: JOB_IDS.HEALER,
+      placement: { boardType: BOARD_TYPES.ALLIES_BOARD, coordinate: [0, 1] },
+    }),
+    Object.assign(createInitialUnitState(), {
+      jobId: JOB_IDS.MAGE,
+      placement: { boardType: BOARD_TYPES.ALLIES_BOARD, coordinate: [1, 3] },
+    }),
+  ];
+
+  return (dispatch, getState) => {
     dispatch({ type: ACTION_TYPES.UPDATE_ALL_SQUARES, updates: squareUpdates });
+    dispatch({ type: ACTION_TYPES.UPDATE_ALLIES, units: allies });
   };
 };
 

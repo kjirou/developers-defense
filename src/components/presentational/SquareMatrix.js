@@ -4,7 +4,7 @@ const { STYLES } = require('../../immutable/constants');
 const Square = require('./Square');
 
 
-const SquareMatrix = ({ squareMatrix, cursorCoordinate, handleTouchStartPad }) => {
+const SquareMatrix = ({ squareMatrix, cursorCoordinate, unitsOnSquares, handleTouchStartPad }) => {
   const props = {
     className: 'square-matrix',
   };
@@ -31,6 +31,7 @@ const SquareMatrix = ({ squareMatrix, cursorCoordinate, handleTouchStartPad }) =
   let cursor = null;
   if (cursorCoordinate) {
     cursor = React.createElement('div', {
+      key: 'square-matrix-cursor',
       className: 'square-matrix__cursor',
       style: {
         top: STYLES.SQUARE_HEIGHT * cursorCoordinate[0],
@@ -38,6 +39,18 @@ const SquareMatrix = ({ squareMatrix, cursorCoordinate, handleTouchStartPad }) =
       },
     });
   }
+
+  // Do not place in the squares.
+  const unitComponentsOnSquares = unitsOnSquares.map(unit => {
+    return React.createElement('div', {
+      key: 'square-matrix-unit-on-square-' + unit.placement.coordinate.join('-'),
+      className: 'square-matrix__unit square-matrix__unit--unit-on-square',
+      style: {
+        top: STYLES.SQUARE_HEIGHT * unit.placement.coordinate[0],
+        left: STYLES.SQUARE_WIDTH * unit.placement.coordinate[1],
+      },
+    }, 'U');
+  });
 
   const serialSquareComponents = squareMatrix.map(rowSquares => {
     return rowSquares.map(square => {
@@ -49,8 +62,12 @@ const SquareMatrix = ({ squareMatrix, cursorCoordinate, handleTouchStartPad }) =
     });
   });
 
-  const components = [touchpad, serialSquareComponents];
-  if (cursor) components.push(cursor);
+  const components = [
+    touchpad,
+    ...(cursor ? [cursor] : []),
+    ...unitComponentsOnSquares,
+    serialSquareComponents,
+  ];
 
   return React.createElement('div', props, ...components);
 };
@@ -62,10 +79,14 @@ Object.assign(SquareMatrix, {
     squareMatrix: React.PropTypes.arrayOf(
       React.PropTypes.arrayOf(React.PropTypes.object.isRequired).isRequired,
     ).isRequired,
+    unitsOnSquares: React.PropTypes.arrayOf(
+      React.PropTypes.object.isRequired,
+    ),
   },
   defaultProps: {
     cursorCoordinate: null,
     handleTouchStartPad: () => {},
+    unitsOnSquares: [],
   },
 });
 

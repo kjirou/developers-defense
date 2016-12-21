@@ -29,8 +29,8 @@
 .square-matrix
   $z-index-touchpad: 9999
   $z-index-cursor: 3
-  $z-index-enemy: 2
-  $z-index-ally: 1
+  $z-index-unit: 2
+  $z-index-unit-on-square: 1
   position: relative;
   width: 100%
   height: 100%
@@ -45,6 +45,13 @@
     height: $square-height
     z-index: $z-index-cursor
     border: 2px solid #ff5f00
+  &__unit
+    position: absolute;
+    width: $square-width
+    height: $square-height
+    z-index: $z-index-unit
+    &.square-matrix__unit--unit-on-square
+      z-index: $z-index-unit-on-square
 
 .square
   position: absolute

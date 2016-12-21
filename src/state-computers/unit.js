@@ -1,6 +1,6 @@
 const uuidV4 = require('uuid/v4');
 
-const { PARAMETERS } = require('../immutable/constants');
+const { FACTION_TYPES, PARAMETERS } = require('../immutable/constants');
 const { JOB_IDS, jobs } = require('../immutable/jobs');
 
 
@@ -9,6 +9,9 @@ const createInitialUnitState = () => {
 
   return {
     uid: uuidV4(),
+    factionType: null,
+    /** @type {?{ boardType, coordinate }} */
+    placement: null,
     jobId: JOB_IDS.NONE,
     maxHp,
     hp: maxHp,
@@ -23,7 +26,12 @@ const getJob = (unit) => {
   return jobs[unit.jobId];
 };
 
+const getIconId = (unit) => {
+  return getJob(unit).iconId;
+};
+
 
 module.exports = {
   createInitialUnitState,
+  getIconId,
 };

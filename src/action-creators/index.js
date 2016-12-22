@@ -5,6 +5,12 @@ const { findSquareByCoordinate } = require('../state-computers/square-matrix');
 const { createInitialUnitState } = require('../state-computers/unit');
 
 
+const clearCursor = () => {
+  return {
+    type: ACTION_TYPES.CLEAR_CURSOR,
+  };
+};
+
 const moveCursor = (cursorBelongingType, coordinate) => {
   return (dispatch, getState) => {
     const { cursor } = getState();
@@ -13,9 +19,7 @@ const moveCursor = (cursorBelongingType, coordinate) => {
       coordinate[0] === cursor.coordinate[0] &&
       coordinate[1] === cursor.coordinate[1]
     ) {
-      dispatch({
-        type: ACTION_TYPES.CLEAR_CURSOR,
-      });
+      dispatch(clearCursor());
     } else {
       dispatch({
         type: ACTION_TYPES.MOVE_CURSOR,
@@ -23,12 +27,6 @@ const moveCursor = (cursorBelongingType, coordinate) => {
         coordinate,
       });
     }
-  };
-};
-
-const clearCursor = () => {
-  return {
-    type: ACTION_TYPES.CLEAR_CURSOR,
   };
 };
 

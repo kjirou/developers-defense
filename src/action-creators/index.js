@@ -6,10 +6,29 @@ const { createInitialUnitState } = require('../state-computers/unit');
 
 
 const moveCursor = (cursorBelongingType, coordinate) => {
+  return (dispatch, getState) => {
+    const { cursor } = getState();
+    if (
+      cursorBelongingType === cursor.cursorBelongingType &&
+      coordinate[0] === cursor.coordinate[0] &&
+      coordinate[1] === cursor.coordinate[1]
+    ) {
+      dispatch({
+        type: ACTION_TYPES.CLEAR_CURSOR,
+      });
+    } else {
+      dispatch({
+        type: ACTION_TYPES.MOVE_CURSOR,
+        cursorBelongingType,
+        coordinate,
+      });
+    }
+  };
+};
+
+const clearCursor = () => {
   return {
-    type: ACTION_TYPES.MOVE_CURSOR,
-    cursorBelongingType,
-    coordinate,
+    type: ACTION_TYPES.CLEAR_CURSOR,
   };
 };
 

@@ -12,7 +12,11 @@ const createInitialState = () => {
 
 const initialState = createInitialState();
 const reduceCursor = (state = initialState, action) => {
-  switch (action.type || '') {
+  switch (action.type) {
+    case ACTION_TYPES.CLEAR_CURSOR:
+      return (() => {
+        return createInitialState();
+      })(action);
     case ACTION_TYPES.MOVE_CURSOR:
       return (({ cursorBelongingType, coordinate }) => {
         return Object.assign({}, state, { cursorBelongingType, coordinate });

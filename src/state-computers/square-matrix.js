@@ -69,5 +69,6 @@ module.exports = {
   createInitialSquareMatrixState,
   extendSquareMatrix,
   findSquareByCoordinate,
+  findSquareByUid,
   mapSquareMatrix,
 };

@@ -1,4 +1,4 @@
-const { ACTION_TYPES, BOARD_TYPES, PARAMETERS } = require('../immutable/constants');
+const { ACTION_TYPES, BOARD_TYPES, FACTION_TYPES, PARAMETERS } = require('../immutable/constants');
 const { JOB_IDS } = require('../immutable/jobs');
 const { parseMapText } = require('../reducers/battle-square-matrix');
 const { findSquareByCoordinate } = require('../state-computers/square-matrix');
@@ -68,14 +68,17 @@ const initializeApp = () => {
 
   const allies = [
     Object.assign(createInitialUnitState(), {
+      factionType: FACTION_TYPES.ALLY,
       jobId: JOB_IDS.FIGHTER,
       placement: { boardType: BOARD_TYPES.ALLIES_BOARD, coordinate: [0, 0] },
     }),
     Object.assign(createInitialUnitState(), {
+      factionType: FACTION_TYPES.ALLY,
       jobId: JOB_IDS.HEALER,
       placement: { boardType: BOARD_TYPES.ALLIES_BOARD, coordinate: [0, 1] },
     }),
     Object.assign(createInitialUnitState(), {
+      factionType: FACTION_TYPES.ALLY,
       jobId: JOB_IDS.MAGE,
       placement: { boardType: BOARD_TYPES.ALLIES_BOARD, coordinate: [1, 3] },
     }),

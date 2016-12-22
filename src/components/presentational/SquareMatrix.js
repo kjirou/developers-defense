@@ -1,6 +1,7 @@
 const React = require('react');
 
-const { STYLES } = require('../../immutable/constants');
+const { FACTION_TYPES, STYLES } = require('../../immutable/constants');
+const { getIconId } = require('../../state-computers/unit');
 const Square = require('./Square');
 
 
@@ -42,14 +43,23 @@ const SquareMatrix = ({ squareMatrix, cursorCoordinate, unitsOnSquares, handleTo
 
   // Do not place in the squares.
   const unitComponentsOnSquares = unitsOnSquares.map(unit => {
+    const icon = React.createElement('i', {
+      // TODO: rpg-awesome 固定なら iconId も短縮できる
+      className: ['ra', getIconId(unit), 'ra-2x'].join(' '),
+    });
+
     return React.createElement('div', {
       key: 'square-matrix-unit-on-square-' + unit.placement.coordinate.join('-'),
-      className: 'square-matrix__unit square-matrix__unit--unit-on-square',
+      className: [
+        'square-matrix__unit',
+        'square-matrix__unit--unit-on-square',
+        unit.factionType === FACTION_TYPES.ALLY ? 'square-matrix__unit--ally' : 'square-matrix__unit--enemy',
+      ].join(' '),
       style: {
         top: STYLES.SQUARE_HEIGHT * unit.placement.coordinate[0],
         left: STYLES.SQUARE_WIDTH * unit.placement.coordinate[1],
       },
-    }, 'U');
+    }, icon);
   });
 
   const serialSquareComponents = squareMatrix.map(rowSquares => {

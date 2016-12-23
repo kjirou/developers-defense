@@ -1,3 +1,7 @@
+const cloneViaJson = (value) => {
+  return JSON.parse(JSON.stringify(value));
+};
+
 /**
  * @param {Array[]} a
  * @param {Array[]} b
@@ -16,4 +20,5 @@ const areSameSize2DArray = (a, b) => {
 
 module.exports = {
   areSameSize2DArray,
+  cloneViaJson,
 };

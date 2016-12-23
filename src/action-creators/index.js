@@ -1,15 +1,35 @@
 const { ACTION_TYPES, BOARD_TYPES, FACTION_TYPES, PARAMETERS } = require('../immutable/constants');
 const { JOB_IDS } = require('../immutable/jobs');
 const { parseMapText } = require('../reducers/battle-square-matrix');
+const { areSamePlace } = require('../state-computers/placement');
 const { findSquareByCoordinate } = require('../state-computers/square-matrix');
 const { createInitialUnitState } = require('../state-computers/unit');
 
 
-const moveCursor = (cursorBelongingType, coordinate) => {
+const clearCursor = () => {
+  return {
+    type: ACTION_TYPES.CLEAR_CURSOR,
+  };
+};
+
+const moveCursor = (placement) => {
   return {
     type: ACTION_TYPES.MOVE_CURSOR,
-    cursorBelongingType,
-    coordinate,
+    placement,
+  };
+};
+
+/**
+ * @param {State~Placement} placement
+ */
+const touchSquare = (placement) => {
+  return (dispatch, getState) => {
+    const { cursor } = getState();
+    if (areSamePlace(placement, cursor.placement)) {
+      dispatch(clearCursor());
+    } else {
+      dispatch(moveCursor(placement));
+    }
   };
 };
 
@@ -93,6 +113,6 @@ const initializeApp = () => {
 
 module.exports = {
   initializeApp,
-  moveCursor,
   runTicks,
+  touchSquare,
 };

@@ -26,9 +26,4 @@ describe('state-computers/square-matrix', () => {
       assert.strictEqual(findSquareByUid(matrix, ''), null);
     });
   });
-
-  describe('extendSquareMatrix', () => {
-    it('should be executed correctly', () => {
-    });
-  });
 });

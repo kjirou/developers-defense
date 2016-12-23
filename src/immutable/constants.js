@@ -4,6 +4,7 @@ const keymirror = require('keymirror');
 const ACTION_TYPES = keymirror({
   ALTER_PROGRESS: null,
   ALTER_TECHNICAL_DEBT: null,
+  CLEAR_CURSOR: null,
   MOVE_CURSOR: null,
   NOOP: null,
   TICK: null,

@@ -1,12 +1,10 @@
 const { ACTION_TYPES, PARAMETERS } = require('../immutable/constants');
+const { createNewPlacementState } = require('../state-computers/placement');
 const { createInitialSquareMatrixState } = require('../state-computers/square-matrix');
 
 
 const createInitialState = () => {
-  return {
-    boardType: null,
-    coordinate: null,
-  };
+  return createNewPlacementState();
 };
 
 

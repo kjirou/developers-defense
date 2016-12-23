@@ -33,7 +33,7 @@ BattleBoard = connect(state => {
     state.cursor.boardType === BOARD_TYPES.BATTLE_BOARD ?  state.cursor.coordinate : null;
 
   const unitsOnSquares = state.allies
-    .filter(ally => ally.placement && ally.placement.boardType === BOARD_TYPES.BATTLE_BOARD);
+    .filter(ally => ally.placement.boardType === BOARD_TYPES.BATTLE_BOARD);
 
   return Object.assign({}, state, {
     cursorCoordinate,

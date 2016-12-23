@@ -4,24 +4,30 @@ const { createInitialSquareMatrixState } = require('../state-computers/square-ma
 
 
 const createInitialState = () => {
-  return createNewPlacementState();
+  return {
+    placement: createNewPlacementState(),
+  };
 };
 
-
 const initialState = createInitialState();
+
+const reducements = {
+  [ACTION_TYPES.CLEAR_CURSOR]: (state) => {
+    return Object.assign({}, state, {
+      placement: createNewPlacementState(),
+    });
+  },
+
+  [ACTION_TYPES.MOVE_CURSOR]: (state, { placement }) => {
+    return Object.assign({}, state, { placement });
+  },
+};
+
 const reduceCursor = (state = initialState, action) => {
-  switch (action.type) {
-    case ACTION_TYPES.CLEAR_CURSOR:
-      return (() => {
-        return createInitialState();
-      })(action);
-    case ACTION_TYPES.MOVE_CURSOR:
-      return (({ boardType, coordinate }) => {
-        return Object.assign({}, state, { boardType, coordinate });
-      })(action);
-    default:
-      return state;
-  }
+  // NOTICE: The "@@redux/INIT" action.type may come.
+  //         Ref) https://github.com/reactjs/redux/issues/382
+  const reducement = reducements[action.type] || null;
+  return reducement ? reducement(state, action) : state;
 };
 
 

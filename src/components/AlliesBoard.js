@@ -3,6 +3,7 @@ const { connect } = require('react-redux');
 
 const { touchSquare } = require('../action-creators');
 const { BOARD_TYPES, PARAMETERS } = require('../immutable/constants');
+const { createNewPlacementState } = require('../state-computers/placement');
 const Board = require('./presentational/Board');
 const SquareMatrix = require('./presentational/SquareMatrix');
 
@@ -10,7 +11,11 @@ const SquareMatrix = require('./presentational/SquareMatrix');
 class AlliesBoard extends React.Component {
   render() {
     const handleTouchStartPad = (event, { coordinate }) => {
-      this.props.dispatch(touchSquare(BOARD_TYPES.ALLIES_BOARD, coordinate));
+      const placement = Object.assign(createNewPlacementState(), {
+        boardType: BOARD_TYPES.ALLIES_BOARD,
+        coordinate: coordinate.slice(),
+      });
+      this.props.dispatch(touchSquare(placement));
     };
 
     return <Board
@@ -30,7 +35,7 @@ class AlliesBoard extends React.Component {
 
 AlliesBoard = connect(state => {
   const cursorCoordinate =
-    state.cursor.boardType === BOARD_TYPES.ALLIES_BOARD ?  state.cursor.coordinate : null;
+    state.cursor.placement.boardType === BOARD_TYPES.ALLIES_BOARD ? state.cursor.placement.coordinate : null;
 
   const unitsOnSquares = state.allies
     .filter(ally => ally.placement.boardType === BOARD_TYPES.ALLIES_BOARD);

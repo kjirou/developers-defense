@@ -4,7 +4,7 @@ const { createInitialSquareMatrixState } = require('../state-computers/square-ma
 
 const createInitialState = () => {
   return {
-    cursorBelongingType: null,
+    boardType: null,
     coordinate: null,
   };
 };
@@ -18,8 +18,8 @@ const reduceCursor = (state = initialState, action) => {
         return createInitialState();
       })(action);
     case ACTION_TYPES.MOVE_CURSOR:
-      return (({ cursorBelongingType, coordinate }) => {
-        return Object.assign({}, state, { cursorBelongingType, coordinate });
+      return (({ boardType, coordinate }) => {
+        return Object.assign({}, state, { boardType, coordinate });
       })(action);
     default:
       return state;

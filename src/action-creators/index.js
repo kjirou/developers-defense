@@ -11,11 +11,11 @@ const clearCursor = () => {
   };
 };
 
-const moveCursor = (cursorBelongingType, coordinate) => {
+const moveCursor = (boardType, coordinate) => {
   return (dispatch, getState) => {
     const { cursor } = getState();
     if (
-      cursorBelongingType === cursor.cursorBelongingType &&
+      boardType === cursor.boardType &&
       coordinate[0] === cursor.coordinate[0] &&
       coordinate[1] === cursor.coordinate[1]
     ) {
@@ -23,7 +23,7 @@ const moveCursor = (cursorBelongingType, coordinate) => {
     } else {
       dispatch({
         type: ACTION_TYPES.MOVE_CURSOR,
-        cursorBelongingType,
+        boardType,
         coordinate,
       });
     }

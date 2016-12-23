@@ -30,7 +30,7 @@ class BattleBoard extends React.Component {
 
 BattleBoard = connect(state => {
   const cursorCoordinate =
-    state.cursor.cursorBelongingType === BOARD_TYPES.BATTLE_BOARD ?  state.cursor.coordinate : null;
+    state.cursor.boardType === BOARD_TYPES.BATTLE_BOARD ?  state.cursor.coordinate : null;
 
   const unitsOnSquares = state.allies
     .filter(ally => ally.placement && ally.placement.boardType === BOARD_TYPES.BATTLE_BOARD);

@@ -12,6 +12,14 @@ const clearCursor = () => {
 };
 
 const moveCursor = (boardType, coordinate) => {
+  return {
+    type: ACTION_TYPES.MOVE_CURSOR,
+    boardType,
+    coordinate,
+  };
+};
+
+const touchSquare = (boardType, coordinate) => {
   return (dispatch, getState) => {
     const { cursor } = getState();
     if (
@@ -21,11 +29,7 @@ const moveCursor = (boardType, coordinate) => {
     ) {
       dispatch(clearCursor());
     } else {
-      dispatch({
-        type: ACTION_TYPES.MOVE_CURSOR,
-        boardType,
-        coordinate,
-      });
+      dispatch(moveCursor(boardType, coordinate));
     }
   };
 };
@@ -110,6 +114,6 @@ const initializeApp = () => {
 
 module.exports = {
   initializeApp,
-  moveCursor,
   runTicks,
+  touchSquare,
 };

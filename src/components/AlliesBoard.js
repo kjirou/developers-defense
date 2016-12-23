@@ -1,7 +1,7 @@
 const React = require('react');
 const { connect } = require('react-redux');
 
-const { moveCursor } = require('../action-creators');
+const { touchSquare } = require('../action-creators');
 const { BOARD_TYPES, PARAMETERS } = require('../immutable/constants');
 const Board = require('./presentational/Board');
 const SquareMatrix = require('./presentational/SquareMatrix');
@@ -10,7 +10,7 @@ const SquareMatrix = require('./presentational/SquareMatrix');
 class AlliesBoard extends React.Component {
   render() {
     const handleTouchStartPad = (event, { coordinate }) => {
-      this.props.dispatch(moveCursor(BOARD_TYPES.ALLIES_BOARD, coordinate));
+      this.props.dispatch(touchSquare(BOARD_TYPES.ALLIES_BOARD, coordinate));
     };
 
     return <Board

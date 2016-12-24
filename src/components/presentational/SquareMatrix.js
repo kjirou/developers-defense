@@ -1,7 +1,7 @@
 const React = require('react');
 
-const { FACTION_TYPES, STYLES } = require('../../immutable/constants');
-const { getIconId } = require('../../state-computers/unit');
+const { STYLES } = require('../../immutable/constants');
+const { getIconId, isAlly } = require('../../state-computers/unit');
 const Square = require('./Square');
 
 
@@ -53,7 +53,7 @@ const SquareMatrix = ({ squareMatrix, cursorCoordinate, unitsOnSquares, handleTo
       className: [
         'square-matrix__unit',
         'square-matrix__unit--unit-on-square',
-        unit.factionType === FACTION_TYPES.ALLY ? 'square-matrix__unit--ally' : 'square-matrix__unit--enemy',
+        isAlly(unit) ? 'square-matrix__unit--ally' : 'square-matrix__unit--enemy',
       ].join(' '),
       style: {
         top: STYLES.SQUARE_HEIGHT * unit.placement.coordinate[0],

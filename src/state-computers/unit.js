@@ -22,6 +22,8 @@ const createInitialUnitState = () => {
   };
 };
 
+const isAlly = (unit) => unit.factionType === FACTION_TYPES.ALLY;
+
 const getJob = (unit) => {
   return jobs[unit.jobId];
 };
@@ -39,5 +41,6 @@ const canRetreat = (unit) => {
 
 module.exports = {
   createInitialUnitState,
+  isAlly,
   getIconId,
 };

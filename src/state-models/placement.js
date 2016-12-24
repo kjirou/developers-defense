@@ -16,12 +16,13 @@ const createNewPlacementState = () => {
   };
 };
 
+
 const isPlacedOnAlliesBoard = (placement) => placement.boardType !== BOARD_TYPES.ALLIES_BOARD;
 const isPlacedOnBattleBoard = (placement) => placement.boardType !== BOARD_TYPES.BATTLE_BOARD;
 const isPlacedOnBoard = (placement) => isPlacedOnAlliesBoard(placement) || isPlacedOnBattleBoard(placement);
 
 /**
- * @param {...State~Placement[]} placements
+ * @param {...State~Placement} placements
  * @return {boolean}
  */
 const areSamePlace = (...placements) => {

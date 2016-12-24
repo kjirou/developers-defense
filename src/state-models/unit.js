@@ -2,10 +2,23 @@ const uuidV4 = require('uuid/v4');
 
 const { FACTION_TYPES, PARAMETERS } = require('../immutable/constants');
 const { JOB_IDS, jobs } = require('../immutable/jobs');
-const {
-  createNewPlacementState, isPlacedOnAlliesBoard, isPlacedOnBattleBoard
-} = require('./placement');
+const { createNewPlacementState } = require('./placement');
 
+
+/**
+ * @typedef {Object} State~Unit
+ * @property {?string} factionType - One of the FACTION_TYPES
+ */
+
+/**
+ * @typedef {Object} State~Ally
+ * @property {string} factionType - The FACTION_TYPES.ALLY is assigned
+ */
+
+/**
+ * @typedef {Object} State~Enemy
+ * @property {string} factionType - The FACTION_TYPES.ENEMY is assigned
+ */
 
 const createNewUnitState = () => {
   const maxHp = PARAMETERS.MIN_MAX_HP;
@@ -25,6 +38,14 @@ const createNewUnitState = () => {
 };
 
 
+//
+// CAUTION: It should not access the `placement` property in this module!
+//          The `placement` is a relation to boards.
+//          Now units refers to boards, but it may be reversed.
+//          Or it may be a different schema just by placing information.
+//          Place methods into the `complex-apis` if necessary.
+//
+
 const isAlly = (unit) => unit.factionType === FACTION_TYPES.ALLY;
 
 const getJob = (unit) => {
@@ -39,14 +60,14 @@ const canSortieAsAlly = (ally) => {
   if (!isAlly(ally)) {
     throw new Error(`It is not a ally`);
   }
-  return isPlacedOnAlliesBoard(ally) && !isPlacedOnBattleBoard(ally);
+  return true;
 };
 
 const canRetreatAsAlly = (ally) => {
   if (!isAlly(ally)) {
     throw new Error(`It is not a ally`);
   }
-  return isPlacedOnBattleBoard(ally) && !isPlacedOnAlliesBoard(ally);
+  return true;
 };
 
 

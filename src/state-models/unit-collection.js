@@ -10,12 +10,25 @@ const createNewUnitCollectionState = () => {
 };
 
 
-const filterByPlacement = (unitCollection, placement) => {
+const findUnitsByPlacement = (unitCollection, placement) => {
   return unitCollection.filter(unit => areSamePlace(unit.placement, placement));
+};
+
+/**
+ * @param {string} uid
+ * @return {?State~Unit}
+ */
+const findUnitByUid = (unitCollection, uid) => {
+  for (let index = 0; index < unitCollection.length; index += 1) {
+    const unit = unitCollection[index];
+    if (unit.uid === uid) return unit;
+  }
+  return null;
 };
 
 
 module.exports = {
   createNewUnitCollectionState,
-  filterByPlacement,
+  findUnitByUid,
+  findUnitsByPlacement,
 };

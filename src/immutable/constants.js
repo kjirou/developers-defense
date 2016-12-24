@@ -6,9 +6,10 @@ const ACTION_TYPES = keymirror({
   ALTER_TECHNICAL_DEBT: null,
   CLEAR_CURSOR: null,
   EXTEND_BATTLE_BOARD_SQUARE_MATRIX: null,
-  MOVE_CURSOR: null,
   NOOP: null,
   TICK: null,
+  MOVE_CURSOR: null,
+  UPDATE_ALLY: null,
   UPDATE_ALLY_COLLECTION: null,
 });
 

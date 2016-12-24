@@ -149,8 +149,8 @@ const initializeApp = () => {
     '. ... .',
     '. ... .',
     '. .F. .',
-    '.C    .',
-    '.......',
+    ' C    .',
+    '. .....',
   ].join('\n');
   const squareMatrixExtension = parseMapText(mapText);
 

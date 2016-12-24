@@ -1,9 +1,8 @@
 const { ACTION_TYPES, BOARD_TYPES, FACTION_TYPES, PARAMETERS } = require('../immutable/constants');
 const { JOB_IDS } = require('../immutable/jobs');
-const { parseMapText } = require('../reducers/battle-square-matrix');
-const { areSamePlace } = require('../state-computers/placement');
-const { findSquareByCoordinate } = require('../state-computers/square-matrix');
-const { createInitialUnitState } = require('../state-computers/unit');
+const { areSamePlace } = require('../state-models/placement');
+const { findSquareByCoordinate, parseMapText } = require('../state-models/square-matrix');
+const { createInitialUnitState } = require('../state-models/unit');
 
 
 const clearCursor = () => {
@@ -24,21 +23,14 @@ const moveCursor = (placement) => {
  */
 const touchSquare = (placement) => {
   return (dispatch, getState) => {
-    const { cursor } = getState();
+    const { cursor, battleSquareMatrix, alliesSquareMatrix } = getState();
+
     if (areSamePlace(placement, cursor.placement)) {
       dispatch(clearCursor());
     } else {
       dispatch(moveCursor(placement));
     }
   };
-};
-
-const placeUnitToSquare = (squareUid, unitUid) => {
-  dispatch({
-    type: ACTION_TYPES.PLACE_UNIT_TO_SQUARE,
-    squareUid,
-    unitUid,
-  });
 };
 
 /**
@@ -84,7 +76,7 @@ const initializeApp = () => {
     '.C    .',
     '.......',
   ].join('\n');
-  const squareUpdates = parseMapText(mapText);
+  const squareMatrixExtension = parseMapText(mapText);
 
   const allies = [
     Object.assign(createInitialUnitState(), {
@@ -105,7 +97,7 @@ const initializeApp = () => {
   ];
 
   return (dispatch, getState) => {
-    dispatch({ type: ACTION_TYPES.UPDATE_ALL_SQUARES, updates: squareUpdates });
+    dispatch({ type: ACTION_TYPES.EXTEND_BATTLE_BOARD_SQUARE_MATRIX, extension: squareMatrixExtension });
     dispatch({ type: ACTION_TYPES.UPDATE_ALLIES, units: allies });
   };
 };

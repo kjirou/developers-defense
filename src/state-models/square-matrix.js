@@ -1,14 +1,20 @@
+const { LANDFORM_TYPES } = require('../immutable/constants');
 const { areSameSize2DArray } = require('../lib/core');
-const { createInitialSquareState, extendSquare } = require('./square');
+const { createNewSquareState, extendSquare } = require('./square');
 
 
-const createInitialSquareMatrixState = (rowLength, columnLength) => {
+/**
+ * @typedef {Object} State~SquareMatrix
+ */
+
+const createNewSquareMatrixState = (rowLength, columnLength) => {
   return Array.from({ length: rowLength }).map((notUsed, rowIndex) => {
     return Array.from({ length: columnLength }).map((notUsed, columnIndex) => {
-      return createInitialSquareState(rowIndex, columnIndex);
+      return createNewSquareState(rowIndex, columnIndex);
     });
   });
 };
+
 
 const mapSquareMatrix = (squareMatrix, callback) => {
   return squareMatrix.map(rowSquares => {
@@ -63,12 +69,44 @@ const extendSquareMatrix = (squareMatrix, propertiesMatrix) => {
   });
 };
 
+/**
+ * @param {string} mapSymbol - A single character string
+ * @return {?string}
+ */
+const parseMapSymbol = (mapSymbol) => {
+  return {
+    'C': LANDFORM_TYPES.CASTLE,
+    '.': LANDFORM_TYPES.GRASSFIELD,
+    'F': LANDFORM_TYPES.FORT,
+    ' ': LANDFORM_TYPES.ROAD,
+  }[mapSymbol] || null;
+};
+
+/**
+ * @param {string} mapText
+ * @return {Object[]} An object list to use as the `extendSquareMatrix`
+ */
+const parseMapText = (mapText) => {
+  return mapText.trim().split('\n')
+    .map(line => {
+      return line.split('').map(mapSymbol => {
+        const landformType = parseMapSymbol(mapSymbol);
+        if (landformType === null) {
+          throw new Error(`map-symbol=${ mapSymbol } is not defined`);
+        }
+        return { landformType };
+      });
+    })
+  ;
+};
+
 
 module.exports = {
   cloneSquareMatrix,
-  createInitialSquareMatrixState,
+  createNewSquareMatrixState,
   extendSquareMatrix,
   findSquareByCoordinate,
   findSquareByUid,
+  parseMapText,
   mapSquareMatrix,
 };

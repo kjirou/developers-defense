@@ -7,7 +7,7 @@ const {
 } = require('./placement');
 
 
-const createInitialUnitState = () => {
+const createNewUnitState = () => {
   const maxHp = PARAMETERS.MIN_MAX_HP;
 
   return {
@@ -53,7 +53,7 @@ const canRetreatAsAlly = (ally) => {
 module.exports = {
   canRetreatAsAlly,
   canSortieAsAlly,
-  createInitialUnitState,
+  createNewUnitState,
   isAlly,
   getIconId,
 };

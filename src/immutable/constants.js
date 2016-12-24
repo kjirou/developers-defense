@@ -9,8 +9,7 @@ const ACTION_TYPES = keymirror({
   MOVE_CURSOR: null,
   NOOP: null,
   TICK: null,
-  UPDATE_ALLIES: null,
-  UPDATE_ENEMIES: null,
+  UPDATE_ALLY_COLLECTION: null,
 });
 
 const BOARD_TYPES = keymirror({

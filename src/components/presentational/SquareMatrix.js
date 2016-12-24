@@ -1,7 +1,7 @@
 const React = require('react');
 
 const { STYLES } = require('../../immutable/constants');
-const { getIconId, isAlly } = require('../../state-computers/unit');
+const { getIconId, isAlly } = require('../../state-models/unit');
 const Square = require('./Square');
 
 

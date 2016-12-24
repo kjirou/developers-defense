@@ -1,9 +1,9 @@
 const { ACTION_TYPES, LANDFORM_TYPES, PARAMETERS } = require('../immutable/constants');
-const { createInitialSquareMatrixState, extendSquareMatrix } = require('../state-computers/square-matrix');
+const { createNewSquareMatrixState, extendSquareMatrix } = require('../state-models/square-matrix');
 
 
 const createInitialState = () => {
-  return createInitialSquareMatrixState(
+  return createNewSquareMatrixState(
     PARAMETERS.BATTLE_BOARD_ROW_LENGTH, PARAMETERS.BATTLE_BOARD_COLUMN_LENGTH);
 };
 

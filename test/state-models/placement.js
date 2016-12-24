@@ -5,10 +5,10 @@ const { cloneViaJson } = require('../../src/lib/core');
 const {
   createNewPlacementState,
   areSamePlace,
-} = require('../../src/state-computers/placement');
+} = require('../../src/state-models/placement');
 
 
-describe('state-computers/placement', () => {
+describe('state-models/placement', () => {
   describe('areSamePlace', () => {
     it('should be executed correctly', () => {
       const p = createNewPlacementState();

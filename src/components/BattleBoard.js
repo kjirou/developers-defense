@@ -3,7 +3,7 @@ const { connect } = require('react-redux');
 
 const { touchSquare } = require('../action-creators');
 const { BOARD_TYPES, PARAMETERS } = require('../immutable/constants');
-const { createNewPlacementState } = require('../state-computers/placement');
+const { createNewPlacementState } = require('../state-models/placement');
 const Board = require('./presentational/Board');
 const SquareMatrix = require('./presentational/SquareMatrix');
 
@@ -24,7 +24,7 @@ class BattleBoard extends React.Component {
       additionalClassNames={ ['root__battle-board'] }
     >
       <SquareMatrix
-        squareMatrix={ this.props.battleSquareMatrix }
+        squareMatrix={ this.props.battleBoard.squareMatrix }
         cursorCoordinate={ this.props.cursorCoordinate }
         unitsOnSquares={ this.props.unitsOnSquares }
         handleTouchStartPad={ handleTouchStartPad }
@@ -35,10 +35,10 @@ class BattleBoard extends React.Component {
 
 BattleBoard = connect(state => {
   const cursorCoordinate =
-    state.cursor.placement.boardType === BOARD_TYPES.BATTLE_BOARD ?  state.cursor.placement.coordinate : null;
+    state.cursor.placement.boardType === BOARD_TYPES.BATTLE_BOARD ? state.cursor.placement.coordinate : null;
 
-  const unitsOnSquares = state.allies
-    .filter(ally => ally.placement.boardType === BOARD_TYPES.BATTLE_BOARD);
+  const unitsOnSquares =
+    state.allies.filter(ally => ally.placement.boardType === state.battleBoard.boardType);
 
   return Object.assign({}, state, {
     cursorCoordinate,

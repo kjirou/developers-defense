@@ -1,10 +1,10 @@
 const { ACTION_TYPES, PARAMETERS } = require('../immutable/constants');
 const { areSameSize2DArray } = require('../lib/core');
-const { createInitialSquareMatrixState } = require('../state-computers/square-matrix');
+const { createNewSquareMatrixState } = require('../state-models/square-matrix');
 
 
 const createInitialState = () => {
-  return createInitialSquareMatrixState(
+  return createNewSquareMatrixState(
     PARAMETERS.ALLIES_BOARD_ROW_LENGTH, PARAMETERS.ALLIES_BOARD_COLUMN_LENGTH);
 };
 

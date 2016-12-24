@@ -1,8 +1,8 @@
 const { combineReducers } = require('redux');
 
 const { reduceAllies } = require('./allies');
-const { reduceAlliesSquareMatrix } = require('./allies-square-matrix');
-const { reduceBattleSquareMatrix } = require('./battle-square-matrix');
+const { reduceAlliesBoard } = require('./allies-board');
+const { reduceBattleBoard } = require('./battle-board');
 const { reduceCursor } = require('./cursor');
 const { reduceEnemies } = require('./enemies');
 const { reduceGameStatus } = require('./game-status');
@@ -10,8 +10,8 @@ const { reduceGameStatus } = require('./game-status');
 
 const reduceApp = combineReducers({
   allies: reduceAllies,
-  alliesSquareMatrix: reduceAlliesSquareMatrix,
-  battleSquareMatrix: reduceBattleSquareMatrix,
+  alliesBoard: reduceAlliesBoard,
+  battleBoard: reduceBattleBoard,
   cursor: reduceCursor,
   enemies: reduceEnemies,
   gameStatus: reduceGameStatus,

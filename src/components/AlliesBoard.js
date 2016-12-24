@@ -3,7 +3,7 @@ const { connect } = require('react-redux');
 
 const { touchSquare } = require('../action-creators');
 const { BOARD_TYPES, PARAMETERS } = require('../immutable/constants');
-const { createNewPlacementState } = require('../state-computers/placement');
+const { createNewPlacementState } = require('../state-models/placement');
 const Board = require('./presentational/Board');
 const SquareMatrix = require('./presentational/SquareMatrix');
 
@@ -24,7 +24,7 @@ class AlliesBoard extends React.Component {
       additionalClassNames={ ['root__recruitment-board'] }
     >
       <SquareMatrix
-        squareMatrix={ this.props.alliesSquareMatrix }
+        squareMatrix={ this.props.alliesBoard.squareMatrix }
         cursorCoordinate={ this.props.cursorCoordinate }
         unitsOnSquares={ this.props.unitsOnSquares }
         handleTouchStartPad={ handleTouchStartPad }
@@ -37,13 +37,14 @@ AlliesBoard = connect(state => {
   const cursorCoordinate =
     state.cursor.placement.boardType === BOARD_TYPES.ALLIES_BOARD ? state.cursor.placement.coordinate : null;
 
-  const unitsOnSquares = state.allies
-    .filter(ally => ally.placement.boardType === BOARD_TYPES.ALLIES_BOARD);
+  const unitsOnSquares =
+    state.allies.filter(ally => ally.placement.boardType === state.alliesBoard.boardType);
 
   return Object.assign({}, state, {
     cursorCoordinate,
     unitsOnSquares,
   });
 })(AlliesBoard);
+
 
 module.exports = AlliesBoard;

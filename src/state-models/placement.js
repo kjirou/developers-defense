@@ -8,6 +8,7 @@ const { BOARD_TYPES } = require('../immutable/constants');
  * @property {?string} boardType - One of the BOARD_TYPES
  * @property {?number[]} coordinate - The position of a matrix. ex) [m, n]
  */
+
 const createNewPlacementState = () => {
   return {
     boardType: null,

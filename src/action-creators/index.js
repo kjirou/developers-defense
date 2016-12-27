@@ -39,19 +39,19 @@ const tick = () => {
  */
 const touchSquare = (newPlacement) => {
   return (dispatch, getState) => {
-    const { cursor, alliesBoard, allyCollection, battleBoard } = getState();
+    const { cursor, sortieBoard, allies, battleBoard } = getState();
     const currentPlacement = cursor.placement;
     const isCurrentPlacementPlacedOnBoard = isPlacedOnBoard(currentPlacement);
-    const currentSquare = findOneSquareFromBoardsByPlacement(currentPlacement, alliesBoard, battleBoard);
-    const newSquare = findOneSquareFromBoardsByPlacement(newPlacement, alliesBoard, battleBoard);
-    const currentCursorHittingAlly = findUnitsByPlacement(allyCollection, currentPlacement)[0] || null;
-    const newCursorHittingAlly = findUnitsByPlacement(allyCollection, newPlacement)[0] || null;
+    const currentSquare = findOneSquareFromBoardsByPlacement(currentPlacement, sortieBoard, battleBoard);
+    const newSquare = findOneSquareFromBoardsByPlacement(newPlacement, sortieBoard, battleBoard);
+    const currentCursorHittingAlly = findUnitsByPlacement(allies, currentPlacement)[0] || null;
+    const newCursorHittingAlly = findUnitsByPlacement(allies, newPlacement)[0] || null;
 
     // TODO: Probably, it becomes very verbose...
 
     // Make an ally sortie
     if (
-      currentPlacement.boardType === BOARD_TYPES.ALLIES_BOARD &&
+      currentPlacement.boardType === BOARD_TYPES.SORTIE_BOARD &&
       newPlacement.boardType === BOARD_TYPES.BATTLE_BOARD &&
       currentCursorHittingAlly &&
       !newCursorHittingAlly
@@ -65,7 +65,7 @@ const touchSquare = (newPlacement) => {
     // Make an ally retreat
     } else if (
       currentPlacement.boardType === BOARD_TYPES.BATTLE_BOARD &&
-      newPlacement.boardType === BOARD_TYPES.ALLIES_BOARD &&
+      newPlacement.boardType === BOARD_TYPES.SORTIE_BOARD &&
       currentCursorHittingAlly &&
       !newCursorHittingAlly
     ) {
@@ -75,10 +75,10 @@ const touchSquare = (newPlacement) => {
       dispatch(updateAlly(movedAlly));
       dispatch(clearCursor());
 
-    // Move the position of an ally in the allies-board
+    // Move the position of an ally in the sortie-board
     } else if (
-      currentPlacement.boardType === BOARD_TYPES.ALLIES_BOARD &&
-      newPlacement.boardType === BOARD_TYPES.ALLIES_BOARD &&
+      currentPlacement.boardType === BOARD_TYPES.SORTIE_BOARD &&
+      newPlacement.boardType === BOARD_TYPES.SORTIE_BOARD &&
       currentCursorHittingAlly &&
       !newCursorHittingAlly
     ) {
@@ -88,10 +88,10 @@ const touchSquare = (newPlacement) => {
       dispatch(updateAlly(movedAlly));
       dispatch(clearCursor());
 
-    // Exchange the positions of allies in the allies-board
+    // Exchange the positions of allies in the sortie-board
     } else if (
-      currentPlacement.boardType === BOARD_TYPES.ALLIES_BOARD &&
-      newPlacement.boardType === BOARD_TYPES.ALLIES_BOARD &&
+      currentPlacement.boardType === BOARD_TYPES.SORTIE_BOARD &&
+      newPlacement.boardType === BOARD_TYPES.SORTIE_BOARD &&
       currentCursorHittingAlly &&
       newCursorHittingAlly
     ) {
@@ -120,13 +120,13 @@ const touchSquare = (newPlacement) => {
  * @return {Function}
  */
 const runTicks = () => {
-  const tickPerSecond = 25;
-  const interval = Math.round(1000 / tickPerSecond);
+  const ticksPerSecond = 25;
+  const interval = Math.round(1000 / ticksPerSecond);
 
   const computeState = (dispatch, state) => {
     const tickId = state.gameStatus.tickId;
 
-    if (tickId % tickPerSecond === 0) {
+    if (tickId % ticksPerSecond === 0) {
       dispatch({ type: ACTION_TYPES.ALTER_PROGRESS, delta: 1 });
       dispatch({ type: ACTION_TYPES.ALTER_TECHNICAL_DEBT, delta: 1 });
     }
@@ -161,27 +161,27 @@ const initializeApp = () => {
   ].join('\n');
   const squareMatrixExtension = parseMapText(mapText);
 
-  const allyCollection = createNewUnitCollectionState().concat([
+  const allies = createNewUnitCollectionState().concat([
     Object.assign(createNewUnitState(), {
       factionType: FACTION_TYPES.ALLY,
       jobId: JOB_IDS.FIGHTER,
-      placement: { boardType: BOARD_TYPES.ALLIES_BOARD, coordinate: [0, 0] },
+      placement: { boardType: BOARD_TYPES.SORTIE_BOARD, coordinate: [0, 0] },
     }),
     Object.assign(createNewUnitState(), {
       factionType: FACTION_TYPES.ALLY,
       jobId: JOB_IDS.HEALER,
-      placement: { boardType: BOARD_TYPES.ALLIES_BOARD, coordinate: [0, 1] },
+      placement: { boardType: BOARD_TYPES.SORTIE_BOARD, coordinate: [0, 1] },
     }),
     Object.assign(createNewUnitState(), {
       factionType: FACTION_TYPES.ALLY,
       jobId: JOB_IDS.MAGE,
-      placement: { boardType: BOARD_TYPES.ALLIES_BOARD, coordinate: [1, 3] },
+      placement: { boardType: BOARD_TYPES.SORTIE_BOARD, coordinate: [1, 3] },
     }),
   ]);
 
   return (dispatch, getState) => {
     dispatch({ type: ACTION_TYPES.EXTEND_BATTLE_BOARD_SQUARE_MATRIX, extension: squareMatrixExtension });
-    dispatch({ type: ACTION_TYPES.UPDATE_ALLY_COLLECTION, allyCollection });
+    dispatch({ type: ACTION_TYPES.UPDATE_ALLY_COLLECTION, allies });
   };
 };
 

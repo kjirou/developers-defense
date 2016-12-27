@@ -1,7 +1,7 @@
 const React = require('react');
 
-const AlliesBoard = require('./AlliesBoard');
 const BattleBoard = require('./BattleBoard');
+const SortieBoard = require('./SortieBoard');
 const StatusBar = require('./StatusBar');
 
 
@@ -11,7 +11,7 @@ class Root extends React.Component {
       <div className="root">
         <StatusBar />
         <BattleBoard />
-        <AlliesBoard />
+        <SortieBoard />
       </div>
     );
   }

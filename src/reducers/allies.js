@@ -21,13 +21,13 @@ const reducements = {
     return newCollection;
   },
 
-  [ACTION_TYPES.UPDATE_ALLY_COLLECTION]: (state, { allyCollection }) => {
-    return allyCollection;
+  [ACTION_TYPES.UPDATE_ALLY_COLLECTION]: (state, { allies }) => {
+    return allies;
   },
 };
 
 
 module.exports = {
   _createInitialState: createInitialState,
-  reduceAllyCollection: createReducer(createInitialState(), reducements),
+  reduceAllies: createReducer(createInitialState(), reducements),
 };

@@ -18,7 +18,7 @@ describe('state-models/placement', () => {
       p1.coordinate = [0, 1];
 
       const p2 = createNewPlacementState();
-      p2.boardType = BOARD_TYPES.ALLIES_BOARD;
+      p2.boardType = BOARD_TYPES.SORTIE_BOARD;
       p2.coordinate = [0, 1];
 
       const p3 = createNewPlacementState();

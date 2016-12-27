@@ -17,9 +17,9 @@ const createNewPlacementState = () => {
 };
 
 
-const isPlacedOnAlliesBoard = (placement) => placement.boardType !== BOARD_TYPES.ALLIES_BOARD;
+const isPlacedOnSortieBoard = (placement) => placement.boardType !== BOARD_TYPES.SORTIE_BOARD;
 const isPlacedOnBattleBoard = (placement) => placement.boardType !== BOARD_TYPES.BATTLE_BOARD;
-const isPlacedOnBoard = (placement) => isPlacedOnAlliesBoard(placement) || isPlacedOnBattleBoard(placement);
+const isPlacedOnBoard = (placement) => isPlacedOnSortieBoard(placement) || isPlacedOnBattleBoard(placement);
 
 /**
  * @param {...State~Placement} placements
@@ -38,7 +38,7 @@ const areSamePlace = (...placements) => {
 module.exports = {
   areSamePlace,
   createNewPlacementState,
-  isPlacedOnAlliesBoard,
+  isPlacedOnSortieBoard,
   isPlacedOnBattleBoard,
   isPlacedOnBoard,
 };

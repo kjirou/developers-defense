@@ -6,14 +6,14 @@ const { createNewBoardState } = require('../state-models/board');
 
 const createInitialState = () => {
   return createNewBoardState(
-    BOARD_TYPES.ALLIES_BOARD,
-    PARAMETERS.ALLIES_BOARD_ROW_LENGTH,
-    PARAMETERS.ALLIES_BOARD_COLUMN_LENGTH
+    BOARD_TYPES.SORTIE_BOARD,
+    PARAMETERS.SORTIE_BOARD_ROW_LENGTH,
+    PARAMETERS.SORTIE_BOARD_COLUMN_LENGTH
   );
 };
 
 
 module.exports = {
   _createInitialState: createInitialState,
-  reduceAlliesBoard: createReducer(createInitialState(), {}),
+  reduceSortieBoard: createReducer(createInitialState(), {}),
 };

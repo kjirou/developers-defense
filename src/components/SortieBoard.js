@@ -8,23 +8,23 @@ const Board = require('./presentational/Board');
 const SquareMatrix = require('./presentational/SquareMatrix');
 
 
-class AlliesBoard extends React.Component {
+class SortieBoard extends React.Component {
   render() {
     const handleTouchStartPad = (event, { coordinate }) => {
       const placement = Object.assign(createNewPlacementState(), {
-        boardType: BOARD_TYPES.ALLIES_BOARD,
+        boardType: BOARD_TYPES.SORTIE_BOARD,
         coordinate: coordinate.slice(),
       });
       this.props.dispatch(touchSquare(placement));
     };
 
     return <Board
-      rowLength={ PARAMETERS.ALLIES_BOARD_ROW_LENGTH }
-      columnLength={ PARAMETERS.ALLIES_BOARD_COLUMN_LENGTH }
+      rowLength={ PARAMETERS.SORTIE_BOARD_ROW_LENGTH }
+      columnLength={ PARAMETERS.SORTIE_BOARD_COLUMN_LENGTH }
       additionalClassNames={ ['root__recruitment-board'] }
     >
       <SquareMatrix
-        squareMatrix={ this.props.alliesBoard.squareMatrix }
+        squareMatrix={ this.props.sortieBoard.squareMatrix }
         cursorCoordinate={ this.props.cursorCoordinate }
         unitsOnSquares={ this.props.unitsOnSquares }
         handleTouchStartPad={ handleTouchStartPad }
@@ -33,18 +33,18 @@ class AlliesBoard extends React.Component {
   }
 }
 
-AlliesBoard = connect(state => {
+SortieBoard = connect(state => {
   const cursorCoordinate =
-    state.cursor.placement.boardType === BOARD_TYPES.ALLIES_BOARD ? state.cursor.placement.coordinate : null;
+    state.cursor.placement.boardType === BOARD_TYPES.SORTIE_BOARD ? state.cursor.placement.coordinate : null;
 
   const unitsOnSquares =
-    state.allies.filter(ally => ally.placement.boardType === state.alliesBoard.boardType);
+    state.allies.filter(ally => ally.placement.boardType === state.sortieBoard.boardType);
 
   return Object.assign({}, state, {
     cursorCoordinate,
     unitsOnSquares,
   });
-})(AlliesBoard);
+})(SortieBoard);
 
 
-module.exports = AlliesBoard;
+module.exports = SortieBoard;

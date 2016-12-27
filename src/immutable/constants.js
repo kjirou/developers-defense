@@ -14,7 +14,7 @@ const ACTION_TYPES = keymirror({
 });
 
 const BOARD_TYPES = keymirror({
-  ALLIES_BOARD: null,
+  SORTIE_BOARD: null,
   BATTLE_BOARD: null,
 });
 
@@ -35,8 +35,6 @@ const LANDFORM_TYPES = keymirror({
 });
 
 const PARAMETERS = {
-  ALLIES_BOARD_COLUMN_LENGTH: 7,
-  ALLIES_BOARD_ROW_LENGTH: 2,
   BATTLE_BOARD_COLUMN_LENGTH: 7,
   BATTLE_BOARD_ROW_LENGTH: 9,
   MAX_MAX_HP: 999,
@@ -45,6 +43,8 @@ const PARAMETERS = {
   MIN_MAX_HP: 1,
   MIN_PROGRESS: 0,
   MIN_TECHNICAL_DEBT: 0,
+  SORTIE_BOARD_COLUMN_LENGTH: 7,
+  SORTIE_BOARD_ROW_LENGTH: 2,
 };
 
 const STYLES = {

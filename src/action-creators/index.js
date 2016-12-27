@@ -39,13 +39,13 @@ const tick = () => {
  */
 const touchSquare = (newPlacement) => {
   return (dispatch, getState) => {
-    const { cursor, alliesBoard, allyCollection, battleBoard } = getState();
+    const { cursor, alliesBoard, allies, battleBoard } = getState();
     const currentPlacement = cursor.placement;
     const isCurrentPlacementPlacedOnBoard = isPlacedOnBoard(currentPlacement);
     const currentSquare = findOneSquareFromBoardsByPlacement(currentPlacement, alliesBoard, battleBoard);
     const newSquare = findOneSquareFromBoardsByPlacement(newPlacement, alliesBoard, battleBoard);
-    const currentCursorHittingAlly = findUnitsByPlacement(allyCollection, currentPlacement)[0] || null;
-    const newCursorHittingAlly = findUnitsByPlacement(allyCollection, newPlacement)[0] || null;
+    const currentCursorHittingAlly = findUnitsByPlacement(allies, currentPlacement)[0] || null;
+    const newCursorHittingAlly = findUnitsByPlacement(allies, newPlacement)[0] || null;
 
     // TODO: Probably, it becomes very verbose...
 
@@ -161,7 +161,7 @@ const initializeApp = () => {
   ].join('\n');
   const squareMatrixExtension = parseMapText(mapText);
 
-  const allyCollection = createNewUnitCollectionState().concat([
+  const allies = createNewUnitCollectionState().concat([
     Object.assign(createNewUnitState(), {
       factionType: FACTION_TYPES.ALLY,
       jobId: JOB_IDS.FIGHTER,
@@ -181,7 +181,7 @@ const initializeApp = () => {
 
   return (dispatch, getState) => {
     dispatch({ type: ACTION_TYPES.EXTEND_BATTLE_BOARD_SQUARE_MATRIX, extension: squareMatrixExtension });
-    dispatch({ type: ACTION_TYPES.UPDATE_ALLY_COLLECTION, allyCollection });
+    dispatch({ type: ACTION_TYPES.UPDATE_ALLY_COLLECTION, allies });
   };
 };
 

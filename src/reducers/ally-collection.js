@@ -1,5 +1,6 @@
+const { createReducer } = require('redux-create-reducer');
+
 const { ACTION_TYPES, PARAMETERS } = require('../immutable/constants');
-const { createBranchReducer } = require('../lib/core');
 const { createNewUnitCollectionState, findUnitByUid } = require('../state-models/unit-collection');
 
 
@@ -28,5 +29,5 @@ const reducements = {
 
 module.exports = {
   _createInitialState: createInitialState,
-  reduceAllyCollection: createBranchReducer(reducements, createInitialState()),
+  reduceAllyCollection: createReducer(createInitialState(), reducements),
 };

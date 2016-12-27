@@ -27,6 +27,13 @@ const updateAlly = (ally) => {
   };
 };
 
+const tick = () => {
+  return {
+    type: ACTION_TYPES.TICK,
+  };
+};
+
+
 /**
  * @param {State~Placement} placement
  */
@@ -126,14 +133,14 @@ const runTicks = () => {
   };
 
   return (dispatch, getState) => {
-    const tick = () => {
+    const tickTask = () => {
       setTimeout(() => {
-        dispatch({ type: ACTION_TYPES.TICK });
+        dispatch(tick());
         computeState(dispatch, getState());
-        tick();
+        tickTask();
       }, interval);
     };
-    tick();
+    tickTask();
   };
 };
 

@@ -1,4 +1,5 @@
-const { createBranchReducer } = require('../lib/core');
+const { createReducer } = require('redux-create-reducer');
+
 const { ACTION_TYPES, PARAMETERS } = require('../immutable/constants');
 const { createNewPlacementState } = require('../state-models/placement');
 
@@ -25,5 +26,5 @@ const reducements = {
 
 module.exports = {
   _createInitialState: createInitialState,
-  reduceCursor: createBranchReducer(reducements, createInitialState()),
+  reduceCursor: createReducer(createInitialState(), reducements),
 };

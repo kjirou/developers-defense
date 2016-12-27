@@ -17,18 +17,8 @@ const areSameSize2DArray = (a, b) => {
   return true;
 };
 
-const createBranchReducer = (reducements, initialState) => {
-  return (state = initialState, action) => {
-    // NOTICE: The "@@redux/INIT" action.type may come.
-    //         Ref) https://github.com/reactjs/redux/issues/382
-    const reducement = reducements[action.type] || null;
-    return reducement ? reducement(state, action) : state;
-  };
-};
-
 
 module.exports = {
   areSameSize2DArray,
   cloneViaJson,
-  createBranchReducer,
 };

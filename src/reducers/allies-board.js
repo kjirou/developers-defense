@@ -1,4 +1,5 @@
-const { createBranchReducer } = require('../lib/core');
+const { createReducer } = require('redux-create-reducer');
+
 const { ACTION_TYPES, BOARD_TYPES, PARAMETERS } = require('../immutable/constants');
 const { createNewBoardState } = require('../state-models/board');
 
@@ -12,11 +13,7 @@ const createInitialState = () => {
 };
 
 
-const reducements = {
-};
-
-
 module.exports = {
   _createInitialState: createInitialState,
-  reduceAlliesBoard: createBranchReducer(reducements, createInitialState()),
+  reduceAlliesBoard: createReducer(createInitialState(), {}),
 };

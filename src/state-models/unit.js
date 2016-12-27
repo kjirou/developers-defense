@@ -8,6 +8,11 @@ const { createNewPlacementState } = require('./placement');
 /**
  * @typedef {Object} State~Unit
  * @property {?string} factionType - One of the FACTION_TYPES
+ * @property {State~Placement} placement
+ * @property {?number[]} location - [top, left] position on the battle-board
+ * @property {number[]} destinationPlacements
+ * @property {?number} nextDestinationIndex
+ * @property {number} movingSpeed - 1.0=48px/1sec, 1.5=72px/1sec
  */
 
 /**
@@ -28,12 +33,16 @@ const createNewUnitState = () => {
     factionType: null,
     placement: createNewPlacementState(),
     jobId: JOB_IDS.NONE,
+    location: [],
+    destinations: [],
+    nextDestinationIndex: null,
     maxHp,
     hp: maxHp,
     attackPower: 0,
     defensePower: 0,
     mattackPower: 0,
     mdefensePower: 0,
+    movingSpeed: 0,
   };
 };
 

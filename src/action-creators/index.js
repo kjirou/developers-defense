@@ -181,7 +181,7 @@ const initializeApp = () => {
 
   return (dispatch, getState) => {
     dispatch({ type: ACTION_TYPES.EXTEND_BATTLE_BOARD_SQUARE_MATRIX, extension: squareMatrixExtension });
-    dispatch({ type: ACTION_TYPES.UPDATE_ALLY_COLLECTION, allies });
+    dispatch({ type: ACTION_TYPES.UPDATE_ALLIES, allies });
   };
 };
 

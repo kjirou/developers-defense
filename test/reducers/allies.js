@@ -22,7 +22,7 @@ describe('reducers/allies', () => {
 
     beforeEach(() => {
       state = reduceAllies(undefined, {
-        type: ACTION_TYPES.UPDATE_ALLY_COLLECTION,
+        type: ACTION_TYPES.UPDATE_ALLIES,
         allies: createNewUnitCollectionState().concat([
           createNewUnitState(),
           createNewUnitState(),

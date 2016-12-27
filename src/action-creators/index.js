@@ -120,13 +120,13 @@ const touchSquare = (newPlacement) => {
  * @return {Function}
  */
 const runTicks = () => {
-  const tickPerSecond = 25;
-  const interval = Math.round(1000 / tickPerSecond);
+  const ticksPerSecond = 25;
+  const interval = Math.round(1000 / ticksPerSecond);
 
   const computeState = (dispatch, state) => {
     const tickId = state.gameStatus.tickId;
 
-    if (tickId % tickPerSecond === 0) {
+    if (tickId % ticksPerSecond === 0) {
       dispatch({ type: ACTION_TYPES.ALTER_PROGRESS, delta: 1 });
       dispatch({ type: ACTION_TYPES.ALTER_TECHNICAL_DEBT, delta: 1 });
     }

@@ -42,15 +42,27 @@ const SquareMatrix = ({ squareMatrix, cursorCoordinate, units, unitsOnSquares, h
     });
   }
 
+  const unitComponents = units.map(unit => {
+    return React.createElement(Unit, {
+      key: 'square-matrix-unit-' + unit.uid,
+      iconId: getIconId(unit),
+      top: unit.location[0],
+      left: unit.location[1],
+      classNames: [
+        'square-matrix__unit',
+        isAlly(unit) ? 'unit--ally' : 'unit--enemy',
+      ],
+    });
+  });
+
   // Do not place in the squares.
   const unitComponentsOnSquares = unitsOnSquares.map(unit => {
     return React.createElement(Unit, {
-      key: 'square-matrix-unit-on-square-' + unit.placement.coordinate.join('-'),
+      key: 'square-matrix-unit-on-square-' + unit.uid,
       iconId: getIconId(unit),
       top: STYLES.SQUARE_HEIGHT * unit.placement.coordinate[0],
       left: STYLES.SQUARE_WIDTH * unit.placement.coordinate[1],
       classNames: [
-        'square-matrix__unit',
         'square-matrix__unit--unit-on-square',
         isAlly(unit) ? 'unit--ally' : 'unit--enemy',
       ],
@@ -70,6 +82,7 @@ const SquareMatrix = ({ squareMatrix, cursorCoordinate, units, unitsOnSquares, h
   const components = [
     touchpad,
     ...(cursor ? [cursor] : []),
+    ...unitComponents,
     ...unitComponentsOnSquares,
     serialSquareComponents,
   ];

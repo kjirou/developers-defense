@@ -3,9 +3,10 @@ const React = require('react');
 const { STYLES } = require('../../immutable/constants');
 const { getIconId, isAlly } = require('../../state-models/unit');
 const Square = require('./Square');
+const Unit = require('./Unit');
 
 
-const SquareMatrix = ({ squareMatrix, cursorCoordinate, unitsOnSquares, handleTouchStartPad }) => {
+const SquareMatrix = ({ squareMatrix, cursorCoordinate, units, unitsOnSquares, handleTouchStartPad }) => {
   const props = {
     className: 'square-matrix',
   };
@@ -43,23 +44,17 @@ const SquareMatrix = ({ squareMatrix, cursorCoordinate, unitsOnSquares, handleTo
 
   // Do not place in the squares.
   const unitComponentsOnSquares = unitsOnSquares.map(unit => {
-    const icon = React.createElement('i', {
-      // TODO: rpg-awesome 固定なら iconId も短縮できる
-      className: ['ra', getIconId(unit), 'ra-2x'].join(' '),
-    });
-
-    return React.createElement('div', {
+    return React.createElement(Unit, {
       key: 'square-matrix-unit-on-square-' + unit.placement.coordinate.join('-'),
-      className: [
+      iconId: getIconId(unit),
+      top: STYLES.SQUARE_HEIGHT * unit.placement.coordinate[0],
+      left: STYLES.SQUARE_WIDTH * unit.placement.coordinate[1],
+      classNames: [
         'square-matrix__unit',
         'square-matrix__unit--unit-on-square',
-        isAlly(unit) ? 'square-matrix__unit--ally' : 'square-matrix__unit--enemy',
-      ].join(' '),
-      style: {
-        top: STYLES.SQUARE_HEIGHT * unit.placement.coordinate[0],
-        left: STYLES.SQUARE_WIDTH * unit.placement.coordinate[1],
-      },
-    }, icon);
+        isAlly(unit) ? 'unit--ally' : 'unit--enemy',
+      ],
+    });
   });
 
   const serialSquareComponents = squareMatrix.map(rowSquares => {
@@ -87,15 +82,21 @@ Object.assign(SquareMatrix, {
     cursorCoordinate: React.PropTypes.arrayOf(React.PropTypes.number.isRequired),
     handleTouchStartPad: React.PropTypes.func,
     squareMatrix: React.PropTypes.arrayOf(
-      React.PropTypes.arrayOf(React.PropTypes.object.isRequired).isRequired,
+      React.PropTypes.arrayOf(
+        React.PropTypes.object.isRequired
+      ).isRequired
     ).isRequired,
+    units: React.PropTypes.arrayOf(
+      React.PropTypes.object.isRequired
+    ),
     unitsOnSquares: React.PropTypes.arrayOf(
-      React.PropTypes.object.isRequired,
+      React.PropTypes.object.isRequired
     ),
   },
   defaultProps: {
     cursorCoordinate: null,
     handleTouchStartPad: () => {},
+    units: [],
     unitsOnSquares: [],
   },
 });

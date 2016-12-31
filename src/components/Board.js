@@ -1,6 +1,6 @@
 const React = require('react');
 
-const { STYLES } = require('../../immutable/constants');
+const { STYLES } = require('../immutable/constants');
 
 
 const Board = ({ children, rowLength, columnLength, additionalClassNames }) => {

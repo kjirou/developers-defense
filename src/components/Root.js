@@ -1,21 +1,21 @@
 const React = require('react');
 
-const BattleBoard = require('./BattleBoard');
-const SortieBoard = require('./SortieBoard');
-const StatusBar = require('./StatusBar');
+const BattleBoard = require('../containers/BattleBoard');
+const DebugButtons = require('../containers/DebugButtons');
+const SortieBoard = require('../containers/SortieBoard');
+const StatusBar = require('../containers/StatusBar');
 
 
-class Root extends React.Component {
-  render() {
-    return (
-      <div className="root">
-        <StatusBar />
-        <BattleBoard />
-        <SortieBoard />
-      </div>
-    );
-  }
-}
+const Root = () => {
+  return (
+    <div className="root">
+      <StatusBar />
+      <BattleBoard />
+      <SortieBoard />
+      <DebugButtons />
+    </div>
+  );
+};
 
 
 module.exports = Root;

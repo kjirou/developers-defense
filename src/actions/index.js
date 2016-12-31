@@ -27,9 +27,10 @@ const updateAlly = (ally) => {
   };
 };
 
-const tick = () => {
+const updateTickId = (tickId) => {
   return {
-    type: ACTION_TYPES.TICK,
+    type: ACTION_TYPES.UPDATE_TICK_ID,
+    tickId,
   };
 };
 
@@ -117,30 +118,24 @@ const touchSquare = (newPlacement) => {
 };
 
 /**
- * @return {Function}
+ * TODO: Probably, that is not correct as an Action Creator.
+ *       I think that is an "Action Creator Creator".
  */
-const runTicks = () => {
-  const ticksPerSecond = 25;
-  const interval = Math.round(1000 / ticksPerSecond);
-
-  const computeState = (dispatch, state) => {
-    const tickId = state.gameStatus.tickId;
-
-    if (tickId % ticksPerSecond === 0) {
-      dispatch({ type: ACTION_TYPES.ALTER_PROGRESS, delta: 1 });
-      dispatch({ type: ACTION_TYPES.ALTER_TECHNICAL_DEBT, delta: 1 });
-    }
-  };
-
+const startGame = () => {
   return (dispatch, getState) => {
-    const tickTask = () => {
+    dispatch(updateTickId(0));
+
+    const reserveTickTask = () => {
       setTimeout(() => {
-        dispatch(tick());
-        computeState(dispatch, getState());
-        tickTask();
-      }, interval);
+        const { gameStatus } = getState();
+        const { tickId } = gameStatus;
+
+        dispatch(updateTickId(tickId + 1));
+
+        reserveTickTask();
+      }, PARAMETERS.TICK_INTERVAL);
     };
-    tickTask();
+    reserveTickTask();
   };
 };
 
@@ -197,6 +192,6 @@ const initializeApp = () => {
 
 module.exports = {
   initializeApp,
-  runTicks,
+  startGame,
   touchSquare,
 };

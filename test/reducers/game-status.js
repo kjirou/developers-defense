@@ -50,40 +50,4 @@ describe('reducers/game-status', () => {
       assert.strictEqual(state.progress, 0);
     });
   });
-
-  describe('ALTER_TECHNICAL_DEBT', () => {
-    let stateValue0;
-
-    beforeEach(() => {
-      stateValue0 = Object.assign(_createInitialState(), { technicalDebt: 0 });
-    });
-
-    it('should not break before state', () => {
-      reduceGameStatus(stateValue0, { type: 'ALTER_TECHNICAL_DEBT', delta: 1 });
-      assert.strictEqual(stateValue0.technicalDebt, 0);
-    });
-
-    it('0 + 1 => 1', () => {
-      const state = reduceGameStatus(stateValue0, { type: 'ALTER_TECHNICAL_DEBT', delta: 1 });
-      assert.strictEqual(state.technicalDebt, 1);
-    });
-
-    it('0 + 101 => 100', () => {
-      const state = reduceGameStatus(stateValue0, { type: 'ALTER_TECHNICAL_DEBT', delta: 101 });
-      assert.strictEqual(state.technicalDebt, 100);
-    });
-
-    it('0 - 1 => 0', () => {
-      const state = reduceGameStatus(stateValue0, { type: 'ALTER_TECHNICAL_DEBT', delta: -1 });
-      assert.strictEqual(state.technicalDebt, 0);
-    });
-  });
-
-  describe('TICK', () => {
-    it('should increment', () => {
-      const beforeState = _createInitialState();
-      const afterState = reduceGameStatus(beforeState, { type: 'TICK' });
-      assert.strictEqual(afterState.tickId, beforeState.tickId + 1);
-    });
-  });
 });

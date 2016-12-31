@@ -1,32 +1,31 @@
 const React = require('react');
 const { connect } = require('react-redux');
 
-const { touchSquare } = require('../action-creators');
+const { touchSquare } = require('../actions');
 const { BOARD_TYPES, PARAMETERS } = require('../immutable/constants');
 const { createNewPlacementState } = require('../state-models/placement');
-const Board = require('./presentational/Board');
-const SquareMatrix = require('./presentational/SquareMatrix');
+const Board = require('../components/Board');
+const SquareMatrix = require('../components/SquareMatrix');
 
 
-class BattleBoard extends React.Component {
+class SortieBoard extends React.Component {
   render() {
     const handleTouchStartPad = (event, { coordinate }) => {
       const placement = Object.assign(createNewPlacementState(), {
-        boardType: BOARD_TYPES.BATTLE_BOARD,
+        boardType: BOARD_TYPES.SORTIE_BOARD,
         coordinate: coordinate.slice(),
       });
       this.props.dispatch(touchSquare(placement));
     };
 
     return <Board
-      rowLength={ PARAMETERS.BATTLE_BOARD_ROW_LENGTH }
-      columnLength={ PARAMETERS.BATTLE_BOARD_COLUMN_LENGTH }
-      additionalClassNames={ ['root__battle-board'] }
+      rowLength={ PARAMETERS.SORTIE_BOARD_ROW_LENGTH }
+      columnLength={ PARAMETERS.SORTIE_BOARD_COLUMN_LENGTH }
+      additionalClassNames={ ['root__recruitment-board'] }
     >
       <SquareMatrix
-        squareMatrix={ this.props.battleBoard.squareMatrix }
+        squareMatrix={ this.props.sortieBoard.squareMatrix }
         cursorCoordinate={ this.props.cursorCoordinate }
-        units={ this.props.enemies }
         unitsOnSquares={ this.props.unitsOnSquares }
         handleTouchStartPad={ handleTouchStartPad }
       />
@@ -34,18 +33,18 @@ class BattleBoard extends React.Component {
   }
 }
 
-BattleBoard = connect(state => {
+SortieBoard = connect(state => {
   const cursorCoordinate =
-    state.cursor.placement.boardType === BOARD_TYPES.BATTLE_BOARD ? state.cursor.placement.coordinate : null;
+    state.cursor.placement.boardType === BOARD_TYPES.SORTIE_BOARD ? state.cursor.placement.coordinate : null;
 
   const unitsOnSquares =
-    state.allies.filter(ally => ally.placement.boardType === state.battleBoard.boardType);
+    state.allies.filter(ally => ally.placement.boardType === state.sortieBoard.boardType);
 
   return Object.assign({}, state, {
     cursorCoordinate,
     unitsOnSquares,
   });
-})(BattleBoard);
+})(SortieBoard);
 
 
-module.exports = BattleBoard;
+module.exports = SortieBoard;

@@ -61,22 +61,28 @@ const handleErrorAsWarning = function(err) {
  */
 
 const createBabelTransformer = () => {
-  return babelify.configure({
-    presets: babelRcData.presets,
-  });
+  return babelify.configure();
 };
 
-const createJsSourcesBundler = (indexFilePath, options) => {
+/**
+ * Return a instance of the Browserify set up just before `.bundle()`
+ * @param {string} indexFilePath
+ * @param {(Object|undefined)} options
+ * @param {?Object} [options.transformer]
+ * @param {?boolean} [options.isWatchified]
+ * @return {Browserify}
+ */
+const configureBrowserify = (indexFilePath, options = {}) => {
   options = Object.assign({
     transformer: createBabelTransformer(),
-    isWatchfied: false,
-  }, options || {});
+    isWatchified: false,
+  }, options);
 
   const browserifyOptions = {
     debug: true,
   };
 
-  if (options.isWatchfied) {
+  if (options.isWatchified) {
     Object.assign(browserifyOptions, watchify.args);
   }
 
@@ -95,7 +101,7 @@ const createJsSourcesBundler = (indexFilePath, options) => {
     bundler.transform(options.transformer);
   }
 
-  if (options.isWatchfied) {
+  if (options.isWatchified) {
     bundler = watchify(bundler);
   }
 
@@ -119,20 +125,20 @@ const bundleJsSources = (bundler, options) => {
 }
 
 gulp.task('build:js', function() {
-  const bundler = createJsSourcesBundler(JS_SOURCE_INDEX_FILE_PATH);
+  const bundler = configureBrowserify(JS_SOURCE_INDEX_FILE_PATH);
   return bundleJsSources(bundler);
 });
 
 gulp.task('build:js:production', function() {
-  const bundler = createJsSourcesBundler(JS_SOURCE_INDEX_FILE_PATH, {
+  const bundler = configureBrowserify(JS_SOURCE_INDEX_FILE_PATH, {
     debug: false,
   });
-  return bundleJsSources(bundler, { outputFileName: `${ APP_NAME }.min.js` });
+  return bundleJsSources(bundler, { outputFileName: `${ APP_NAME }.prod.js` });
 });
 
 gulp.task('watch:js', function() {
-  const bundler = createJsSourcesBundler(JS_SOURCE_INDEX_FILE_PATH, {
-    isWatchfied: true,
+  const bundler = configureBrowserify(JS_SOURCE_INDEX_FILE_PATH, {
+    isWatchified: true,
   });
   bundleJsSources(bundler);  // TODO: Why is this necessary?
 

@@ -1,3 +1,5 @@
+/** @module */
+
 const cloneViaJson = (value) => {
   return JSON.parse(JSON.stringify(value));
 };

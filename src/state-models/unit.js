@@ -1,10 +1,3 @@
-const uuidV4 = require('uuid/v4');
-
-const { FACTION_TYPES, PARAMETERS } = require('../immutable/constants');
-const { JOB_IDS, jobs } = require('../immutable/jobs');
-const { createNewPlacementState } = require('./placement');
-
-
 /**
  * @typedef {Object} State~Unit
  * @property {?string} factionType - One of the FACTION_TYPES
@@ -24,6 +17,15 @@ const { createNewPlacementState } = require('./placement');
  * @typedef {Object} State~Enemy
  * @property {string} factionType - The FACTION_TYPES.ENEMY is assigned
  */
+
+
+/** @module */
+const uuidV4 = require('uuid/v4');
+
+const { FACTION_TYPES, PARAMETERS } = require('../immutable/constants');
+const { JOB_IDS, jobs } = require('../immutable/jobs');
+const { createNewPlacementState } = require('./placement');
+
 
 const createNewUnitState = () => {
   const maxHp = PARAMETERS.MIN_MAX_HP;

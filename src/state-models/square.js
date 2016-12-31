@@ -1,6 +1,3 @@
-const uuidV4 = require('uuid/v4');
-
-
 /**
  * @typedef {Object} State~Square
  * @property {?string} uid
@@ -8,18 +5,21 @@ const uuidV4 = require('uuid/v4');
  * @property {?string} landformType - One of the LANDFORM_TYPES
  */
 
+
+/** @module */
+const uuidV4 = require('uuid/v4');
+
+
 const createNewSquareState = (rowIndex, columnIndex) => {
   return {
     uid: uuidV4(),
-    /** @type {number[]} */
     coordinate: [rowIndex, columnIndex],
-    /** @type {?string} A one of LANDFORM_TYPES */
     landformType: null,
   };
 };
 
 /**
- * @param {Object} square
+ * @param {State~Square} square
  * @param {Object} properties
  * @return {Object} A shallow-copied square state
  */

@@ -1,9 +1,11 @@
-const { areSamePlace } = require('./placement');
-
-
 /**
  * @typedef {State~Unit[]} State~UnitCollection
  */
+
+
+/** @module */
+const { areSamePlace } = require('./placement');
+
 
 const createNewUnitCollectionState = () => {
   return [];

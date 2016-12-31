@@ -1,3 +1,4 @@
+/** @module */
 const { BOARD_TYPES } = require('../immutable/constants');
 const { findSquareByCoordinate } = require('./square-matrix');
 

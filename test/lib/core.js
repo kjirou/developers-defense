@@ -1,6 +1,9 @@
 const assert = require('power-assert');
 
-const { areSameSize2DArray } = require('../../src/lib/core');
+const {
+  areSameSize2DArray,
+  performPseudoVectorAddition,
+} = require('../../src/lib/core');
 
 
 describe('lib/core', () => {
@@ -62,6 +65,39 @@ describe('lib/core', () => {
           [1, 1, 1],
         ]
       ), false);
+    });
+  });
+
+  describe('performPseudoVectorAddition', () => {
+    it('initialX < terminalX', () => {
+      assert.deepEqual(performPseudoVectorAddition(1, 0, 3, 0, 1), [2, 0]);
+      assert.deepEqual(performPseudoVectorAddition(1, 0, 3, 0, 3), [3, 0]);
+    });
+
+    it('initialX > terminalX', () => {
+      assert.deepEqual(performPseudoVectorAddition(3, 0, 1, 0, 1), [2, 0]);
+      assert.deepEqual(performPseudoVectorAddition(3, 0, 1, 0, 3), [3, 0]);
+    });
+
+    it('initialY < terminalY', () => {
+      assert.deepEqual(performPseudoVectorAddition(0, 1, 0, 3, 1), [0, 2]);
+      assert.deepEqual(performPseudoVectorAddition(0, 1, 0, 3, 3), [0, 3]);
+    });
+
+    it('initialY > terminalY', () => {
+      assert.deepEqual(performPseudoVectorAddition(0, 3, 0, 1, 1), [0, 2]);
+      assert.deepEqual(performPseudoVectorAddition(0, 3, 0, 1, 3), [0, 3]);
+    });
+
+    it('initialX !== terminalX && initialY !== terminalY', () => {
+      assert.throws(() => {
+        performPseudoVectorAddition(1, 2, 3, 4, 1);
+      }, /move only/);
+    });
+
+    it('can perform float type numbers', () => {
+      assert.deepEqual(performPseudoVectorAddition(1.1, 2.2, 10, 2.2, 1.1), [1.1 + 1.1, 2.2]);
+      assert.deepEqual(performPseudoVectorAddition(1.1, 2.2, 1.1, 10, 1.1), [1.1, 2.2 + 1.1]);
     });
   });
 });

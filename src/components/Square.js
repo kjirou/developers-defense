@@ -1,6 +1,6 @@
 const React = require('react');
 
-const { LANDFORM_TYPES, STYLES } = require('../../immutable/constants');
+const { LANDFORM_TYPES, STYLES } = require('../immutable/constants');
 
 
 const Square = ({ rowIndex, columnIndex, landformType }) => {

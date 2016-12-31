@@ -1,7 +1,7 @@
 const React = require('react');
 const { connect } = require('react-redux');
 
-const { startGame } = require('../action-creators');
+const { startGame } = require('../actions');
 
 
 let DebugButtons = ({ dispatch, gameStatus }) => {

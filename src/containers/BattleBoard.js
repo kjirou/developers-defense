@@ -1,7 +1,7 @@
 const React = require('react');
 const { connect } = require('react-redux');
 
-const { touchSquare } = require('../action-creators');
+const { touchSquare } = require('../actions');
 const { BOARD_TYPES, PARAMETERS } = require('../immutable/constants');
 const { createNewPlacementState } = require('../state-models/placement');
 const Board = require('../components/Board');

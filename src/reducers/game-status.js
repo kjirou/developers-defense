@@ -5,7 +5,7 @@ const { ACTION_TYPES, PARAMETERS } = require('../immutable/constants');
 
 const createInitialState = () => {
   return {
-    tickId: 0,
+    tickId: null,  // null or integer >= 0
     maxProgress: PARAMETERS.MAX_PROGRESS,
     progress: PARAMETERS.MIN_PROGRESS,
   };
@@ -23,9 +23,10 @@ const reducements = {
       progress: alterLimitedValue(state.progress, delta, PARAMETERS.MIN_PROGRESS, PARAMETERS.MAX_PROGRESS),
     });
   },
-  [ACTION_TYPES.TICK]: (state) => {
+
+  [ACTION_TYPES.UPDATE_TICK_ID]: (state, { tickId }) => {
     return Object.assign({}, state, {
-      tickId: state.tickId + 1,
+      tickId,
     });
   },
 };

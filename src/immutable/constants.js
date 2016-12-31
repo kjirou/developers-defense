@@ -7,11 +7,11 @@ const ACTION_TYPES = keymirror({
   CLEAR_CURSOR: null,
   EXTEND_BATTLE_BOARD_SQUARE_MATRIX: null,
   NOOP: null,
-  TICK: null,
   MOVE_CURSOR: null,
   UPDATE_ALLIES: null,
   UPDATE_ALLY: null,
   UPDATE_ENEMIES: null,
+  UPDATE_TICK_ID: null,
 });
 
 const BOARD_TYPES = keymirror({
@@ -35,6 +35,12 @@ const LANDFORM_TYPES = keymirror({
   ROAD: null,
 });
 
+const ticksPerSecond = 25;
+const tickInterval = 1000 / ticksPerSecond;
+if (Math.ceil(tickInterval) !== tickInterval) {
+  throw new Error(`The tick-interval must be an integer`);
+}
+
 const PARAMETERS = {
   BATTLE_BOARD_COLUMN_LENGTH: 7,
   BATTLE_BOARD_ROW_LENGTH: 9,
@@ -44,6 +50,8 @@ const PARAMETERS = {
   MIN_PROGRESS: 0,
   SORTIE_BOARD_COLUMN_LENGTH: 7,
   SORTIE_BOARD_ROW_LENGTH: 2,
+  TICK_INTERVAL: tickInterval,
+  TICKS_PER_SECOND: ticksPerSecond,
 };
 
 const STYLES = {

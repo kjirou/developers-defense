@@ -1,6 +1,7 @@
 const { createStore, applyMiddleware } = require('redux');
 const thunkMiddleware = require('redux-thunk').default;
 
+const { ACTION_TYPES } =  require('../immutable/constants');
 const reducer =  require('../reducers');
 
 
@@ -8,9 +9,7 @@ const loggerMiddleware = store => {
   return next => {
     return action => {
       if ([
-        'ALTER_PROGRESS',
-        'ALTER_TECHNICAL_DEBT',
-        'TICK',
+        ACTION_TYPES.UPDATE_TICK_ID,
       ].indexOf(action.type) === -1) {
         console.log('dispatching:', action);
       };

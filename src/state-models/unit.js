@@ -11,11 +11,13 @@
 /**
  * @typedef {Object} State~Ally
  * @property {string} factionType - The FACTION_TYPES.ALLY is assigned
+ * @description Based on the {@link State~Unit}
  */
 
 /**
  * @typedef {Object} State~Enemy
  * @property {string} factionType - The FACTION_TYPES.ENEMY is assigned
+ * @description Based on the {@link State~Unit}
  */
 
 

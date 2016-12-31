@@ -3,20 +3,20 @@
  * @property {?string} factionType - One of the FACTION_TYPES
  * @property {State~Placement} placement
  * @property {?number[]} location - [top, left] position on the battle-board
- * @property {number[]} destinationPlacements
- * @property {?number} nextDestinationIndex
- * @property {number} movingSpeed - 1.0=48px/1sec, 1.5=72px/1sec
+ * @property {number[]} destinations
+ * @property {?number} currentDestinationIndex
+ * @property {number} movingSpeed - 1.0=2px/1tick
  */
 
 /**
  * @typedef {Object} State~Ally
- * @property {string} factionType - The FACTION_TYPES.ALLY is assigned
+ * @property {string} factionType - = FACTION_TYPES.ALLY
  * @description Based on the {@link State~Unit}
  */
 
 /**
  * @typedef {Object} State~Enemy
- * @property {string} factionType - The FACTION_TYPES.ENEMY is assigned
+ * @property {string} factionType - = FACTION_TYPES.ENEMY
  * @description Based on the {@link State~Unit}
  */
 
@@ -39,7 +39,7 @@ const createNewUnitState = () => {
     jobId: JOB_IDS.NONE,
     location: [],
     destinations: [],
-    nextDestinationIndex: null,
+    currentDestinationIndex: null,
     maxHp,
     hp: maxHp,
     attackPower: 0,

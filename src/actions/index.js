@@ -151,8 +151,8 @@ const initializeApp = () => {
     '. ... .',
     '. ... .',
     '. .F. .',
-    ' C    .',
-    '. .....',
+    '.C    .',
+    '.......',
   ].join('\n');
   const squareMatrixExtension = parseMapText(mapText);
 
@@ -179,6 +179,8 @@ const initializeApp = () => {
       factionType: FACTION_TYPES.ENEMY,
       jobId: JOB_IDS.FIGHTER,
       location: [0, 48 * 5],
+      destinations: [[7, 5], [7, 2]],
+      currentDestinationIndex: 0,
     }),
   ]);
 

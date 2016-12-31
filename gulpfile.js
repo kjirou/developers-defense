@@ -104,7 +104,9 @@ const createJsSourcesBundler = (indexFilePath, options) => {
 
 const bundleJsSources = (bundler, options) => {
   options = Object.assign({
-    errorHandler: function(err) { throw err; },
+    errorHandler: function(err) {
+      throw err;
+    },
     outputFileName: `${ APP_NAME }.js`,
   }, options || {});
 

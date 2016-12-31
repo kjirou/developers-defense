@@ -1,13 +1,15 @@
-const uuidV4 = require('uuid/v4');
-
-const { BOARD_TYPES } = require('../immutable/constants');
-
-
 /**
  * @typedef {Object} State~Placement
  * @property {?string} boardType - One of the BOARD_TYPES
  * @property {?number[]} coordinate - The position of a matrix. ex) [m, n]
  */
+
+
+/** @module */
+const uuidV4 = require('uuid/v4');
+
+const { BOARD_TYPES } = require('../immutable/constants');
+
 
 const createNewPlacementState = () => {
   return {

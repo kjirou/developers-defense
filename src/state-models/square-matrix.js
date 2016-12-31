@@ -1,11 +1,13 @@
+/**
+ * @typedef {Array[]} State~SquareMatrix
+ */
+
+
+/** @module */
 const { LANDFORM_TYPES } = require('../immutable/constants');
 const { areSameSize2DArray } = require('../lib/core');
 const { createNewSquareState, extendSquare } = require('./square');
 
-
-/**
- * @typedef {Object} State~SquareMatrix
- */
 
 const createNewSquareMatrixState = (rowLength, columnLength) => {
   return Array.from({ length: rowLength }).map((notUsed, rowIndex) => {
@@ -31,7 +33,9 @@ const cloneSquareMatrix = (squareMatrix) => {
 };
 
 /**
- * @return {?Object} A square
+ * @param {State~squareMatrix} squareMatrix
+ * @param {string} uid
+ * @return {?State~Square}
  */
 const findSquareByUid = (squareMatrix, uid) => {
   for (let rowIndex = 0; rowIndex < squareMatrix.length; rowIndex += 1) {
@@ -45,7 +49,8 @@ const findSquareByUid = (squareMatrix, uid) => {
 };
 
 /**
- * @return {?Object} A square
+ * @param {State~squareMatrix} squareMatrix
+ * @return {?State~Square}
  */
 const findSquareByCoordinate = (squareMatrix, [ rowIndex, columnIndex ]) => {
   const row = squareMatrix[rowIndex];

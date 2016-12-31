@@ -21,7 +21,7 @@ const reducements = {
     return newCollection;
   },
 
-  [ACTION_TYPES.UPDATE_ALLY_COLLECTION]: (state, { allies }) => {
+  [ACTION_TYPES.UPDATE_ALLIES]: (state, { allies }) => {
     return allies;
   },
 };

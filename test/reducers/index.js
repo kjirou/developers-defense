@@ -10,6 +10,7 @@ describe('reducers/index', () => {
     assert('allies' in state);
     assert('battleBoard' in state);
     assert('cursor' in state);
+    assert('enemies' in state);
     assert('sortieBoard' in state);
   });
 });

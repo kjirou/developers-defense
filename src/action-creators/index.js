@@ -179,9 +179,18 @@ const initializeApp = () => {
     }),
   ]);
 
+  const enemies = createNewUnitCollectionState().concat([
+    Object.assign(createNewUnitState(), {
+      factionType: FACTION_TYPES.ENEMY,
+      jobId: JOB_IDS.FIGHTER,
+      location: [0, 48 * 5],
+    }),
+  ]);
+
   return (dispatch, getState) => {
     dispatch({ type: ACTION_TYPES.EXTEND_BATTLE_BOARD_SQUARE_MATRIX, extension: squareMatrixExtension });
-    dispatch({ type: ACTION_TYPES.UPDATE_ALLY_COLLECTION, allies });
+    dispatch({ type: ACTION_TYPES.UPDATE_ALLIES, allies });
+    dispatch({ type: ACTION_TYPES.UPDATE_ENEMIES, enemies });
   };
 };
 

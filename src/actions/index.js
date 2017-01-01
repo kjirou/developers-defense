@@ -1,3 +1,4 @@
+/** @module */
 const { ACTION_TYPES, BOARD_TYPES, FACTION_TYPES, PARAMETERS, STYLES } = require('../immutable/constants');
 const { JOB_IDS } = require('../immutable/jobs');
 const { findOneSquareFromBoardsByPlacement } = require('../state-models/complex-apis');

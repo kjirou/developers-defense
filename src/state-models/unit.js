@@ -112,12 +112,8 @@ const calculateMovementResults = (unit) => {
 
   let newLocation;
   if (unit.location) {
-    newLocation = performPseudoVectorAddition(
-      ...unit.location,
-      ...currentDestination,
-      // TODO: Calculate moving speed
-      2
-    );
+    // TODO: Calculate moving speed
+    newLocation = performPseudoVectorAddition(unit.location, currentDestination, 2);
   // The first movement means that the unit is placed on the board
   } else {
     newLocation = currentDestination;

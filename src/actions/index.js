@@ -233,6 +233,7 @@ const initializeApp = () => {
 
 
 module.exports = {
+  extendGameStatus,
   initializeApp,
   startGame,
   touchSquare,

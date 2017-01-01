@@ -55,6 +55,7 @@ const PARAMETERS = {
 };
 
 const STYLES = {
+  // TODO: They are not just styles. Move to the `PARAMETERS`
   SQUARE_HEIGHT: 48,
   SQUARE_WIDTH: 48,
 };

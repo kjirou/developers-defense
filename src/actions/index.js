@@ -1,5 +1,6 @@
-const { ACTION_TYPES, BOARD_TYPES, FACTION_TYPES, PARAMETERS } = require('../immutable/constants');
+const { ACTION_TYPES, BOARD_TYPES, FACTION_TYPES, PARAMETERS, STYLES } = require('../immutable/constants');
 const { JOB_IDS } = require('../immutable/jobs');
+const { performPseudoVectorAddition } = require('../lib/core');
 const { findOneSquareFromBoardsByPlacement } = require('../state-models/complex-apis');
 const { areSamePlace, isPlacedOnBoard } = require('../state-models/placement');
 const { findSquareByCoordinate, parseMapText } = require('../state-models/square-matrix');
@@ -24,6 +25,20 @@ const updateAlly = (ally) => {
   return {
     type: ACTION_TYPES.UPDATE_ALLY,
     ally,
+  };
+};
+
+const updateAllies = (allies) => {
+  return {
+    type: ACTION_TYPES.UPDATE_ALLIES,
+    allies,
+  };
+};
+
+const updateEnemies = (enemies) => {
+  return {
+    type: ACTION_TYPES.UPDATE_ENEMIES,
+    enemies,
   };
 };
 
@@ -127,9 +142,22 @@ const startGame = () => {
 
     const reserveTickTask = () => {
       setTimeout(() => {
-        const { gameStatus } = getState();
+        const { allies, enemies, gameStatus } = getState();
         const { tickId } = gameStatus;
 
+        const newEnemies = enemies.map(enemy => {
+          const newLocation = performPseudoVectorAddition(
+            ...enemy.location,
+            ...enemy.destinations[enemy.currentDestinationIndex],
+            2,
+          );
+
+          return Object.assign({}, enemy, {
+            location: newLocation,
+          });
+        });
+
+        dispatch(updateEnemies(newEnemies));
         dispatch(updateTickId(tickId + 1));
 
         reserveTickTask();
@@ -179,15 +207,15 @@ const initializeApp = () => {
       factionType: FACTION_TYPES.ENEMY,
       jobId: JOB_IDS.FIGHTER,
       location: [0, 48 * 5],
-      destinations: [[7, 5], [7, 2]],
+      destinations: [[7 * 48, 5 * 48], [7 * 48, 2 * 48]],
       currentDestinationIndex: 0,
     }),
   ]);
 
   return (dispatch, getState) => {
     dispatch({ type: ACTION_TYPES.EXTEND_BATTLE_BOARD_SQUARE_MATRIX, extension: squareMatrixExtension });
-    dispatch({ type: ACTION_TYPES.UPDATE_ALLIES, allies });
-    dispatch({ type: ACTION_TYPES.UPDATE_ENEMIES, enemies });
+    dispatch(updateAllies(allies));
+    dispatch(updateEnemies(enemies));
   };
 };
 

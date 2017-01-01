@@ -153,7 +153,6 @@ const startGame = () => {
         const { allies, enemies, gameStatus } = getState();
         const { tickId } = gameStatus;
 
-        // TODO: 動きが荒いのでCSSトランジションを使う
         const newEnemies = enemies.map(enemy => {
           const {
             location: newLocation,

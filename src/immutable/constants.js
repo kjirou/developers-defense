@@ -35,7 +35,7 @@ const LANDFORM_TYPES = keymirror({
   ROAD: null,
 });
 
-const ticksPerSecond = 25;
+const ticksPerSecond = 20;
 const tickInterval = 1000 / ticksPerSecond;
 if (Math.ceil(tickInterval) !== tickInterval) {
   throw new Error(`The tick-interval must be an integer`);

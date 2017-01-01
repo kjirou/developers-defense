@@ -14,6 +14,7 @@ const createNewLocationState = (top, left) => {
  * 大量に呼び出されるので処理の速さを優先する。
  * @param {State~Location} initialLocation
  * @param {State~Location} terminalLocation
+ * @param {number} vector
  * @return {State~Location} [movedTop, movedLeft]
  */
 const performPseudoVectorAddition = (initialLocation, terminalLocation, vector) => {

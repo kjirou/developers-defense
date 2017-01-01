@@ -49,6 +49,14 @@ const updateTickId = (tickId) => {
   };
 };
 
+const tick = (tickId, enemies) => {
+  return {
+    type: ACTION_TYPES.TICK,
+    tickId,
+    enemies,
+  };
+};
+
 
 /**
  * @param {State~Placement} placement
@@ -145,6 +153,7 @@ const startGame = () => {
         const { allies, enemies, gameStatus } = getState();
         const { tickId } = gameStatus;
 
+        // TODO: 動きが荒いのでCSSトランジションを使う
         const newEnemies = enemies.map(enemy => {
           const newLocation = performPseudoVectorAddition(
             ...enemy.location,
@@ -152,13 +161,14 @@ const startGame = () => {
             2,
           );
 
+          // TODO: 目的地に到達したら次のインデックスを設定する
+
           return Object.assign({}, enemy, {
             location: newLocation,
           });
         });
 
-        dispatch(updateEnemies(newEnemies));
-        dispatch(updateTickId(tickId + 1));
+        dispatch(tick(tickId + 1, newEnemies));
 
         reserveTickTask();
       }, PARAMETERS.TICK_INTERVAL);

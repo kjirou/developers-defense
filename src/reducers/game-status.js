@@ -17,10 +17,16 @@ const alterLimitedValue = (value, delta, min, max) => {
 };
 
 
-const reducements = {
+const handlers = {
   [ACTION_TYPES.ALTER_PROGRESS]: (state, { delta }) => {
     return Object.assign({}, state, {
       progress: alterLimitedValue(state.progress, delta, PARAMETERS.MIN_PROGRESS, PARAMETERS.MAX_PROGRESS),
+    });
+  },
+
+  [ACTION_TYPES.TICK]: (state, { tickId }) => {
+    return Object.assign({}, state, {
+      tickId,
     });
   },
 
@@ -34,5 +40,5 @@ const reducements = {
 
 module.exports = {
   _createInitialState: createInitialState,
-  reduceGameStatus: createReducer(createInitialState(), reducements),
+  reduceGameStatus: createReducer(createInitialState(), handlers),
 };

@@ -3,11 +3,11 @@ const keymirror = require('keymirror');
 
 const ACTION_TYPES = keymirror({
   ALTER_PROGRESS: null,
-  ALTER_TECHNICAL_DEBT: null,
   CLEAR_CURSOR: null,
   EXTEND_BATTLE_BOARD_SQUARE_MATRIX: null,
   NOOP: null,
   MOVE_CURSOR: null,
+  TICK: null,
   UPDATE_ALLIES: null,
   UPDATE_ALLY: null,
   UPDATE_ENEMIES: null,

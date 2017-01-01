@@ -69,27 +69,27 @@ describe('lib/core', () => {
   });
 
   describe('performPseudoVectorAddition', () => {
-    it('initialX < terminalX', () => {
+    it('initialTop < terminaiTop', () => {
       assert.deepEqual(performPseudoVectorAddition(1, 0, 3, 0, 1), [2, 0]);
       assert.deepEqual(performPseudoVectorAddition(1, 0, 3, 0, 3), [3, 0]);
     });
 
-    it('initialX > terminalX', () => {
+    it('initialTop > terminaiTop', () => {
       assert.deepEqual(performPseudoVectorAddition(3, 0, 1, 0, 1), [2, 0]);
       assert.deepEqual(performPseudoVectorAddition(3, 0, 1, 0, 3), [3, 0]);
     });
 
-    it('initialY < terminalY', () => {
+    it('initialLeft < terminaiLeft', () => {
       assert.deepEqual(performPseudoVectorAddition(0, 1, 0, 3, 1), [0, 2]);
       assert.deepEqual(performPseudoVectorAddition(0, 1, 0, 3, 3), [0, 3]);
     });
 
-    it('initialY > terminalY', () => {
+    it('initialLeft > terminaiLeft', () => {
       assert.deepEqual(performPseudoVectorAddition(0, 3, 0, 1, 1), [0, 2]);
       assert.deepEqual(performPseudoVectorAddition(0, 3, 0, 1, 3), [0, 3]);
     });
 
-    it('initialX !== terminalX && initialY !== terminalY', () => {
+    it('initialTop !== terminaiTop && initialLeft !== terminaiLeft', () => {
       assert.throws(() => {
         performPseudoVectorAddition(1, 2, 3, 4, 1);
       }, /move only/);

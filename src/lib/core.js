@@ -22,27 +22,27 @@ const areSameSize2DArray = (a, b) => {
 /**
  * ベクトルの和を行うが、方向は上下左右に限定する。
  * 大量に呼び出されるので処理の速さを優先する。
- * @return {number[]} [movedX, movedY]
+ * @return {number[]} [movedTop, movedLeft]
  */
-const performPseudoVectorAddition = (initialX, initialY, terminalX, terminalY, vector) => {
-  if (initialX !== terminalX && initialY !== terminalY) {
+const performPseudoVectorAddition = (initialTop, initialLeft, terminalTop, terminalLeft, vector) => {
+  if (initialTop !== terminalTop && initialLeft !== terminalLeft) {
     throw new Error('It is possible to move only up / down / left / right.');
   }
 
-  let movedX = initialX;
-  let movedY = initialY;
+  let movedTop = initialTop;
+  let movedLeft = initialLeft;
 
-  if (initialX < terminalX) {
-    movedX = Math.min(terminalX, initialX + vector);
-  } else if (initialX > terminalX) {
-    movedX = Math.min(initialX, terminalX + vector);
-  } else if (initialY < terminalY) {
-    movedY = Math.min(terminalY, initialY + vector);
-  } else if (initialY > terminalY) {
-    movedY = Math.min(initialY, terminalY + vector);
+  if (initialTop < terminalTop) {
+    movedTop = Math.min(terminalTop, initialTop + vector);
+  } else if (initialTop > terminalTop) {
+    movedTop = Math.min(initialTop, terminalTop + vector);
+  } else if (initialLeft < terminalLeft) {
+    movedLeft = Math.min(terminalLeft, initialLeft + vector);
+  } else if (initialLeft > terminalLeft) {
+    movedLeft = Math.min(initialLeft, terminalLeft + vector);
   }
 
-  return [movedX, movedY];
+  return [movedTop, movedLeft];
 };
 
 

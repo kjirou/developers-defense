@@ -5,13 +5,13 @@ const ACTION_TYPES = keymirror({
   ALTER_PROGRESS: null,
   CLEAR_CURSOR: null,
   EXTEND_BATTLE_BOARD_SQUARE_MATRIX: null,
+  EXTEND_GAME_STATUS: null,
   NOOP: null,
   MOVE_CURSOR: null,
   TICK: null,
   UPDATE_ALLIES: null,
   UPDATE_ALLY: null,
   UPDATE_ENEMIES: null,
-  UPDATE_TICK_ID: null,
 });
 
 const BOARD_TYPES = keymirror({

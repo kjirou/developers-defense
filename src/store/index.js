@@ -9,7 +9,6 @@ const loggerMiddleware = store => {
   return next => {
     return action => {
       if ([
-        ACTION_TYPES.UPDATE_TICK_ID,
         ACTION_TYPES.TICK,
       ].indexOf(action.type) === -1) {
         console.log('dispatching:', action);

@@ -6,6 +6,7 @@ const { ACTION_TYPES, PARAMETERS } = require('../immutable/constants');
 const createInitialState = () => {
   return {
     tickId: null,  // null or integer >= 0
+    isPaused: false,
     maxProgress: PARAMETERS.MAX_PROGRESS,
     progress: PARAMETERS.MIN_PROGRESS,
   };
@@ -24,13 +25,11 @@ const handlers = {
     });
   },
 
-  [ACTION_TYPES.TICK]: (state, { tickId }) => {
-    return Object.assign({}, state, {
-      tickId,
-    });
+  [ACTION_TYPES.EXTEND_GAME_STATUS]: (state, { extension }) => {
+    return Object.assign({}, state, extension);
   },
 
-  [ACTION_TYPES.UPDATE_TICK_ID]: (state, { tickId }) => {
+  [ACTION_TYPES.TICK]: (state, { tickId }) => {
     return Object.assign({}, state, {
       tickId,
     });

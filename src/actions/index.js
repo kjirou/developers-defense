@@ -21,6 +21,13 @@ const moveCursor = (placement) => {
   };
 };
 
+const extendGameStatus = (extension) => {
+  return {
+    type: ACTION_TYPES.EXTEND_GAME_STATUS,
+    extension,
+  };
+};
+
 const updateAlly = (ally) => {
   return {
     type: ACTION_TYPES.UPDATE_ALLY,
@@ -39,13 +46,6 @@ const updateEnemies = (enemies) => {
   return {
     type: ACTION_TYPES.UPDATE_ENEMIES,
     enemies,
-  };
-};
-
-const updateTickId = (tickId) => {
-  return {
-    type: ACTION_TYPES.UPDATE_TICK_ID,
-    tickId,
   };
 };
 
@@ -146,12 +146,16 @@ const touchSquare = (newPlacement) => {
  */
 const startGame = () => {
   return (dispatch, getState) => {
-    dispatch(updateTickId(0));
+    dispatch(extendGameStatus({ tickId: 0 }));
 
     const reserveTickTask = () => {
       setTimeout(() => {
         const { allies, enemies, gameStatus } = getState();
-        const { tickId } = gameStatus;
+
+        if (gameStatus.isPaused) {
+          reserveTickTask();
+          return;
+        }
 
         const newEnemies = enemies.map(enemy => {
           const {
@@ -166,7 +170,7 @@ const startGame = () => {
         });
 
         dispatch(tick(
-          tickId + 1,
+          gameStatus.tickId + 1,
           newEnemies
         ));
 

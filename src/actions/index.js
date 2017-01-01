@@ -1,10 +1,10 @@
 /** @module */
 const { ACTION_TYPES, BOARD_TYPES, FACTION_TYPES, PARAMETERS, STYLES } = require('../immutable/constants');
 const { JOB_IDS } = require('../immutable/jobs');
-const { findOneSquareFromBoardsByPlacement } = require('../state-models/complex-apis');
+const { computeTick, findOneSquareFromBoardsByPlacement } = require('../state-models/complex-apis');
 const { areSamePlace, isPlacedOnBoard } = require('../state-models/placement');
 const { findSquareByCoordinate, parseMapText } = require('../state-models/square-matrix');
-const { calculateMovementResults, createNewUnitState } = require('../state-models/unit');
+const { createNewUnitState } = require('../state-models/unit');
 const { createNewUnitCollectionState, findUnitsByPlacement } = require('../state-models/unit-collection');
 
 
@@ -157,21 +157,11 @@ const startGame = () => {
           return;
         }
 
-        const newEnemies = enemies.map(enemy => {
-          const {
-            location: newLocation,
-            destinationIndex: newDestinationIndex,
-          } = calculateMovementResults(enemy);
-
-          return Object.assign({}, enemy, {
-            location: newLocation,
-            destinationIndex: newDestinationIndex,
-          });
-        });
+        const newState = computeTick({ allies, enemies, gameStatus });
 
         dispatch(tick(
           gameStatus.tickId + 1,
-          newEnemies
+          newState.enemies,
         ));
 
         reserveTickTask();

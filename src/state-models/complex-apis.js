@@ -1,6 +1,7 @@
 /** @module */
 const { BOARD_TYPES } = require('../immutable/constants');
 const { findSquareByCoordinate } = require('./square-matrix');
+const { calculateMovementResults } = require('./unit');
 
 
 /**
@@ -36,7 +37,31 @@ const findOneSquareFromBoardsByPlacement = (placement, ...boards) => {
   return squares[0] || null;
 };
 
+/**
+ * Compute the state transition during the "tick"
+ * <section>
+ *   The "tick" is a coined word, which means so-called "one game loop".
+ * </section>
+ * @param {Object} state - A state generated from `store.getState()`
+ * @return {Object}
+ */
+const computeTick = ({ allies, enemies, gameStatus }) => {
+  const newEnemies = enemies.map(enemy => {
+    const { location, destinationIndex } = calculateMovementResults(enemy);
+
+    return Object.assign({}, enemy, {
+      location,
+      destinationIndex,
+    });
+  });
+
+  return {
+    enemies: newEnemies,
+  };
+};
+
 
 module.exports = {
+  computeTick,
   findOneSquareFromBoardsByPlacement,
 };

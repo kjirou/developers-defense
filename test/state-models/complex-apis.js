@@ -1,11 +1,14 @@
 const assert = require('power-assert');
 
-const { BOARD_TYPES } = require('../../src/immutable/constants');
+const { ACTION_TYPES, BOARD_TYPES } = require('../../src/immutable/constants');
+const reducer = require('../../src/reducers');
 const { createNewBoardState } = require('../../src/state-models/board');
 const {
+  computeTick,
   findOneSquareFromBoardsByPlacement,
 } = require('../../src/state-models/complex-apis');
 const { createNewPlacementState } = require('../../src/state-models/placement');
+
 
 describe('state-models/complex-apis', () => {
   describe('findOneSquareFromBoardsByPlacement', () => {
@@ -69,6 +72,21 @@ describe('state-models/complex-apis', () => {
           sortieBoard
         );
       }, /SORTIE_BOARD/);
+    });
+  });
+
+  describe('computeTick', () => {
+    let initialState;
+
+    beforeEach(() => {
+      initialState = reducer(undefined, { type: ACTION_TYPES.NOOP });
+    });
+
+    it('should not throw an error at least', () => {
+      const newState = computeTick(initialState);
+
+      assert(Boolean(newState));
+      assert.strictEqual(typeof newState, 'object');
     });
   });
 });

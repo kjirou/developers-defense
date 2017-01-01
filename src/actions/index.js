@@ -1,10 +1,9 @@
 const { ACTION_TYPES, BOARD_TYPES, FACTION_TYPES, PARAMETERS, STYLES } = require('../immutable/constants');
 const { JOB_IDS } = require('../immutable/jobs');
-const { performPseudoVectorAddition } = require('../lib/core');
 const { findOneSquareFromBoardsByPlacement } = require('../state-models/complex-apis');
 const { areSamePlace, isPlacedOnBoard } = require('../state-models/placement');
 const { findSquareByCoordinate, parseMapText } = require('../state-models/square-matrix');
-const { createNewUnitState } = require('../state-models/unit');
+const { calculateMovementResults, createNewUnitState } = require('../state-models/unit');
 const { createNewUnitCollectionState, findUnitsByPlacement } = require('../state-models/unit-collection');
 
 
@@ -155,20 +154,21 @@ const startGame = () => {
 
         // TODO: 動きが荒いのでCSSトランジションを使う
         const newEnemies = enemies.map(enemy => {
-          const newLocation = performPseudoVectorAddition(
-            ...enemy.location,
-            ...enemy.destinations[enemy.currentDestinationIndex],
-            2,
-          );
-
-          // TODO: 目的地に到達したら次のインデックスを設定する
+          const {
+            location: newLocation,
+            destinationIndex: newDestinationIndex,
+          } = calculateMovementResults(enemy);
 
           return Object.assign({}, enemy, {
             location: newLocation,
+            destinationIndex: newDestinationIndex,
           });
         });
 
-        dispatch(tick(tickId + 1, newEnemies));
+        dispatch(tick(
+          tickId + 1,
+          newEnemies
+        ));
 
         reserveTickTask();
       }, PARAMETERS.TICK_INTERVAL);
@@ -216,9 +216,7 @@ const initializeApp = () => {
     Object.assign(createNewUnitState(), {
       factionType: FACTION_TYPES.ENEMY,
       jobId: JOB_IDS.FIGHTER,
-      location: [0, 48 * 5],
-      destinations: [[7 * 48, 5 * 48], [7 * 48, 2 * 48]],
-      currentDestinationIndex: 0,
+      destinations: [[0 * 48, 5 * 48], [7 * 48, 5 * 48], [7 * 48, 1 * 48]],
     }),
   ]);
 

@@ -1,21 +1,29 @@
 /**
+ * @typedef {number[]} State~Location
+ * @description [top, left] position on the battle-board
+ */
+
+/**
  * @typedef {Object} State~Unit
  * @property {?string} factionType - One of the FACTION_TYPES
  * @property {State~Placement} placement
- * @property {?number[]} location - [top, left] position on the battle-board
- * @property {number[]} destinationPlacements
- * @property {?number} nextDestinationIndex
- * @property {number} movingSpeed - 1.0=48px/1sec, 1.5=72px/1sec
+ * @property {?State~Location} location
+ * @property {State~Location[]} destinations
+ * @property {number} destinationIndex
+ *   The index of the currently active element in destinations. 0 ~ (destinations.length - 1)
+ * @property {number} movingSpeed - 1.0=2px/1tick
  */
 
 /**
  * @typedef {Object} State~Ally
- * @property {string} factionType - The FACTION_TYPES.ALLY is assigned
+ * @property {string} factionType - = FACTION_TYPES.ALLY
+ * @description Based on the {@link State~Unit}
  */
 
 /**
  * @typedef {Object} State~Enemy
- * @property {string} factionType - The FACTION_TYPES.ENEMY is assigned
+ * @property {string} factionType - = FACTION_TYPES.ENEMY
+ * @description Based on the {@link State~Unit}
  */
 
 
@@ -24,6 +32,7 @@ const uuidV4 = require('uuid/v4');
 
 const { FACTION_TYPES, PARAMETERS } = require('../immutable/constants');
 const { JOB_IDS, jobs } = require('../immutable/jobs');
+const { performPseudoVectorAddition } = require('../lib/core');
 const { createNewPlacementState } = require('./placement');
 
 
@@ -35,9 +44,9 @@ const createNewUnitState = () => {
     factionType: null,
     placement: createNewPlacementState(),
     jobId: JOB_IDS.NONE,
-    location: [],
+    location: null,
     destinations: [],
-    nextDestinationIndex: null,
+    destinationIndex: 0,
     maxHp,
     hp: maxHp,
     attackPower: 0,
@@ -81,8 +90,47 @@ const canRetreatAsAlly = (ally) => {
   return true;
 };
 
+/**
+ * Calculate the movement results for next one tick
+ * @param {State~Unit} unit
+ * @return {{ location, destinationIndex }}
+ */
+const calculateMovementResults = (unit) => {
+  if (unit.destinations.length === 0) {
+    throw new Error(`This unit should not move`);
+  }
+
+  // Movement is already finished
+  if (unit.destinationIndex > unit.destinations.length - 1) {
+    return {
+      location: unit.location,
+      destinationIndex: unit.destinationIndex,
+    };
+  }
+
+  const currentDestination = unit.destinations[unit.destinationIndex];
+
+  let newLocation;
+  if (unit.location) {
+    // TODO: Calculate moving speed
+    newLocation = performPseudoVectorAddition(unit.location, currentDestination, 2);
+  // The first movement means that the unit is placed on the board
+  } else {
+    newLocation = currentDestination;
+  }
+
+  const newDestinationIndex = unit.destinationIndex +
+    (newLocation[0] === currentDestination[0] && newLocation[1] === currentDestination[1] ? 1 : 0);
+
+  return {
+    location: newLocation,
+    destinationIndex: newDestinationIndex,
+  };
+};
+
 
 module.exports = {
+  calculateMovementResults,
   canRetreatAsAlly,
   canSortieAsAlly,
   createNewUnitState,

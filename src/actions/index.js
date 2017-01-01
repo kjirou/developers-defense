@@ -1,9 +1,9 @@
-const { ACTION_TYPES, BOARD_TYPES, FACTION_TYPES, PARAMETERS } = require('../immutable/constants');
+const { ACTION_TYPES, BOARD_TYPES, FACTION_TYPES, PARAMETERS, STYLES } = require('../immutable/constants');
 const { JOB_IDS } = require('../immutable/jobs');
 const { findOneSquareFromBoardsByPlacement } = require('../state-models/complex-apis');
 const { areSamePlace, isPlacedOnBoard } = require('../state-models/placement');
 const { findSquareByCoordinate, parseMapText } = require('../state-models/square-matrix');
-const { createNewUnitState } = require('../state-models/unit');
+const { calculateMovementResults, createNewUnitState } = require('../state-models/unit');
 const { createNewUnitCollectionState, findUnitsByPlacement } = require('../state-models/unit-collection');
 
 
@@ -27,10 +27,32 @@ const updateAlly = (ally) => {
   };
 };
 
+const updateAllies = (allies) => {
+  return {
+    type: ACTION_TYPES.UPDATE_ALLIES,
+    allies,
+  };
+};
+
+const updateEnemies = (enemies) => {
+  return {
+    type: ACTION_TYPES.UPDATE_ENEMIES,
+    enemies,
+  };
+};
+
 const updateTickId = (tickId) => {
   return {
     type: ACTION_TYPES.UPDATE_TICK_ID,
     tickId,
+  };
+};
+
+const tick = (tickId, enemies) => {
+  return {
+    type: ACTION_TYPES.TICK,
+    tickId,
+    enemies,
   };
 };
 
@@ -127,10 +149,26 @@ const startGame = () => {
 
     const reserveTickTask = () => {
       setTimeout(() => {
-        const { gameStatus } = getState();
+        const { allies, enemies, gameStatus } = getState();
         const { tickId } = gameStatus;
 
-        dispatch(updateTickId(tickId + 1));
+        // TODO: 動きが荒いのでCSSトランジションを使う
+        const newEnemies = enemies.map(enemy => {
+          const {
+            location: newLocation,
+            destinationIndex: newDestinationIndex,
+          } = calculateMovementResults(enemy);
+
+          return Object.assign({}, enemy, {
+            location: newLocation,
+            destinationIndex: newDestinationIndex,
+          });
+        });
+
+        dispatch(tick(
+          tickId + 1,
+          newEnemies
+        ));
 
         reserveTickTask();
       }, PARAMETERS.TICK_INTERVAL);
@@ -151,8 +189,8 @@ const initializeApp = () => {
     '. ... .',
     '. ... .',
     '. .F. .',
-    ' C    .',
-    '. .....',
+    '.C    .',
+    '.......',
   ].join('\n');
   const squareMatrixExtension = parseMapText(mapText);
 
@@ -178,14 +216,14 @@ const initializeApp = () => {
     Object.assign(createNewUnitState(), {
       factionType: FACTION_TYPES.ENEMY,
       jobId: JOB_IDS.FIGHTER,
-      location: [0, 48 * 5],
+      destinations: [[0 * 48, 5 * 48], [7 * 48, 5 * 48], [7 * 48, 1 * 48]],
     }),
   ]);
 
   return (dispatch, getState) => {
     dispatch({ type: ACTION_TYPES.EXTEND_BATTLE_BOARD_SQUARE_MATRIX, extension: squareMatrixExtension });
-    dispatch({ type: ACTION_TYPES.UPDATE_ALLIES, allies });
-    dispatch({ type: ACTION_TYPES.UPDATE_ENEMIES, enemies });
+    dispatch(updateAllies(allies));
+    dispatch(updateEnemies(enemies));
   };
 };
 

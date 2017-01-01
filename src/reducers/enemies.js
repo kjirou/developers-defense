@@ -13,6 +13,10 @@ const handlers = {
   [ACTION_TYPES.UPDATE_ENEMIES]: (state, { enemies }) => {
     return enemies;
   },
+
+  [ACTION_TYPES.TICK]: (state, { enemies }) => {
+    return enemies;
+  },
 };
 
 

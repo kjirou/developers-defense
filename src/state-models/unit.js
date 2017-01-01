@@ -1,9 +1,4 @@
 /**
- * @typedef {number[]} State~Location
- * @description [top, left] position on the battle-board
- */
-
-/**
  * @typedef {Object} State~Unit
  * @property {?string} factionType - One of the FACTION_TYPES
  * @property {State~Placement} placement
@@ -32,8 +27,8 @@ const uuidV4 = require('uuid/v4');
 
 const { FACTION_TYPES, PARAMETERS } = require('../immutable/constants');
 const { JOB_IDS, jobs } = require('../immutable/jobs');
-const { performPseudoVectorAddition } = require('../lib/core');
 const { createNewPlacementState } = require('./placement');
+const { performPseudoVectorAddition } = require('./location');
 
 
 const createNewUnitState = () => {

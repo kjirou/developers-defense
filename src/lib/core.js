@@ -19,41 +19,8 @@ const areSameSize2DArray = (a, b) => {
   return true;
 };
 
-/**
- * ベクトルの和を行うが、方向は上下左右に限定する。
- * 大量に呼び出されるので処理の速さを優先する。
- * TODO: Move to under the state-models
- * @param {State~Location} initialLocation
- * @param {State~Location} terminalLocation
- * @return {number[]} [movedTop, movedLeft]
- */
-const performPseudoVectorAddition = (initialLocation, terminalLocation, vector) => {
-  const [initialTop, initialLeft] = initialLocation;
-  const [terminalTop, terminalLeft] = terminalLocation;
-
-  if (initialTop !== terminalTop && initialLeft !== terminalLeft) {
-    throw new Error('It is possible to move only up / down / left / right.');
-  }
-
-  let movedTop = initialTop;
-  let movedLeft = initialLeft;
-
-  if (initialTop < terminalTop) {
-    movedTop = Math.min(terminalTop, initialTop + vector);
-  } else if (initialTop > terminalTop) {
-    movedTop = Math.max(terminalTop, initialTop - vector);
-  } else if (initialLeft < terminalLeft) {
-    movedLeft = Math.min(terminalLeft, initialLeft + vector);
-  } else if (initialLeft > terminalLeft) {
-    movedLeft = Math.max(terminalLeft, initialLeft - vector);
-  }
-
-  return [movedTop, movedLeft];
-};
-
 
 module.exports = {
   areSameSize2DArray,
   cloneViaJson,
-  performPseudoVectorAddition,
 };

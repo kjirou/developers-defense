@@ -1,13 +1,21 @@
 const React = require('react');
 
+const { PARAMETERS } = require('../immutable/constants');
+
 
 const Unit = ({ iconId, top, left, classNames }) => {
+  const mergedClassNames = ['unit'].concat(classNames);
+
+  const durationStr = `${ PARAMETERS.TICK_INTERVAL }ms`;
+  const styles = {
+    top,
+    left,
+    transition: `top ${ durationStr } linear, left ${ durationStr } linear`,
+  };
+
   const props = {
-    className: ['unit'].concat(classNames).join(' '),
-    style: {
-      top,
-      left,
-    },
+    className: mergedClassNames.join(' '),
+    style: styles,
   };
 
   const icon = React.createElement('i', {

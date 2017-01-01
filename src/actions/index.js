@@ -1,3 +1,4 @@
+/** @module */
 const { ACTION_TYPES, BOARD_TYPES, FACTION_TYPES, PARAMETERS, STYLES } = require('../immutable/constants');
 const { JOB_IDS } = require('../immutable/jobs');
 const { findOneSquareFromBoardsByPlacement } = require('../state-models/complex-apis');
@@ -20,6 +21,13 @@ const moveCursor = (placement) => {
   };
 };
 
+const extendGameStatus = (extension) => {
+  return {
+    type: ACTION_TYPES.EXTEND_GAME_STATUS,
+    extension,
+  };
+};
+
 const updateAlly = (ally) => {
   return {
     type: ACTION_TYPES.UPDATE_ALLY,
@@ -38,13 +46,6 @@ const updateEnemies = (enemies) => {
   return {
     type: ACTION_TYPES.UPDATE_ENEMIES,
     enemies,
-  };
-};
-
-const updateTickId = (tickId) => {
-  return {
-    type: ACTION_TYPES.UPDATE_TICK_ID,
-    tickId,
   };
 };
 
@@ -145,14 +146,17 @@ const touchSquare = (newPlacement) => {
  */
 const startGame = () => {
   return (dispatch, getState) => {
-    dispatch(updateTickId(0));
+    dispatch(extendGameStatus({ tickId: 0 }));
 
     const reserveTickTask = () => {
       setTimeout(() => {
         const { allies, enemies, gameStatus } = getState();
-        const { tickId } = gameStatus;
 
-        // TODO: 動きが荒いのでCSSトランジションを使う
+        if (gameStatus.isPaused) {
+          reserveTickTask();
+          return;
+        }
+
         const newEnemies = enemies.map(enemy => {
           const {
             location: newLocation,
@@ -166,7 +170,7 @@ const startGame = () => {
         });
 
         dispatch(tick(
-          tickId + 1,
+          gameStatus.tickId + 1,
           newEnemies
         ));
 
@@ -229,6 +233,7 @@ const initializeApp = () => {
 
 
 module.exports = {
+  extendGameStatus,
   initializeApp,
   startGame,
   touchSquare,

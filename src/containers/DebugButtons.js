@@ -1,7 +1,7 @@
 const React = require('react');
 const { connect } = require('react-redux');
 
-const { startGame } = require('../actions');
+const { extendGameStatus, startGame } = require('../actions');
 
 
 let DebugButtons = ({ dispatch, gameStatus }) => {
@@ -9,10 +9,29 @@ let DebugButtons = ({ dispatch, gameStatus }) => {
     dispatch(startGame());
   };
 
+  const handlePauseGameButtonTouchStart = () => {
+    dispatch(extendGameStatus({ isPaused: true }));
+  };
+
+  const handleResumeGameButtonTouchStart = () => {
+    dispatch(extendGameStatus({ isPaused: false }));
+  };
+
+
+  const startGameButton = gameStatus.tickId === null ?
+    <div onTouchStart={ handleStartGameButtonTouchStart }>[ Start ]</div> : null;
+
+  const pauseGameButton = gameStatus.tickId !== null && !gameStatus.isPaused ?
+    <div onTouchStart={ handlePauseGameButtonTouchStart }>[ Pause ]</div> : null;
+
+  const resumeGameButton = gameStatus.tickId !== null && gameStatus.isPaused ?
+    <div onTouchStart={ handleResumeGameButtonTouchStart }>[ Resume ]</div> : null;
+
+
   return <div className="root__debug-buttons" style={ { margin: '10px 20px' } }>
-    {
-      gameStatus.tickId === null ? <div onTouchStart={ handleStartGameButtonTouchStart }>[Start Game]</div> : null
-    }
+    { startGameButton }
+    { pauseGameButton }
+    { resumeGameButton }
   </div>;
 };
 

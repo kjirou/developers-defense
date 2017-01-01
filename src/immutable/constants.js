@@ -5,13 +5,13 @@ const ACTION_TYPES = keymirror({
   ALTER_PROGRESS: null,
   CLEAR_CURSOR: null,
   EXTEND_BATTLE_BOARD_SQUARE_MATRIX: null,
+  EXTEND_GAME_STATUS: null,
   NOOP: null,
   MOVE_CURSOR: null,
   TICK: null,
   UPDATE_ALLIES: null,
   UPDATE_ALLY: null,
   UPDATE_ENEMIES: null,
-  UPDATE_TICK_ID: null,
 });
 
 const BOARD_TYPES = keymirror({
@@ -35,7 +35,7 @@ const LANDFORM_TYPES = keymirror({
   ROAD: null,
 });
 
-const ticksPerSecond = 25;
+const ticksPerSecond = 20;
 const tickInterval = 1000 / ticksPerSecond;
 if (Math.ceil(tickInterval) !== tickInterval) {
   throw new Error(`The tick-interval must be an integer`);

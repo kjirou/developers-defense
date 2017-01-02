@@ -5,22 +5,51 @@ const cloneViaJson = (value) => {
 };
 
 /**
- * @param {Array[]} a
- * @param {Array[]} b
+ * @param {...Array<Array<number>>} matrices
  * @return {boolean}
  */
-const areSameSize2DArray = (a, b) => {
-  if (a.length !== b.length) return false;
+const areSameSizeMatrices = (...matrices) => {
+  const [first, ...rest] = matrices;
 
-  for (let rowIndex = 0; rowIndex < a.length; rowIndex += 1) {
-    if (a[rowIndex].length !== b[rowIndex].length) return false;
+  for (let restIndex = 0; restIndex < rest.length; restIndex += 1) {
+    const current = rest[restIndex];
+
+    if (first.length !== current.length) return false;
+
+    for (let rowIndex = 0; rowIndex < first.length; rowIndex += 1) {
+      if (first[rowIndex].length !== current[rowIndex].length) return false;
+    }
   }
 
   return true;
 };
 
+/**
+ * @param {...Array<Array<number>>} matrices
+ * @return {Array<Array<number>>}
+ */
+const matrixAdd = (...matrices) => {
+  if (!areSameSizeMatrices(matrices)) {
+    throw new Error('Matrices are not same size');
+  }
+
+  const [first, ...rest] = matrices;
+  const result = first.map(row => row.slice());
+
+  for (let restIndex = 0; restIndex < rest.length; restIndex += 1) {
+    for (let rowIndex = 0; rowIndex < first.length; rowIndex += 1) {
+      for (let columnIndex = 0; columnIndex < first[rowIndex].length; columnIndex += 1) {
+        result[rowIndex][columnIndex] += rest[restIndex][rowIndex][columnIndex];
+      }
+    }
+  }
+
+  return result;
+};
+
 
 module.exports = {
-  areSameSize2DArray,
+  areSameSizeMatrices,
   cloneViaJson,
+  matrixAdd,
 };

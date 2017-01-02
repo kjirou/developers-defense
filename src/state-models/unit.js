@@ -7,9 +7,9 @@
  * @property {number} destinationIndex
  *   The index of the currently active element in destinations. 0 ~ (destinations.length - 1)
  * @property {number} movingSpeed - 1.0=2px/1tick
- * @property {number} attackCharge - A integer >= 0
- * @property {number} maxAttackCharge - A integer >= 0
- * @property {number} attackChargePower - A integer >= 0
+ * @property {number} actionPoints - A integer >= 0
+ * @property {number} maxActionPoints - A integer >= 0
+ * @property {number} actionPointsRecovery - A integer >= 0
  */
 
 /**
@@ -48,9 +48,9 @@ const createNewUnitState = () => {
     maxHp,
     hp: maxHp,
     movingSpeed: 0,
-    attackCharge: 0,
-    maxAttackCharge: 20,  // TODO: Temporary setting
-    attackChargePower: 1,  // TODO: Temporary setting
+    actionPoints: 0,
+    maxActionPoints: 20,  // TODO: Temporary setting
+    actionPointsRecovery: 1,  // TODO: Temporary setting
     attackPower: 0,
     defensePower: 0,
     mattackPower: 0,
@@ -131,22 +131,22 @@ const calculateMovementResults = (unit) => {
 
 /**
  * @param {State~Unit} unit
- * @return {{ attackCharge }}
+ * @return {{ actionPoints }}
  */
-const calculateAttackChargeResult = (unit) => {
-  const newAttackCharge = Math.max(
+const calculateActionPointsRecovery = (unit) => {
+  const newActionPoints = Math.max(
     0,
-    Math.min(unit.maxAttackCharge, unit.attackCharge + unit.attackChargePower)
+    Math.min(unit.maxActionPoints, unit.actionPoints + unit.actionPointsRecovery)
   );
 
   return {
-    attackCharge: newAttackCharge,
+    actionPoints: newActionPoints,
   };
 };
 
 
 module.exports = {
-  calculateAttackChargeResult,
+  calculateActionPointsRecovery,
   calculateMovementResults,
   canRetreatAsAlly,
   canSortieAsAlly,

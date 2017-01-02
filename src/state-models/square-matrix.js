@@ -5,7 +5,7 @@
 
 /** @module */
 const { LANDFORM_TYPES } = require('../immutable/constants');
-const { areSameSize2DArray } = require('../lib/core');
+const { areSameSizeMatrices } = require('../lib/core');
 const { createNewSquareState, extendSquare } = require('./square');
 
 
@@ -64,7 +64,7 @@ const findSquareByCoordinate = (squareMatrix, [ rowIndex, columnIndex ]) => {
  * @param {Object[]} propertiesMatrix - A 2D array of the same size as square-matrix
  */
 const extendSquareMatrix = (squareMatrix, propertiesMatrix) => {
-  if (!areSameSize2DArray(squareMatrix, propertiesMatrix)) {
+  if (!areSameSizeMatrices(squareMatrix, propertiesMatrix)) {
     throw new Error('Both arrarys are not the same size');
   }
 

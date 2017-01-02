@@ -1,15 +1,15 @@
 const assert = require('power-assert');
 
 const {
-  areSameSize2DArray,
+  areSameSizeMatrices,
   performPseudoVectorAddition,
 } = require('../../src/lib/core');
 
 
 describe('lib/core', () => {
-  describe('areSameSize2DArray', () => {
+  describe('areSameSizeMatrices', () => {
     it('should be executed as expected', () => {
-      assert.strictEqual(areSameSize2DArray(
+      assert.strictEqual(areSameSizeMatrices(
         [
           [1, 1, 1],
           [1, 1, 1],
@@ -20,7 +20,7 @@ describe('lib/core', () => {
         ]
       ), true);
 
-      assert.strictEqual(areSameSize2DArray(
+      assert.strictEqual(areSameSizeMatrices(
         [
           [1, 1, 1],
           [1, 1, 1],
@@ -32,7 +32,7 @@ describe('lib/core', () => {
         ]
       ), false);
 
-      assert.strictEqual(areSameSize2DArray(
+      assert.strictEqual(areSameSizeMatrices(
         [
           [1, 1, 1],
           [1, 1, 1],
@@ -44,7 +44,7 @@ describe('lib/core', () => {
         ]
       ), false);
 
-      assert.strictEqual(areSameSize2DArray(
+      assert.strictEqual(areSameSizeMatrices(
         [
           [1, 1, 1],
           [1, 1, 1],
@@ -55,7 +55,7 @@ describe('lib/core', () => {
         ]
       ), false);
 
-      assert.strictEqual(areSameSize2DArray(
+      assert.strictEqual(areSameSizeMatrices(
         [
           [1, 1, 1],
           [1, 1],

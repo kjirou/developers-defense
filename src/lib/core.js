@@ -9,7 +9,7 @@ const cloneViaJson = (value) => {
  * @param {Array[]} b
  * @return {boolean}
  */
-const areSameSize2DArray = (a, b) => {
+const areSameSizeMatrices = (a, b) => {
   if (a.length !== b.length) return false;
 
   for (let rowIndex = 0; rowIndex < a.length; rowIndex += 1) {
@@ -21,6 +21,6 @@ const areSameSize2DArray = (a, b) => {
 
 
 module.exports = {
-  areSameSize2DArray,
+  areSameSizeMatrices,
   cloneViaJson,
 };

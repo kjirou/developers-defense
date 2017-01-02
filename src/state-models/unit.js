@@ -7,6 +7,8 @@
  * @property {number} destinationIndex
  *   The index of the currently active element in destinations. 0 ~ (destinations.length - 1)
  * @property {number} movingSpeed - 1.0=2px/1tick
+ * @property {number} attackCharge - A integer >= 0
+ * @property {number} attackChargePower - A integer >= 0
  */
 
 /**
@@ -44,11 +46,13 @@ const createNewUnitState = () => {
     destinationIndex: 0,
     maxHp,
     hp: maxHp,
+    movingSpeed: 0,
+    attackCharge: 0,
+    attackChargePower: 0,
     attackPower: 0,
     defensePower: 0,
     mattackPower: 0,
     mdefensePower: 0,
-    movingSpeed: 0,
   };
 };
 

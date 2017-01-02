@@ -49,10 +49,11 @@ const updateEnemies = (enemies) => {
   };
 };
 
-const tick = (tickId, enemies) => {
+const tick = (tickId, allies, enemies) => {
   return {
     type: ACTION_TYPES.TICK,
     tickId,
+    allies,
     enemies,
   };
 };
@@ -161,6 +162,7 @@ const startGame = () => {
 
         dispatch(tick(
           gameStatus.tickId + 1,
+          newState.allies,
           newState.enemies
         ));
 

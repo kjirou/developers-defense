@@ -8,6 +8,7 @@
  *   The index of the currently active element in destinations. 0 ~ (destinations.length - 1)
  * @property {number} movingSpeed - 1.0=2px/1tick
  * @property {number} attackCharge - A integer >= 0
+ * @property {number} maxAttackCharge - A integer >= 0
  * @property {number} attackChargePower - A integer >= 0
  */
 
@@ -48,7 +49,8 @@ const createNewUnitState = () => {
     hp: maxHp,
     movingSpeed: 0,
     attackCharge: 0,
-    attackChargePower: 0,
+    maxAttackCharge: 20,  // TODO: Temporary setting
+    attackChargePower: 1,  // TODO: Temporary setting
     attackPower: 0,
     defensePower: 0,
     mattackPower: 0,
@@ -127,8 +129,24 @@ const calculateMovementResults = (unit) => {
   };
 };
 
+/**
+ * @param {State~Unit} unit
+ * @return {{ attackCharge }}
+ */
+const calculateAttackChargeResult = (unit) => {
+  const newAttackCharge = Math.max(
+    0,
+    Math.min(unit.maxAttackCharge, unit.attackCharge + unit.attackChargePower)
+  );
+
+  return {
+    attackCharge: newAttackCharge,
+  };
+};
+
 
 module.exports = {
+  calculateAttackChargeResult,
   calculateMovementResults,
   canRetreatAsAlly,
   canSortieAsAlly,

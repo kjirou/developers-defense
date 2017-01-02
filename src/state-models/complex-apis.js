@@ -1,7 +1,10 @@
 /** @module */
 const { BOARD_TYPES } = require('../immutable/constants');
 const { findSquareByCoordinate } = require('./square-matrix');
-const { calculateMovementResults } = require('./unit');
+const {
+  calculateAttackChargeResult,
+  calculateMovementResults,
+} = require('./unit');
 
 
 /**
@@ -46,6 +49,14 @@ const findOneSquareFromBoardsByPlacement = (placement, ...boards) => {
  * @return {Object}
  */
 const computeTick = ({ allies, enemies, gameStatus }) => {
+  const newAllies = allies.map(ally => {
+    const { attackCharge } = calculateAttackChargeResult(ally);
+
+    return Object.assign({}, ally, {
+      attackCharge,
+    });
+  });
+
   const newEnemies = enemies.map(enemy => {
     const { location, destinationIndex } = calculateMovementResults(enemy);
 
@@ -56,6 +67,7 @@ const computeTick = ({ allies, enemies, gameStatus }) => {
   });
 
   return {
+    allies: newAllies,
     enemies: newEnemies,
   };
 };

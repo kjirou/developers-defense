@@ -161,7 +161,7 @@ const startGame = () => {
 
         dispatch(tick(
           gameStatus.tickId + 1,
-          newState.enemies,
+          newState.enemies
         ));
 
         reserveTickTask();

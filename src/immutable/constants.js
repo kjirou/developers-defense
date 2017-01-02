@@ -1,6 +1,20 @@
 const keymirror = require('keymirror');
 
 
+const ACT_AIM_RANGE_TYPES = keymirror({
+  CROSS: null,
+  REACHABLE: null,
+  X: null,
+});
+
+const ACT_EFFECT_RANGE_TYPES = keymirror({
+  BALL: null,
+  CONE: null,
+  INDIVIDUAL: null,
+  LINE: null,
+  SLANTING_LINE: null,
+});
+
 const ACTION_TYPES = keymirror({
   ALTER_PROGRESS: null,
   CLEAR_CURSOR: null,
@@ -22,6 +36,11 @@ const BOARD_TYPES = keymirror({
 const FACTION_TYPES = keymirror({
   ALLY: null,
   ENEMY: null,
+});
+
+const FRIENDSHIP_TYPES = keymirror({
+  FRIENDLY: null,
+  UNFRIENDLY: null,
 });
 
 const LANDFORM_TYPES = keymirror({

@@ -8,7 +8,7 @@ const {
 
 describe('lib/core', () => {
   describe('areSameSizeMatrices', () => {
-    it('should be executed as expected', () => {
+    it('can check 2 matrices', () => {
       assert.strictEqual(areSameSizeMatrices(
         [
           [1, 1, 1],
@@ -62,6 +62,52 @@ describe('lib/core', () => {
         ],
         [
           [1, 1, 1],
+          [1, 1, 1],
+        ]
+      ), false);
+    });
+
+    it('can check 3 matrices', () => {
+      assert.strictEqual(areSameSizeMatrices(
+        [
+          [1, 1],
+          [1, 1],
+        ],
+        [
+          [1, 1],
+          [1, 1],
+        ],
+        [
+          [1, 1],
+          [1, 1],
+        ]
+      ), true);
+
+      assert.strictEqual(areSameSizeMatrices(
+        [
+          [1, 1],
+          [1, 1],
+        ],
+        [
+          [1, 1],
+          [1, 1],
+        ],
+        [
+          [1, 1],
+        ]
+      ), false);
+
+      assert.strictEqual(areSameSizeMatrices(
+        [
+          [1, 1],
+          [1, 1],
+        ],
+        [
+          [1, 1],
+          [1, 1],
+        ],
+        [
+          [1, 1],
           [1, 1, 1],
         ]
       ), false);

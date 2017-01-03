@@ -28,7 +28,8 @@
 /** @module */
 const uuidV4 = require('uuid/v4');
 
-const { FACTION_TYPES, PARAMETERS } = require('../immutable/constants');
+const { FACTION_TYPES, FRIENDSHIP_TYPES, PARAMETERS } = require('../immutable/constants');
+const { ACT_IDS, acts } = require('../immutable/acts');
 const { JOB_IDS, jobs } = require('../immutable/jobs');
 const { createNewPlacementState } = require('./placement');
 const { performPseudoVectorAddition } = require('./location');
@@ -45,6 +46,7 @@ const createNewUnitState = () => {
     location: null,
     destinations: [],
     destinationIndex: 0,
+    // TODO: "hp" -> "hitPoints"
     maxHp,
     hp: maxHp,
     movingSpeed: 0,
@@ -71,6 +73,17 @@ const isAlly = (unit) => unit.factionType === FACTION_TYPES.ALLY;
 
 const getJob = (unit) => {
   return jobs[unit.jobId];
+};
+
+const getAct = (unit) => {
+  // TODO
+  if (unit.jobId === JOB_IDS.HEALER) {
+    return acts.TREATMENT;
+  } else if (unit.jobId === JOB_IDS.MAGE) {
+    return acts.MAGICAL_BLAST;
+  } else {
+    return acts.MELEE_ATTACK;
+  }
 };
 
 const getIconId = (unit) => {
@@ -144,13 +157,32 @@ const calculateActionPointsRecovery = (unit) => {
   };
 };
 
+/**
+ * @return {string} One of FRIENDSHIP_TYPES
+ */
+const determineFriendship = (unitA, unitB) => {
+  return unitA.factionType === unitB.factionType ? FRIENDSHIP_TYPES.FRIENDLY : FRIENDSHIP_TYPES.UNFRIENDLY;
+};
+
+/**
+ * @param {State~Unit} unit
+ * @return {boolean}
+ */
+const canDoAction = (unit) => {
+  // TODO:
+  return unit.actionPoints >= unit.maxActionPoints;
+};
+
 
 module.exports = {
   calculateActionPointsRecovery,
   calculateMovementResults,
+  canDoAction,
   canRetreatAsAlly,
   canSortieAsAlly,
   createNewUnitState,
+  determineFriendship,
   isAlly,
+  getAct,
   getIconId,
 };

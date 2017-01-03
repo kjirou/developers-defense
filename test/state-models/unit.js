@@ -1,8 +1,10 @@
 const assert = require('power-assert');
 
+const { FACTION_TYPES } = require('../../src/immutable/constants');
 const {
   createNewUnitState,
   calculateMovementResults,
+  determineFriendship,
 } = require('../../src/state-models/unit');
 
 
@@ -44,6 +46,21 @@ describe('state-models/unit', () => {
       Object.assign(unit, calculateMovementResults(unit));
       assert.deepStrictEqual(unit.location, [2, 3]);
       assert.strictEqual(unit.destinationIndex, 3);
+    });
+  });
+
+  describe('determineFriendship', () => {
+    it('can execute correctly', () => {
+      const ally = createNewUnitState();
+      ally.factionType = FACTION_TYPES.ALLY;
+
+      const enemy = createNewUnitState();
+      enemy.factionType = FACTION_TYPES.ENEMY;
+
+      assert.strictEqual(determineFriendship(ally, ally), 'FRIENDLY');
+      assert.strictEqual(determineFriendship(enemy, enemy), 'FRIENDLY');
+      assert.strictEqual(determineFriendship(ally, enemy), 'UNFRIENDLY');
+      assert.strictEqual(determineFriendship(enemy, ally), 'UNFRIENDLY');
     });
   });
 });

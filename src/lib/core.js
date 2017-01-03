@@ -74,10 +74,10 @@ const partitionIntegerToTwoParts = (n) => {
 };
 
 /**
- * @param {number} reach - 0 <= integer < 10000
- * @description It does not work in the case of `reach > 10000`, because the internal logic is not good.
+ * @param {number} distance - 0 <= integer < 10000
+ * @description It does not work in the case of `distance > 10000`, because the internal logic is not good.
  */
-const expandDistanceToRelativeCoordinatesWithoutMemoization = (reach) => {
+const expandDistanceToRelativeCoordinatesWithoutMemoization = (distance) => {
   const directions = [
     // top-right
     [-1, 1],
@@ -91,7 +91,7 @@ const expandDistanceToRelativeCoordinatesWithoutMemoization = (reach) => {
 
   const relativeCoordinates = [];
 
-  partitionIntegerToTwoParts(reach).forEach(part => {
+  partitionIntegerToTwoParts(distance).forEach(part => {
     directions.forEach(direction => {
       const coordinate = [
         part[0] * direction[0],

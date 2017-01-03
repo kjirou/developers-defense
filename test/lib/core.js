@@ -135,6 +135,20 @@ describe('lib/core', () => {
         matrixAdd(
           [
             [0, 1],
+          ],
+          [
+            [10, 11],
+          ]
+        ),
+        [
+          [10, 12],
+        ]
+      );
+
+      assert.deepStrictEqual(
+        matrixAdd(
+          [
+            [0, 1],
             [2, 3],
           ],
           [

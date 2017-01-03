@@ -1,7 +1,11 @@
 const assert = require('power-assert');
 
 const {
+  _expandDistanceToRelativeCoordinatesWithoutMemoization,
+  _expandDistanceToRelativeCoordinates,
+  _partitionIntegerToTwoParts,
   areSameSizeMatrices,
+  expandReachToRelativeCoordinates,
   performPseudoVectorAddition,
   matrixAdd,
   underscoredToClassName,
@@ -181,6 +185,165 @@ describe('lib/core', () => {
         [
           [0, 3],
           [6, 9],
+        ]
+      );
+    });
+  });
+
+  describe('_partitionIntegerToTwoParts', () => {
+    it('can partition 0', () => {
+      assert.deepStrictEqual(_partitionIntegerToTwoParts(0), [
+        [0, 0],
+      ]);
+    });
+
+    it('can partition 4', () => {
+      assert.deepStrictEqual(_partitionIntegerToTwoParts(4), [
+        [4, 0],
+        [3, 1],
+        [2, 2],
+        [1, 3],
+        [0, 4],
+      ]);
+    });
+  });
+
+  describe('_expandDistanceToRelativeCoordinatesWithoutMemoization', () => {
+    it('can expand 0', () => {
+      assert.deepStrictEqual(
+        _expandDistanceToRelativeCoordinatesWithoutMemoization(0),
+        [
+          [0, 0],
+        ]
+      );
+    });
+
+    it('can expand 1', () => {
+      assert.deepStrictEqual(
+        _expandDistanceToRelativeCoordinatesWithoutMemoization(1),
+        [
+          [-1, 0],
+          [0, 1],
+          [1, 0],
+          [0, -1],
+        ]
+      );
+    });
+
+    it('can expand 2', () => {
+      assert.deepStrictEqual(
+        _expandDistanceToRelativeCoordinatesWithoutMemoization(2),
+        [
+          [-2, 0],
+          [-1, 1],
+          [0, 2],
+          [1, 1],
+          [2, 0],
+          [1, -1],
+          [0, -2],
+          [-1, -1],
+        ]
+      );
+    });
+
+    it('can expand 3', () => {
+      assert.deepStrictEqual(
+        _expandDistanceToRelativeCoordinatesWithoutMemoization(3),
+        [
+          [-3, 0],
+          [-2, 1],
+          [-1, 2],
+          [0, 3],
+          [1, 2],
+          [2, 1],
+          [3, 0],
+          [2, -1],
+          [1, -2],
+          [0, -3],
+          [-1, -2],
+          [-2, -1],
+        ]
+      );
+    });
+
+    it('can expand 4', () => {
+      assert.deepStrictEqual(
+        _expandDistanceToRelativeCoordinatesWithoutMemoization(4),
+        [
+          [-4, 0],
+          [-3, 1],
+          [-2, 2],
+          [-1, 3],
+          [0, 4],
+          [1, 3],
+          [2, 2],
+          [3, 1],
+          [4, 0],
+          [3, -1],
+          [2, -2],
+          [1, -3],
+          [0, -4],
+          [-1, -3],
+          [-2, -2],
+          [-3, -1],
+        ]
+      );
+    });
+  });
+
+  describe('_expandDistanceToRelativeCoordinates', () => {
+    it('can expand 2 by using cache', () => {
+      const result1 = _expandDistanceToRelativeCoordinates(2);
+      const result2 = _expandDistanceToRelativeCoordinates(2);
+
+      assert.strictEqual(result1, result2);
+      assert.deepStrictEqual(
+        result1,
+        [
+          [-2, 0],
+          [-1, 1],
+          [0, 2],
+          [1, 1],
+          [2, 0],
+          [1, -1],
+          [0, -2],
+          [-1, -1],
+        ]
+      );
+    });
+  });
+
+  describe('expandReachToRelativeCoordinates', () => {
+    it('can expand from 0 to 0', () => {
+      assert.deepStrictEqual(
+        expandReachToRelativeCoordinates(0, 0),
+        [
+          [0, 0],
+        ]
+      );
+    });
+
+    it('can expand from 0 to 1', () => {
+      assert.deepStrictEqual(
+        expandReachToRelativeCoordinates(0, 1),
+        [
+          [0, 0],
+          [-1, 0],
+          [0, 1],
+          [1, 0],
+          [0, -1],
+        ]
+      );
+    });
+
+    it('can expand from 1 to 1', () => {
+      assert.deepStrictEqual(
+        expandReachToRelativeCoordinates(1, 1),
+        [
+          [-1, 0],
+          [0, 1],
+          [1, 0],
+          [0, -1],
         ]
       );
     });

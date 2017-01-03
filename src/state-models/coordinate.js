@@ -1,6 +1,6 @@
 /**
  * @typedef {number[]} State~Coordinate
- * @description The position of a matrix. For example, it means [rowIndex, columnIndex] or [m, n].<br>
+ * @description The position of a square-matrix. For example, it means [rowIndex, columnIndex] or [m, n].<br>
  *              It allows floating point numbers.
  */
 

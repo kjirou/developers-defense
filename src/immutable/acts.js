@@ -66,7 +66,7 @@ const actList = createClassBasedResourceList(Act, fixture, {
   },
 });
 const acts = dictify(actList, 'id');
-const ACT_IDS = keymirror(actions);
+const ACT_IDS = keymirror(acts);
 
 
 module.exports = {

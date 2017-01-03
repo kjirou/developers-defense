@@ -9,9 +9,6 @@ const {
 
 
 describe('immutable/jobs', () => {
-  describe('Job', () => {
-  });
-
   describe('jobList', () => {
     it('should be defined', () => {
       assert(jobList.length > 0);

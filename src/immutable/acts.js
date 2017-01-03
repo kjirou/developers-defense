@@ -21,14 +21,14 @@ const fixture = [
   },
   {
     constants: {
-      id: 'MELEE_FIGHT',
+      id: 'MELEE_ATTACK',
       aimRange: {
         type: 'REACHABLE',
         reach: 1,
         friendshipType: 'UNFRIENDLY',
       },
       effectRange: {
-        type: 'INDIVIDUAL',
+        type: 'UNIT',
         count: 1,
       },
     },
@@ -42,7 +42,7 @@ const fixture = [
         friendshipType: 'FRIENDLY',
       },
       effectRange: {
-        type: 'INDIVIDUAL',
+        type: 'UNIT',
         count: 1,
       },
     },

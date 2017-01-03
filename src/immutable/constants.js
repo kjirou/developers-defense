@@ -2,17 +2,18 @@ const keymirror = require('keymirror');
 
 
 const ACT_AIM_RANGE_TYPES = keymirror({
-  CROSS: null,
+  CONE: null,
+  LINE: null,
   REACHABLE: null,
-  X: null,
+  SLANTING_LINE: null,
 });
 
 const ACT_EFFECT_RANGE_TYPES = keymirror({
   BALL: null,
   CONE: null,
-  INDIVIDUAL: null,
   LINE: null,
   SLANTING_LINE: null,
+  UNIT: null,
 });
 
 const ACTION_TYPES = keymirror({
@@ -81,9 +82,12 @@ const STYLES = {
 
 
 module.exports = {
+  ACT_AIM_RANGE_TYPES,
+  ACT_EFFECT_RANGE_TYPES,
   ACTION_TYPES,
   BOARD_TYPES,
   FACTION_TYPES,
+  FRIENDSHIP_TYPES,
   LANDFORM_TYPES,
   STYLES,
   PARAMETERS,

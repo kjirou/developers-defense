@@ -1,10 +1,10 @@
 /** @module */
-const { ACTION_TYPES, BOARD_TYPES, FACTION_TYPES, PARAMETERS, STYLES } = require('../immutable/constants');
+const { ACTION_TYPES, BOARD_TYPES, PARAMETERS, STYLES } = require('../immutable/constants');
 const { JOB_IDS } = require('../immutable/jobs');
 const { computeTick, findOneSquareFromBoardsByPlacement } = require('../state-models/complex-apis');
 const { areSamePlace, isPlacedOnBoard } = require('../state-models/placement');
 const { findSquareByCoordinate, parseMapText } = require('../state-models/square-matrix');
-const { createNewUnitState } = require('../state-models/unit');
+const unitMethods = require('../state-models/unit');
 const { createNewUnitCollectionState, findUnitsByPlacement } = require('../state-models/unit-collection');
 
 
@@ -191,26 +191,22 @@ const initializeApp = () => {
   const squareMatrixExtension = parseMapText(mapText);
 
   const allies = createNewUnitCollectionState().concat([
-    Object.assign(createNewUnitState(), {
-      factionType: FACTION_TYPES.ALLY,
+    Object.assign(unitMethods.createNewAllyState(), {
       jobId: JOB_IDS.FIGHTER,
       placement: { boardType: BOARD_TYPES.SORTIE_BOARD, coordinate: [0, 0] },
     }),
-    Object.assign(createNewUnitState(), {
-      factionType: FACTION_TYPES.ALLY,
+    Object.assign(unitMethods.createNewAllyState(), {
       jobId: JOB_IDS.HEALER,
       placement: { boardType: BOARD_TYPES.SORTIE_BOARD, coordinate: [0, 1] },
     }),
-    Object.assign(createNewUnitState(), {
-      factionType: FACTION_TYPES.ALLY,
+    Object.assign(unitMethods.createNewAllyState(), {
       jobId: JOB_IDS.MAGE,
       placement: { boardType: BOARD_TYPES.SORTIE_BOARD, coordinate: [1, 3] },
     }),
   ]);
 
   const enemies = createNewUnitCollectionState().concat([
-    Object.assign(createNewUnitState(), {
-      factionType: FACTION_TYPES.ENEMY,
+    Object.assign(unitMethods.createNewEnemyState(), {
       jobId: JOB_IDS.FIGHTER,
       destinations: [[0 * 48, 5 * 48], [7 * 48, 5 * 48], [7 * 48, 1 * 48]],
     }),

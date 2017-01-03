@@ -2,6 +2,8 @@ const assert = require('power-assert');
 
 const { FACTION_TYPES } = require('../../src/immutable/constants');
 const {
+  createNewAllyState,
+  createNewEnemyState,
   createNewUnitState,
   calculateMovementResults,
   determineFriendship,
@@ -51,11 +53,8 @@ describe('state-models/unit', () => {
 
   describe('determineFriendship', () => {
     it('can execute correctly', () => {
-      const ally = createNewUnitState();
-      ally.factionType = FACTION_TYPES.ALLY;
-
-      const enemy = createNewUnitState();
-      enemy.factionType = FACTION_TYPES.ENEMY;
+      const ally = createNewAllyState();
+      const enemy = createNewEnemyState();
 
       assert.strictEqual(determineFriendship(ally, ally), 'FRIENDLY');
       assert.strictEqual(determineFriendship(enemy, enemy), 'FRIENDLY');

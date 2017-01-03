@@ -15,13 +15,13 @@
 /**
  * @typedef {Object} State~Ally
  * @property {string} factionType - = FACTION_TYPES.ALLY
- * @description Based on the {@link State~Unit}
+ * @description Based on {@link State~Unit}
  */
 
 /**
  * @typedef {Object} State~Enemy
  * @property {string} factionType - = FACTION_TYPES.ENEMY
- * @description Based on the {@link State~Unit}
+ * @description Based on {@link State~Unit}
  */
 
 
@@ -58,6 +58,18 @@ const createNewUnitState = () => {
     mattackPower: 0,
     mdefensePower: 0,
   };
+};
+
+const createNewAllyState = () => {
+  return Object.assign(createNewUnitState(), {
+    factionType: FACTION_TYPES.ALLY,
+  });
+};
+
+const createNewEnemyState = () => {
+  return Object.assign(createNewUnitState(), {
+    factionType: FACTION_TYPES.ENEMY,
+  });
 };
 
 
@@ -180,6 +192,8 @@ module.exports = {
   canDoAction,
   canRetreatAsAlly,
   canSortieAsAlly,
+  createNewAllyState,
+  createNewEnemyState,
   createNewUnitState,
   determineFriendship,
   isAlly,

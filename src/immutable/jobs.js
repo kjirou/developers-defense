@@ -1,7 +1,8 @@
 const { createClassBasedResourceList } = require('@kjirou/utils');
 const dictify = require('dictify');
 const keymirror = require('keymirror');
-const S = require('string');
+
+const { underscoredToClassName } = require('../lib/core');
 
 
 const fixture = [
@@ -55,9 +56,7 @@ Object.assign(Job, {
 
 
 const jobList = createClassBasedResourceList(Job, fixture, {
-  naming: ({ Resource }) => {
-    return S(Resource.id).capitalize().s + Job.name;
-  },
+  naming: ({ Resource }) => underscoredToClassName(Resource.id) + Job.name,
 });
 const jobs = dictify(jobList, 'id');
 const JOB_IDS = keymirror(jobs);

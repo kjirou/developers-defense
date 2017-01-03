@@ -4,10 +4,20 @@ const {
   areSameSizeMatrices,
   performPseudoVectorAddition,
   matrixAdd,
+  underscoredToClassName,
 } = require('../../src/lib/core');
 
 
 describe('lib/core', () => {
+  describe('toClassName', () => {
+    it('can execute correctly', () => {
+      assert.strictEqual(underscoredToClassName('abc'), 'Abc');
+      assert.strictEqual(underscoredToClassName('abc_def'), 'AbcDef');
+      assert.strictEqual(underscoredToClassName('ABC'), 'Abc');
+      assert.strictEqual(underscoredToClassName('ABC_DEF'), 'AbcDef');
+    });
+  });
+
   describe('areSameSizeMatrices', () => {
     it('can check 2 matrices', () => {
       assert.strictEqual(areSameSizeMatrices(

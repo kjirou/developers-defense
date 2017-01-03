@@ -32,7 +32,7 @@ describe('immutable/acts', () => {
 
   describe('Sub classes', () => {
     it('should be named correctly', () => {
-      assert.strictEqual(acts.TREATMENT.name, 'TreatmentAct');
+      assert.strictEqual(acts.MELEE_ATTACK.name, 'MeleeAttackAct');
     });
   });
 });

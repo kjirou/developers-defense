@@ -1,7 +1,18 @@
 /** @module */
+const S = require('string');
+
 
 const cloneViaJson = (value) => {
   return JSON.parse(JSON.stringify(value));
+};
+
+/**
+ * ("abc_def"|"ABC_DEF") -> "AbcDef"
+ * @param {string} str
+ * @return {string}
+ */
+const underscoredToClassName = (str) => {
+  return S(str.toLowerCase()).titleCase().camelize().s;
 };
 
 /**
@@ -52,4 +63,5 @@ module.exports = {
   areSameSizeMatrices,
   cloneViaJson,
   matrixAdd,
+  underscoredToClassName,
 };

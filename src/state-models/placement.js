@@ -1,7 +1,7 @@
 /**
  * @typedef {Object} State~Placement
  * @property {?string} boardType - One of the BOARD_TYPES
- * @property {?number[]} coordinate - The position of a matrix. ex) [m, n]
+ * @property {?State~Coordinate} coordinate
  */
 
 

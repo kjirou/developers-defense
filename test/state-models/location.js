@@ -1,11 +1,24 @@
 const assert = require('power-assert');
 
 const {
+  createNewLocationState,
+  measureDistance,
   performPseudoVectorAddition,
 } = require('../../src/state-models/location');
 
 
 describe('state-models/location', () => {
+  describe('measureDistance', () => {
+    it('can execute correctly', () => {
+      const a = createNewLocationState(0, 0);
+      const b = createNewLocationState(0, 0);
+
+      assert.deepStrictEqual(measureDistance(createNewLocationState(0, 0), createNewLocationState(0, 0)), 0);
+      assert.deepStrictEqual(measureDistance(createNewLocationState(0, 1), createNewLocationState(0, 0)), 1);
+      assert.deepStrictEqual(measureDistance(createNewLocationState(0, 0), createNewLocationState(-1, 0)), 1);
+    });
+  });
+
   describe('performPseudoVectorAddition', () => {
     it('initialTop < terminaiTop', () => {
       assert.deepEqual(performPseudoVectorAddition([1, 0], [3, 0], 1), [2, 0]);

@@ -1,12 +1,12 @@
 /**
  * @typedef {number[]} State~Location
- * @description [top, left] position on the battle-board
+ * @description [y, x] (= [top, left]) position on the battle-board
  */
 
 
 /** @module */
-const createNewLocationState = (top, left) => {
-  return [top, left];
+const createNewLocationState = (y, x) => {
+  return [y, x];
 };
 
 /**
@@ -24,30 +24,30 @@ const measureDistance = (a, b) => {
  * @param {State~Location} initialLocation
  * @param {State~Location} terminalLocation
  * @param {number} vector
- * @return {State~Location} [movedTop, movedLeft]
+ * @return {State~Location} [movedY, movedX]
  */
 const performPseudoVectorAddition = (initialLocation, terminalLocation, vector) => {
-  const [initialTop, initialLeft] = initialLocation;
+  const [initialY, initialX] = initialLocation;
   const [terminalTop, terminalLeft] = terminalLocation;
 
-  if (initialTop !== terminalTop && initialLeft !== terminalLeft) {
+  if (initialY !== terminalTop && initialX !== terminalLeft) {
     throw new Error('It is possible to move only up / down / left / right.');
   }
 
-  let movedTop = initialTop;
-  let movedLeft = initialLeft;
+  let movedY = initialY;
+  let movedX = initialX;
 
-  if (initialTop < terminalTop) {
-    movedTop = Math.min(terminalTop, initialTop + vector);
-  } else if (initialTop > terminalTop) {
-    movedTop = Math.max(terminalTop, initialTop - vector);
-  } else if (initialLeft < terminalLeft) {
-    movedLeft = Math.min(terminalLeft, initialLeft + vector);
-  } else if (initialLeft > terminalLeft) {
-    movedLeft = Math.max(terminalLeft, initialLeft - vector);
+  if (initialY < terminalTop) {
+    movedY = Math.min(terminalTop, initialY + vector);
+  } else if (initialY > terminalTop) {
+    movedY = Math.max(terminalTop, initialY - vector);
+  } else if (initialX < terminalLeft) {
+    movedX = Math.min(terminalLeft, initialX + vector);
+  } else if (initialX > terminalLeft) {
+    movedX = Math.max(terminalLeft, initialX - vector);
   }
 
-  return [movedTop, movedLeft];
+  return [movedY, movedX];
 };
 
 

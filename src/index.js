@@ -8,6 +8,10 @@ const { configureStore } =  require('./store');
 
 
 /**
+ * @namespace Immutable
+ */
+
+/**
  * @namespace State
  */
 

@@ -1,3 +1,9 @@
+/**
+ * @typedef {Function} Immutable~Job
+ */
+
+
+/** @module */
 const { createClassBasedResourceList } = require('@kjirou/utils');
 const dictify = require('dictify');
 const keymirror = require('keymirror');

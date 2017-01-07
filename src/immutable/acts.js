@@ -1,3 +1,9 @@
+/**
+ * @typedef {Function} Immutable~Act
+ */
+
+
+/** @module */
 const { createClassBasedResourceList } = require('@kjirou/utils');
 const dictify = require('dictify');
 const keymirror = require('keymirror');
@@ -56,6 +62,7 @@ class Act {
 
 Object.assign(Act, {
   id: null,
+  friendshipType: null,
   aimRange: null,
   effectRange: null,
 });

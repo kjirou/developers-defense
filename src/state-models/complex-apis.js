@@ -2,6 +2,7 @@
 const angles = require('angles');
 const boxCollide = require('box-collide');
 
+const config = require('../config');
 const { ACT_AIM_RANGE_TYPES, BOARD_TYPES, STYLES } = require('../immutable/constants');
 const { expandReachToRelativeCoordinates, matrixAdd } = require('../lib/core');
 const locationMethods = require('./location');
@@ -204,7 +205,9 @@ const computeTick = ({ allies, enemies, gameStatus }) => {
     if (unitMethods.canDoAct(newAlly)) {
       const aimedUnit = choiceAimedUnit(newAlly, act, newAllies.concat(newEnemies));
       if (aimedUnit) {
-        //console.debug(`${ newAlly.factionType }:${ newAlly.jobId } aims ${ act.id } at ${ aimedUnit.factionType }:${ aimedUnit.jobId }`);
+        if (config.isEnabledTickLog) {
+          console.debug(`${ newAlly.factionType }:${ newAlly.jobId } aims ${ act.id } at ${ aimedUnit.factionType }:${ aimedUnit.jobId }`);
+        }
 
         // TODO: 効果を発生させる
 

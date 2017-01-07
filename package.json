@@ -41,6 +41,7 @@
     "redux": "3.6.0",
     "redux-create-reducer": "1.1.1",
     "redux-thunk": "2.1.0",
+    "rpgparameter": "2.0.2",
     "run-sequence": "1.2.2",
     "sanitize.css": "4.1.0",
     "string": "3.3.3",

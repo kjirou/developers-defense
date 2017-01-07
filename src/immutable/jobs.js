@@ -70,7 +70,7 @@ const JOB_IDS = keymirror(jobs);
 
 jobList.forEach(job => {
   if (!job.id || !job.iconId) {
-    throw new Error(`Job.id="${ act.id }" is invalid`);
+    throw new Error(`Job.id="${ job.id }" is invalid`);
   }
 });
 

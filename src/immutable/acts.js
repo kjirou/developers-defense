@@ -9,10 +9,10 @@ const fixture = [
   {
     constants: {
       id: 'MAGICAL_BLAST',
+      friendshipType: 'UNFRIENDLY',
       aimRange: {
         type: 'REACHABLE',
         reach: 2,
-        friendshipType: 'UNFRIENDLY',
       },
       effectRange: {
         type: 'BALL',
@@ -23,10 +23,10 @@ const fixture = [
   {
     constants: {
       id: 'MELEE_ATTACK',
+      friendshipType: 'UNFRIENDLY',
       aimRange: {
         type: 'REACHABLE',
         reach: 1,
-        friendshipType: 'UNFRIENDLY',
       },
       effectRange: {
         type: 'UNIT',
@@ -37,10 +37,10 @@ const fixture = [
   {
     constants: {
       id: 'TREATMENT',
+      friendshipType: 'FRIENDLY',
       aimRange: {
         type: 'REACHABLE',
         reach: 1,
-        friendshipType: 'FRIENDLY',
       },
       effectRange: {
         type: 'UNIT',
@@ -68,7 +68,7 @@ const acts = dictify(actList, 'id');
 const ACT_IDS = keymirror(acts);
 
 actList.forEach(act => {
-  if (!act.id || !act.aimRange || !act.effectRange) {
+  if (!act.id || !act.friendshipType || !act.aimRange || !act.effectRange) {
     throw new Error(`Act.id="${ act.id }" is invalid`);
   }
 });

@@ -104,7 +104,7 @@ const findOneSquareFromBoardsByPlacement = (placement, ...boards) => {
  * @return {boolean}
  */
 const isUnitInBattle = (unit) => {
-  return unit.placement.boardType === BOARD_TYPES.BATTLE_BOARD && unit.hp > 0;
+  return unit.placement.boardType === BOARD_TYPES.BATTLE_BOARD && unit.hitPoints > 0;
 };
 
 /**

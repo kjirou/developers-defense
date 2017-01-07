@@ -37,7 +37,7 @@ const { areSameLocations, performPseudoVectorAddition } = require('./location');
 
 
 const createNewUnitState = () => {
-  const maxHp = PARAMETERS.MIN_MAX_HP;
+  const maxHitPoints = PARAMETERS.MIN_MAX_HIT_POINTS;
 
   return {
     uid: uuidV4(),
@@ -47,9 +47,8 @@ const createNewUnitState = () => {
     location: null,
     destinations: [],
     destinationIndex: 0,
-    // TODO: "hp" -> "hitPoints"
-    maxHp,
-    hp: maxHp,
+    maxHitPoints,
+    hitPoints: maxHitPoints,
     movingSpeed: 0,
     actionPoints: 0,
     maxActionPoints: 20,  // TODO: Temporary setting

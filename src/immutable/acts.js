@@ -74,6 +74,7 @@ const actList = createClassBasedResourceList(Act, fixture, {
 const acts = dictify(actList, 'id');
 const ACT_IDS = keymirror(acts);
 
+
 actList.forEach(act => {
   if (!act.id || !act.friendshipType || !act.aimRange || !act.effectRange) {
     throw new Error(`Act.id="${ act.id }" is invalid`);

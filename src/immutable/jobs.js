@@ -16,7 +16,7 @@ const fixture = [
     constants: {
       id: 'FIGHTER',
       iconId: 'ra-sword',
-      maxHp: 10,
+      maxHitPoints: 10,
       attackPower: 3,
       defensePower: 2,
     },
@@ -25,7 +25,7 @@ const fixture = [
     constants: {
       id: 'HEALER',
       iconId: 'ra-health',
-      maxHp: 8,
+      maxHitPoints: 8,
       defensePower: 1,
     },
   },
@@ -33,7 +33,7 @@ const fixture = [
     constants: {
       id: 'MAGE',
       iconId: 'ra-crystal-wand',
-      maxHp: 3,
+      maxHitPoints: 3,
       mattackPower: 3,
       mdefensePower: 1,
     },
@@ -53,7 +53,7 @@ class Job {
 Object.assign(Job, {
   id: null,
   iconId: null,
-  maxHp: 0,
+  maxHitPoints: 0,
   attackPower: 0,
   defensePower: 0,
   mattackPower: 0,
@@ -66,6 +66,13 @@ const jobList = createClassBasedResourceList(Job, fixture, {
 });
 const jobs = dictify(jobList, 'id');
 const JOB_IDS = keymirror(jobs);
+
+
+jobList.forEach(job => {
+  if (!job.id || !job.iconId) {
+    throw new Error(`Job.id="${ act.id }" is invalid`);
+  }
+});
 
 
 module.exports = {

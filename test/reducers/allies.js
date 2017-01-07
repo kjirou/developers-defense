@@ -32,7 +32,7 @@ describe('reducers/allies', () => {
 
     it('can update the specified ally', () => {
       const newFirstAlly = Object.assign({}, state[0], {
-        maxHp: 100,
+        maxHitPoints: 100,
       });
 
       const newState = reduceAllies(state, {
@@ -40,8 +40,8 @@ describe('reducers/allies', () => {
         ally: newFirstAlly,
       });
 
-      assert.strictEqual(state[0].maxHp, 1);
-      assert.strictEqual(newState[0].maxHp, 100);
+      assert.strictEqual(state[0].maxHitPoints, 1);
+      assert.strictEqual(newState[0].maxHitPoints, 100);
     });
 
     it('should throw a error if the specified ally does not exist', () => {

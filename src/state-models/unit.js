@@ -170,6 +170,16 @@ const calculateActionPointsRecovery = (unit) => {
 };
 
 /**
+ * @param {State~Unit} unit
+ * @param {Function} Act - One of sub classes of {@link Immutable~Act}
+ * @return {number}
+ */
+const calculateActionPointsConsumption = (unit, Act) => {
+  // TODO: Calculate from the setting of the Act
+  return 0;
+};
+
+/**
  * @return {string} One of FRIENDSHIP_TYPES
  */
 const determineFriendship = (unitA, unitB) => {
@@ -187,6 +197,7 @@ const canDoAct = (unit) => {
 
 
 module.exports = {
+  calculateActionPointsConsumption,
   calculateActionPointsRecovery,
   calculateMovementResults,
   canDoAct,

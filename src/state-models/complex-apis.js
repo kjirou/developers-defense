@@ -53,7 +53,7 @@ const getUnitPositionAsLocation = (unit) => {
 /**
  * @param {State~Location} centerSquareLocation
  * @param {number} reach - A integer >= 0
- * @return {{x, y, width, height}[]}
+ * @return {Array<{x, y, width, height}>}
  * @todo Remove overflowed coordinates from result?
  */
 const createReachableRects = (centerSquareLocation, reach) => {
@@ -187,6 +187,7 @@ const computeTick = ({ allies, enemies, gameStatus }) => {
   // TODO: 死亡者を盤上から除去するのは、ループの最初と最後どこで行う？または両方で？
   //       想定ケース)
   //       - 味方の手動退却 || 味方の死亡 -> 盤上から取り除かれてHP回復/出撃ゲージ空
+  //       - 既に前の味方の攻撃で倒している敵を攻撃してしまう
 
   // Ally's act
   newAllies = newAllies.map(ally => {
@@ -203,8 +204,12 @@ const computeTick = ({ allies, enemies, gameStatus }) => {
     if (unitMethods.canDoAct(newAlly)) {
       const aimedUnit = choiceAimedUnit(newAlly, act, newAllies.concat(newEnemies));
       if (aimedUnit) {
+        //console.debug(`${ newAlly.factionType }:${ newAlly.jobId } aims ${ act.id } at ${ aimedUnit.factionType }:${ aimedUnit.jobId }`);
+
         // TODO: 効果を発生させる
-        // TODO: AP 消費
+
+        newAlly.actionPoints = unitMethods.calculateActionPointsConsumption(newAlly, act);
+
         didAct = true;
       }
     }

@@ -4,11 +4,19 @@ const { FACTION_TYPES } = require('../../src/immutable/constants');
 const locationMethods = require('../../src/state-models/location');
 const {
   calculateActionPointsRecovery,
+  calculateDamage,
+  calculateDamageByRate,
+  calculateHealing,
+  calculateHealingByRate,
   calculateMovementResults,
   createNewAllyState,
   createNewEnemyState,
   createNewUnitState,
   determineFriendship,
+  getMaxHitPoints,
+  isAlive,
+  isDead,
+  isFullHitPoints,
 } = require('../../src/state-models/unit');
 
 
@@ -91,6 +99,155 @@ describe('state-models/unit', () => {
         ),
         10
       );
+    });
+  });
+
+  describe('parameters', () => {
+    it('getMaxHitPoints', () => {
+      assert(getMaxHitPoints(unit) > 0);
+
+      unit.fixedMaxHitPoints = 5;
+      assert.strictEqual(getMaxHitPoints(unit), 5);
+    });
+
+    it('calculateHealing', () => {
+      unit.fixedMaxHitPoints = 10;
+      unit.hitPoints = 1;
+
+      assert.deepStrictEqual(calculateHealing(unit, 0), {
+        hitPoints: 1,
+        healingPoints: 0,
+      });
+
+      assert.deepStrictEqual(calculateHealing(unit, -1), {
+        hitPoints: 1,
+        healingPoints: 0,
+      });
+
+      assert.deepStrictEqual(calculateHealing(unit, 1), {
+        hitPoints: 2,
+        healingPoints: 1,
+      });
+
+      assert.deepStrictEqual(calculateHealing(unit, 9), {
+        hitPoints: 10,
+        healingPoints: 9,
+      });
+
+      assert.deepStrictEqual(calculateHealing(unit, 10), {
+        hitPoints: 10,
+        healingPoints: 10,
+      });
+    });
+
+    it('calculateHealingByRate', () => {
+      unit.fixedMaxHitPoints = 10;
+      unit.hitPoints = 1;
+
+      assert.deepStrictEqual(calculateHealingByRate(unit, 0.0), {
+        hitPoints: 1,
+        healingPoints: 0,
+      });
+
+      assert.deepStrictEqual(calculateHealingByRate(unit, -1.0), {
+        hitPoints: 1,
+        healingPoints: 0,
+      });
+
+      assert.deepStrictEqual(calculateHealingByRate(unit, 0.1), {
+        hitPoints: 2,
+        healingPoints: 1,
+      });
+
+      assert.deepStrictEqual(calculateHealingByRate(unit, 1.0), {
+        hitPoints: 10,
+        healingPoints: 10,
+      });
+
+      assert.deepStrictEqual(calculateHealingByRate(unit, 2.0), {
+        hitPoints: 10,
+        healingPoints: 20,
+      });
+    });
+
+    it('calculateDamage', () => {
+      unit.fixedMaxHitPoints = 10;
+      unit.hitPoints = 10;
+
+      assert.deepStrictEqual(calculateDamage(unit, 0), {
+        hitPoints: 10,
+        damagePoints: 0,
+      });
+
+      assert.deepStrictEqual(calculateDamage(unit, -1), {
+        hitPoints: 10,
+        damagePoints: 0,
+      });
+
+      assert.deepStrictEqual(calculateDamage(unit, 1), {
+        hitPoints: 9,
+        damagePoints: 1,
+      });
+
+      assert.deepStrictEqual(calculateDamage(unit, 10), {
+        hitPoints: 0,
+        damagePoints: 10,
+      });
+
+      assert.deepStrictEqual(calculateDamage(unit, 11), {
+        hitPoints: 0,
+        damagePoints: 11,
+      });
+    });
+
+    it('calculateDamageByRate', () => {
+      unit.fixedMaxHitPoints = 10;
+      unit.hitPoints = 10;
+
+      assert.deepStrictEqual(calculateDamageByRate(unit, 0.0), {
+        hitPoints: 10,
+        damagePoints: 0,
+      });
+
+      assert.deepStrictEqual(calculateDamageByRate(unit, -1.0), {
+        hitPoints: 10,
+        damagePoints: 0,
+      });
+
+      assert.deepStrictEqual(calculateDamageByRate(unit, 0.1), {
+        hitPoints: 9,
+        damagePoints: 1,
+      });
+
+      assert.deepStrictEqual(calculateDamageByRate(unit, 1.0), {
+        hitPoints: 0,
+        damagePoints: 10,
+      });
+
+      assert.deepStrictEqual(calculateDamageByRate(unit, 2.0), {
+        hitPoints: 0,
+        damagePoints: 20,
+      });
+    });
+
+    it('isFullHitPoints', () => {
+      unit.fixedMaxHitPoints = 10;
+      unit.hitPoints = 10;
+      assert.strictEqual(isFullHitPoints(unit), true);
+
+      unit.hitPoints = 9;
+      assert.strictEqual(isFullHitPoints(unit), false);
+    });
+
+    it('isDead / isAlive', () => {
+      unit.fixedMaxHitPoints = 10;
+      unit.hitPoints = 0;
+      assert.strictEqual(isDead(unit), true);
+      assert.strictEqual(isAlive(unit), false);
+
+      unit.hitPoints = 1;
+      assert.strictEqual(isDead(unit), false);
+      assert.strictEqual(isAlive(unit), true);
     });
   });
 });

@@ -32,13 +32,12 @@ const uuidV4 = require('uuid/v4');
 const { FACTION_TYPES, FRIENDSHIP_TYPES, PARAMETERS } = require('../immutable/constants');
 const { ACT_IDS, acts } = require('../immutable/acts');
 const { JOB_IDS, jobs } = require('../immutable/jobs');
+const parameters = require('../lib/parameters');
 const { createNewPlacementState } = require('./placement');
 const { areSameLocations, performPseudoVectorAddition } = require('./location');
 
 
 const createNewUnitState = () => {
-  const maxHitPoints = PARAMETERS.MIN_MAX_HIT_POINTS;
-
   return {
     uid: uuidV4(),
     factionType: null,
@@ -47,8 +46,8 @@ const createNewUnitState = () => {
     location: null,
     destinations: [],
     destinationIndex: 0,
-    maxHitPoints,
-    hitPoints: maxHitPoints,
+    hitPoints: parameters.maxHitPoints.min,
+    fixedMaxHitPoints: null,
     movingSpeed: 0,
     actionPoints: 0,
     maxActionPoints: 20,  // TODO: Temporary setting
@@ -101,6 +100,53 @@ const getAct = (unit) => {
 const getIconId = (unit) => {
   return getJob(unit).iconId;
 };
+
+const getMaxHitPoints = (unit) => {
+  // TODO
+  return unit.fixedMaxHitPoints || 10;
+};
+
+const calculateUpdateHitPoints = (unit, nextHp) => {
+  return clamp(nextHp, 0, getMaxHitPoints(unit));
+};
+
+const calculateHealing = (unit, points) => {
+  const actualPoints = Math.max(0, points);
+
+  return {
+    hitPoints: calculateUpdateHitPoints(unit, unit.hitPoints + actualPoints),
+    healingPoints: actualPoints,
+  };
+};
+
+const calculateHealingByRate = (unit, rate) => {
+  return calculateHealing(unit, Math.ceil(getMaxHitPoints(unit) * rate));
+};
+
+const calculateDamage = (unit, points) => {
+  const actualPoints = Math.max(0, points);
+
+  return {
+    hitPoints: calculateUpdateHitPoints(unit, unit.hitPoints - actualPoints),
+    damagePoints: actualPoints,
+  };
+};
+
+const calculateDamageByRate = (unit, rate) => {
+  return calculateDamage(unit, Math.ceil(getMaxHitPoints(unit) * rate));
+};
+
+const isFullHitPoints = (unit) => {
+  return unit.hitPoints === getMaxHitPoints(unit);
+}
+
+const isDead = (unit) => {
+  return unit.hitPoints === 0;
+}
+
+const isAlive = (unit) => {
+  return !isDead(unit);
+}
 
 const canSortieAsAlly = (ally) => {
   if (!isAlly(ally)) {
@@ -193,6 +239,10 @@ module.exports = {
   calculateActionPointsConsumption,
   calculateActionPointsRecovery,
   calculateMovementResults,
+  calculateDamage,
+  calculateDamageByRate,
+  calculateHealing,
+  calculateHealingByRate,
   canDoAct,
   canRetreatAsAlly,
   canSortieAsAlly,
@@ -200,7 +250,11 @@ module.exports = {
   createNewEnemyState,
   createNewUnitState,
   determineFriendship,
+  isAlive,
   isAlly,
+  isDead,
+  isFullHitPoints,
   getAct,
   getIconId,
+  getMaxHitPoints,
 };

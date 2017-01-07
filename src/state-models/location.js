@@ -1,3 +1,5 @@
+// TODO: `Location` -> `Point` & `[y,x]` -> {x,y}
+
 /**
  * @typedef {number[]} State~Location
  * @description [y, x] (= [top, left]) position on the battle-board

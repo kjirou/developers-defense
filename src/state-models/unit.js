@@ -180,7 +180,7 @@ const determineFriendship = (unitA, unitB) => {
  * @param {State~Unit} unit
  * @return {boolean}
  */
-const canDoAction = (unit) => {
+const canDoAct = (unit) => {
   // TODO:
   return unit.actionPoints >= unit.maxActionPoints;
 };
@@ -189,7 +189,7 @@ const canDoAction = (unit) => {
 module.exports = {
   calculateActionPointsRecovery,
   calculateMovementResults,
-  canDoAction,
+  canDoAct,
   canRetreatAsAlly,
   canSortieAsAlly,
   createNewAllyState,

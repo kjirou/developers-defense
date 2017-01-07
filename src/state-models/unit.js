@@ -26,6 +26,7 @@
 
 
 /** @module */
+const clamp = require('lodash.clamp');
 const uuidV4 = require('uuid/v4');
 
 const { FACTION_TYPES, FRIENDSHIP_TYPES, PARAMETERS } = require('../immutable/constants');
@@ -169,7 +170,7 @@ const calculateActionPointsConsumption = (unit, Act) => {
  * @return {number}
  */
 const calculateActionPointsRecovery = (unit) => {
-  return Math.max(0, Math.min(unit.maxActionPoints, unit.actionPoints + unit.actionPointsRecovery));
+  return clamp(unit.actionPoints + unit.actionPointsRecovery, 0, unit.maxActionPoints);
 };
 
 /**

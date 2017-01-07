@@ -2,10 +2,11 @@ const assert = require('power-assert');
 
 const { FACTION_TYPES } = require('../../src/immutable/constants');
 const {
+  calculateActionPointsRecovery,
+  calculateMovementResults,
   createNewAllyState,
   createNewEnemyState,
   createNewUnitState,
-  calculateMovementResults,
   determineFriendship,
 } = require('../../src/state-models/unit');
 
@@ -60,6 +61,31 @@ describe('state-models/unit', () => {
       assert.strictEqual(determineFriendship(enemy, enemy), 'FRIENDLY');
       assert.strictEqual(determineFriendship(ally, enemy), 'UNFRIENDLY');
       assert.strictEqual(determineFriendship(enemy, ally), 'UNFRIENDLY');
+    });
+  });
+
+  describe('calculateActionPointsRecovery', () => {
+    it('can execute correctly', () => {
+      assert.strictEqual(
+        calculateActionPointsRecovery(
+          Object.assign(createNewUnitState(), { actionPoints: 0, actionPointsRecovery: 3, maxActionPoints: 10 })
+        ),
+        3
+      );
+
+      assert.strictEqual(
+        calculateActionPointsRecovery(
+          Object.assign(createNewUnitState(), { actionPoints: 3, actionPointsRecovery: 3, maxActionPoints: 10 })
+        ),
+        6
+      );
+
+      assert.strictEqual(
+        calculateActionPointsRecovery(
+          Object.assign(createNewUnitState(), { actionPoints: 8, actionPointsRecovery: 3, maxActionPoints: 10 })
+        ),
+        10
+      );
     });
   });
 });

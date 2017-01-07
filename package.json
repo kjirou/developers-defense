@@ -30,6 +30,7 @@
     "gulp-sass": "2.3.2",
     "jsdoc": "3.4.3",
     "keymirror": "0.1.1",
+    "lodash.clamp": "4.0.3",
     "lodash.memoize": "4.1.2",
     "mocha": "3.2.0",
     "node-notifier": "4.6.1",

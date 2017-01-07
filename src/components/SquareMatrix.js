@@ -46,8 +46,8 @@ const SquareMatrix = ({ squareMatrix, cursorCoordinate, units, unitsOnSquares, h
     return React.createElement(Unit, {
       key: 'square-matrix-unit-' + unit.uid,
       iconId: getIconId(unit),
-      top: unit.location[0],
-      left: unit.location[1],
+      top: unit.location.y,
+      left: unit.location.x,
       classNames: [
         'square-matrix__unit',
         isAlly(unit) ? 'unit--ally' : 'unit--enemy',

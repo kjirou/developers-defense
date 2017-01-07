@@ -1,14 +1,40 @@
-// TODO: `Location` -> `Point` & `[y,x]` -> {x,y}
-
 /**
- * @typedef {number[]} State~Location
- * @description [y, x] (= [top, left]) position on the battle-board
+ * @typedef {Object} State~Location
+ * @description A position on the battle-board
+ * @property {number} y - A distance from top to bottom in other word. In other words in CSS term is "top".
+ * @property {number} x - A distance from left to right. In other words in CSS terms is "left".
  */
 
 
 /** @module */
+const angles = require('angles');
+
+
 const createNewLocationState = (y, x) => {
-  return [y, x];
+  return { y, x };
+};
+
+/**
+ * @param {...State~Location} locations
+ * @return {boolean}
+ */
+const areSameLocations = (...locations) => {
+  const [first, ...rest] = locations;
+  return rest.every(v => first.y === v.y && first.x === v.x);
+};
+
+/**
+ * @param {...State~Location} locations
+ * @return {State~Location}
+ */
+const addLocations = (...locations) => {
+  const [first, ...rest] = locations;
+  let { y, x } = first;
+  rest.forEach(v => {
+    y += v.y;
+    x += v.x;
+  });
+  return createNewLocationState(y, x);
 };
 
 /**
@@ -17,44 +43,61 @@ const createNewLocationState = (y, x) => {
  * @return {number}
  */
 const measureDistance = (a, b) => {
-  return Math.sqrt(Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2));
+  return Math.sqrt(Math.pow(a.y - b.y, 2) + Math.pow(a.x - b.x, 2));
+};
+
+/**
+ * Measure the angle of the line with the top as 0
+ * @param {State~Location} from
+ * @param {State~Location} to
+ * @return {?number} ex) from(0, 0) / to(-1, 0) -> 0
+ *                       from(0, 0) / to(-1, 1) -> 45
+ *                       from(0, 0) / to(0, 1)  -> 90
+ *                       from(0, 0) / to(1, 0)  -> 180
+ *                       from(0, 0) / to(0, -1) -> 270
+ *                       from(0, 0) / to(0, 0)  -> null
+ */
+const measureAngleWithTopAsZero = (from, to) => {
+  if (areSameLocations(from, to)) return null;
+  return angles.normalize(angles.fromSlope([from.x, from.y], [to.x, to.y]) - 270);
 };
 
 /**
  * ベクトルの和を行うが、方向は上下左右に限定する。
- * 大量に呼び出されるので処理の速さを優先する。
- * @param {State~Location} initialLocation
- * @param {State~Location} terminalLocation
- * @param {number} vector
- * @return {State~Location} [movedY, movedX]
+ * 大量に呼び出されるので処理の速さに配慮する。
+ * @param {State~Location} initial
+ * @param {State~Location} terminal
+ * @param {number} scalar
+ * @todo Memoize?
+ * @return {State~Location} { y: movedY, x: movedX }
  */
-const performPseudoVectorAddition = (initialLocation, terminalLocation, vector) => {
-  const [initialY, initialX] = initialLocation;
-  const [terminalTop, terminalLeft] = terminalLocation;
-
-  if (initialY !== terminalTop && initialX !== terminalLeft) {
+const performPseudoVectorAddition = (initial, terminal, scalar) => {
+  if (initial.y !== terminal.y && initial.x !== terminal.x) {
     throw new Error('It is possible to move only up / down / left / right.');
   }
 
-  let movedY = initialY;
-  let movedX = initialX;
+  let movedY = initial.y;
+  let movedX = initial.x;
 
-  if (initialY < terminalTop) {
-    movedY = Math.min(terminalTop, initialY + vector);
-  } else if (initialY > terminalTop) {
-    movedY = Math.max(terminalTop, initialY - vector);
-  } else if (initialX < terminalLeft) {
-    movedX = Math.min(terminalLeft, initialX + vector);
-  } else if (initialX > terminalLeft) {
-    movedX = Math.max(terminalLeft, initialX - vector);
+  if (initial.y < terminal.y) {
+    movedY = Math.min(terminal.y, initial.y + scalar);
+  } else if (initial.y > terminal.y) {
+    movedY = Math.max(terminal.y, initial.y - scalar);
+  } else if (initial.x < terminal.x) {
+    movedX = Math.min(terminal.x, initial.x + scalar);
+  } else if (initial.x > terminal.x) {
+    movedX = Math.max(terminal.x, initial.x - scalar);
   }
 
-  return [movedY, movedX];
+  return createNewLocationState(movedY, movedX);
 };
 
 
 module.exports = {
+  addLocations,
+  areSameLocations,
   createNewLocationState,
+  measureAngleWithTopAsZero,
   measureDistance,
   performPseudoVectorAddition,
 };

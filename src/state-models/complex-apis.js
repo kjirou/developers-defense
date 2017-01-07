@@ -4,7 +4,7 @@ const boxCollide = require('box-collide');
 
 const config = require('../config');
 const { ACT_AIM_RANGE_TYPES, BOARD_TYPES, STYLES } = require('../immutable/constants');
-const { expandReachToRelativeCoordinates, matrixAdd } = require('../lib/core');
+const { expandReachToRelativeCoordinates } = require('../lib/core');
 const locationMethods = require('./location');
 const squareMatrixMethods = require('./square-matrix');
 const unitMethods = require('./unit');
@@ -15,7 +15,8 @@ const unitMethods = require('./unit');
  * @return {State~Location} A location of square
  */
 const coordinateToSquareLocation = (coordinate) => {
-  return [coordinate[0] * STYLES.SQUARE_HEIGHT, coordinate[1] * STYLES.SQUARE_WIDTH];
+  return locationMethods.createNewLocationState(
+    coordinate[0] * STYLES.SQUARE_HEIGHT, coordinate[1] * STYLES.SQUARE_WIDTH);
 };
 
 /**
@@ -24,8 +25,8 @@ const coordinateToSquareLocation = (coordinate) => {
  */
 const squareLocationToRect = (squareLocation) => {
   return {
-    x: squareLocation[1],
-    y: squareLocation[0],
+    x: squareLocation.x,
+    y: squareLocation.y,
     width: STYLES.SQUARE_WIDTH,
     height: STYLES.SQUARE_HEIGHT,
   };
@@ -59,8 +60,10 @@ const getUnitPositionAsLocation = (unit) => {
  */
 const createReachableRects = (centerSquareLocation, reach) => {
   return expandReachToRelativeCoordinates(0, reach)
-    .map(relativeCoordinate => matrixAdd([centerSquareLocation], [coordinateToSquareLocation(relativeCoordinate)]))
-    .map(([location]) => squareLocationToRect(location));
+    .map(relativeCoordinate =>
+      locationMethods.addLocations(centerSquareLocation, coordinateToSquareLocation(relativeCoordinate))
+    )
+    .map(location => squareLocationToRect(location));
 };
 
 /**
@@ -135,9 +138,9 @@ const canActorAimActAtTargetedUnit = (actor, act, target) => {
 
 /**
  * @param {State~Unit} actor
- * @param {Act} act
+ * @param {Function} act
  * @param {State~Unit[]} units
- * @return {State~Unit[]}
+ * @return {?State~Unit}
  */
 const choiceAimedUnit = (actor, act, units) => {
   const aimableUnits = units
@@ -145,6 +148,7 @@ const choiceAimedUnit = (actor, act, units) => {
     .filter(unit => canActorAimActAtTargetedUnit(actor, act, unit));
 
   const actorLocation = getUnitPositionAsLocation(actor);
+
   aimableUnits.sort((a, b) => {
     const aLocation = getUnitPositionAsLocation(a);
     const bLocation = getUnitPositionAsLocation(b);
@@ -159,11 +163,11 @@ const choiceAimedUnit = (actor, act, units) => {
     }
 
     // 2nd; Sort by clock-wise
-    const angleA = angles.fromSlope([-actorLocation[0], actorLocation[1]], [-aLocation[0], aLocation[1]]);
-    const angleB = angles.fromSlope([-actorLocation[0], actorLocation[1]], [-bLocation[0], bLocation[1]]);
-    if (angleA < angleB) {
+    const angleA = locationMethods.measureAngleWithTopAsZero(actorLocation, aLocation);
+    const angleB = locationMethods.measureAngleWithTopAsZero(actorLocation, bLocation);
+    if (angleA === null || angleA < angleB) {
       return -1;
-    } else if (angleA > angleB) {
+    } else if (angleB === null || angleA > angleB) {
       return 1;
     }
 

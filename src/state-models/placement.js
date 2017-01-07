@@ -9,12 +9,13 @@
 const uuidV4 = require('uuid/v4');
 
 const { BOARD_TYPES } = require('../immutable/constants');
+const { createNewCoordinateState } = require('./coordinate');
 
 
-const createNewPlacementState = () => {
+const createNewPlacementState = (boardType = null, coordinate = null) => {
   return {
-    boardType: null,
-    coordinate: null,
+    boardType,
+    coordinate: coordinate === null ? coordinate : createNewCoordinateState(...coordinate),
   };
 };
 

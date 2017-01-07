@@ -1,6 +1,7 @@
 const assert = require('power-assert');
 
 const { FACTION_TYPES } = require('../../src/immutable/constants');
+const locationMethods = require('../../src/state-models/location');
 const {
   calculateActionPointsRecovery,
   calculateMovementResults,
@@ -28,26 +29,30 @@ describe('state-models/unit', () => {
     });
 
     it('can move', () => {
-      unit.destinations = [[1, 2], [2, 2], [2, 3]];
+      unit.destinations = [
+        locationMethods.createNewLocationState(1, 2),
+        locationMethods.createNewLocationState(2, 2),
+        locationMethods.createNewLocationState(2, 3),
+      ];
       unit.movingSpeed = 99;
 
       assert.strictEqual(unit.location, null);
       assert.strictEqual(unit.destinationIndex, 0);
 
       Object.assign(unit, calculateMovementResults(unit));
-      assert.deepStrictEqual(unit.location, [1, 2]);
+      assert.deepStrictEqual(unit.location, locationMethods.createNewLocationState(1, 2));
       assert.strictEqual(unit.destinationIndex, 1);
 
       Object.assign(unit, calculateMovementResults(unit));
-      assert.deepStrictEqual(unit.location, [2, 2]);
+      assert.deepStrictEqual(unit.location, locationMethods.createNewLocationState(2, 2));
       assert.strictEqual(unit.destinationIndex, 2);
 
       Object.assign(unit, calculateMovementResults(unit));
-      assert.deepStrictEqual(unit.location, [2, 3]);
+      assert.deepStrictEqual(unit.location, locationMethods.createNewLocationState(2, 3));
       assert.strictEqual(unit.destinationIndex, 3);
 
       Object.assign(unit, calculateMovementResults(unit));
-      assert.deepStrictEqual(unit.location, [2, 3]);
+      assert.deepStrictEqual(unit.location, locationMethods.createNewLocationState(2, 3));
       assert.strictEqual(unit.destinationIndex, 3);
     });
   });

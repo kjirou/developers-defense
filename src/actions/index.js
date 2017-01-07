@@ -2,7 +2,9 @@
 const { ACTION_TYPES, BOARD_TYPES, PARAMETERS, STYLES } = require('../immutable/constants');
 const { JOB_IDS } = require('../immutable/jobs');
 const { computeTick, findOneSquareFromBoardsByPlacement } = require('../state-models/complex-apis');
+const locationMethods = require('../state-models/location');
 const { areSamePlacements, isPlacedOnBoard } = require('../state-models/placement');
+const placementMethods = require('../state-models/placement');
 const { findSquareByCoordinate, parseMapText } = require('../state-models/square-matrix');
 const unitMethods = require('../state-models/unit');
 const { createNewUnitCollectionState, findUnitsByPlacement } = require('../state-models/unit-collection');
@@ -193,22 +195,26 @@ const initializeApp = () => {
   const allies = createNewUnitCollectionState().concat([
     Object.assign(unitMethods.createNewAllyState(), {
       jobId: JOB_IDS.FIGHTER,
-      placement: { boardType: BOARD_TYPES.SORTIE_BOARD, coordinate: [0, 0] },
+      placement: placementMethods.createNewPlacementState(BOARD_TYPES.SORTIE_BOARD, [0, 0]),
     }),
     Object.assign(unitMethods.createNewAllyState(), {
       jobId: JOB_IDS.HEALER,
-      placement: { boardType: BOARD_TYPES.SORTIE_BOARD, coordinate: [0, 1] },
+      placement: placementMethods.createNewPlacementState(BOARD_TYPES.SORTIE_BOARD, [0, 1]),
     }),
     Object.assign(unitMethods.createNewAllyState(), {
       jobId: JOB_IDS.MAGE,
-      placement: { boardType: BOARD_TYPES.SORTIE_BOARD, coordinate: [1, 3] },
+      placement: placementMethods.createNewPlacementState(BOARD_TYPES.SORTIE_BOARD, [1, 3]),
     }),
   ]);
 
   const enemies = createNewUnitCollectionState().concat([
     Object.assign(unitMethods.createNewEnemyState(), {
       jobId: JOB_IDS.FIGHTER,
-      destinations: [[0 * 48, 5 * 48], [7 * 48, 5 * 48], [7 * 48, 1 * 48]],
+      destinations: [
+        locationMethods.createNewLocationState(0 * 48, 5 * 48),
+        locationMethods.createNewLocationState(7 * 48, 5 * 48),
+        locationMethods.createNewLocationState(7 * 48, 1 * 48),
+      ],
     }),
   ]);
 

@@ -37,9 +37,9 @@ describe('state-models/complex-apis', () => {
     });
   };
 
-  const _createLocatedUnit = (top, left) => {
+  const _createLocatedUnit = (y, x) => {
     return Object.assign(unitMethods.createNewUnitState(), {
-      location: locationMethods.createNewLocationState(top, left),
+      location: locationMethods.createNewLocationState(y, x),
     });
   };
 
@@ -61,12 +61,12 @@ describe('state-models/complex-apis', () => {
     it('can execute correctly', () => {
       assert.deepStrictEqual(
         coordinateToSquareLocation(coordinateMethods.createNewCoordinateState(0, 0)),
-        [0, 0]
+        locationMethods.createNewLocationState(0, 0)
       );
 
       assert.deepStrictEqual(
         coordinateToSquareLocation(coordinateMethods.createNewCoordinateState(1, 2)),
-        [48, 96]
+        locationMethods.createNewLocationState(48, 96)
       );
     });
   });
@@ -97,21 +97,30 @@ describe('state-models/complex-apis', () => {
 
   describe('createReachableRects', () => {
     it('can execute correctly', () => {
-      assert.deepStrictEqual(createReachableRects([0, 0], 0), [
-        { x: 0, y: 0, width: 48, height: 48 },
-      ]);
+      assert.deepStrictEqual(
+        createReachableRects(locationMethods.createNewLocationState(0, 0), 0),
+        [
+          { x: 0, y: 0, width: 48, height: 48 },
+        ]
+      );
 
-      assert.deepStrictEqual(createReachableRects([0, 0], 1), [
-        { x: 0, y: 0, width: 48, height: 48 },
-        { x: 0, y: -48, width: 48, height: 48 },
-        { x: 48, y: 0, width: 48, height: 48 },
-        { x: 0, y: 48, width: 48, height: 48 },
-        { x: -48, y: 0, width: 48, height: 48 },
-      ]);
+      assert.deepStrictEqual(
+        createReachableRects(locationMethods.createNewLocationState(0, 0), 1),
+        [
+          { x: 0, y: 0, width: 48, height: 48 },
+          { x: 0, y: -48, width: 48, height: 48 },
+          { x: 48, y: 0, width: 48, height: 48 },
+          { x: 0, y: 48, width: 48, height: 48 },
+          { x: -48, y: 0, width: 48, height: 48 },
+        ]
+      );
 
-      assert.deepStrictEqual(createReachableRects([100, 150], 0), [
-        { x: 150, y: 100, width: 48, height: 48 },
-      ]);
+      assert.deepStrictEqual(
+        createReachableRects(locationMethods.createNewLocationState(100, 150), 0),
+        [
+          { x: 150, y: 100, width: 48, height: 48 },
+        ]
+      );
     });
   });
 

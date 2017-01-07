@@ -33,7 +33,7 @@ const { FACTION_TYPES, FRIENDSHIP_TYPES, PARAMETERS } = require('../immutable/co
 const { ACT_IDS, acts } = require('../immutable/acts');
 const { JOB_IDS, jobs } = require('../immutable/jobs');
 const { createNewPlacementState } = require('./placement');
-const { performPseudoVectorAddition } = require('./location');
+const { areSameLocations, performPseudoVectorAddition } = require('./location');
 
 
 const createNewUnitState = () => {
@@ -146,8 +146,8 @@ const calculateMovementResults = (unit) => {
     newLocation = currentDestination;
   }
 
-  const newDestinationIndex = unit.destinationIndex +
-    (newLocation[0] === currentDestination[0] && newLocation[1] === currentDestination[1] ? 1 : 0);
+  const newDestinationIndex =
+    unit.destinationIndex + (areSameLocations(newLocation, currentDestination) ? 1 : 0);
 
   return {
     location: newLocation,

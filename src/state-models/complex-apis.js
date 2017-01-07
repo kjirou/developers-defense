@@ -208,6 +208,7 @@ const computeTick = ({ allies, enemies, gameStatus }) => {
 
         // TODO: 効果を発生させる
 
+        // Comsume AP
         newAlly.actionPoints = unitMethods.calculateActionPointsConsumption(newAlly, act);
 
         didAct = true;
@@ -216,8 +217,7 @@ const computeTick = ({ allies, enemies, gameStatus }) => {
 
     if (!didAct) {
       // Recover AP
-      const { actionPoints } = unitMethods.calculateActionPointsRecovery(newAlly);
-      Object.assign(newAlly, { actionPoints });
+      newAlly.actionPoints = unitMethods.calculateActionPointsRecovery(newAlly);
     }
 
     return newAlly;

@@ -156,27 +156,20 @@ const calculateMovementResults = (unit) => {
 
 /**
  * @param {State~Unit} unit
- * @return {{ actionPoints }}
- */
-const calculateActionPointsRecovery = (unit) => {
-  const newActionPoints = Math.max(
-    0,
-    Math.min(unit.maxActionPoints, unit.actionPoints + unit.actionPointsRecovery)
-  );
-
-  return {
-    actionPoints: newActionPoints,
-  };
-};
-
-/**
- * @param {State~Unit} unit
  * @param {Function} Act - One of sub classes of {@link Immutable~Act}
  * @return {number}
  */
 const calculateActionPointsConsumption = (unit, Act) => {
   // TODO: Calculate from the setting of the Act
   return 0;
+};
+
+/**
+ * @param {State~Unit} unit
+ * @return {number}
+ */
+const calculateActionPointsRecovery = (unit) => {
+  return Math.max(0, Math.min(unit.maxActionPoints, unit.actionPoints + unit.actionPointsRecovery));
 };
 
 /**

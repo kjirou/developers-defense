@@ -2,7 +2,7 @@
 const { ACTION_TYPES, BOARD_TYPES, PARAMETERS, STYLES } = require('../immutable/constants');
 const { JOB_IDS } = require('../immutable/jobs');
 const { computeTick, findOneSquareFromBoardsByPlacement } = require('../state-models/complex-apis');
-const { areSamePlace, isPlacedOnBoard } = require('../state-models/placement');
+const { areSamePlacements, isPlacedOnBoard } = require('../state-models/placement');
 const { findSquareByCoordinate, parseMapText } = require('../state-models/square-matrix');
 const unitMethods = require('../state-models/unit');
 const { createNewUnitCollectionState, findUnitsByPlacement } = require('../state-models/unit-collection');
@@ -131,7 +131,7 @@ const touchSquare = (newPlacement) => {
       dispatch(clearCursor());
 
     // Just the cursor disappears
-    } else if (areSamePlace(newPlacement, currentPlacement)) {
+    } else if (areSamePlacements(newPlacement, currentPlacement)) {
       dispatch(clearCursor());
 
     // Just move the cursor

@@ -27,7 +27,7 @@ const isPlacedOnBoard = (placement) => isPlacedOnSortieBoard(placement) || isPla
  * @param {...State~Placement} placements
  * @return {boolean}
  */
-const areSamePlace = (...placements) => {
+const areSamePlacements = (...placements) => {
   const [first, ...rest] = placements;
   return rest.every(v => {
     return first.boardType === v.boardType &&
@@ -38,7 +38,7 @@ const areSamePlace = (...placements) => {
 
 
 module.exports = {
-  areSamePlace,
+  areSamePlacements,
   createNewPlacementState,
   isPlacedOnSortieBoard,
   isPlacedOnBattleBoard,

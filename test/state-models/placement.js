@@ -4,12 +4,12 @@ const { BOARD_TYPES } = require('../../src/immutable/constants');
 const { cloneViaJson } = require('../../src/lib/core');
 const {
   createNewPlacementState,
-  areSamePlace,
+  areSamePlacements,
 } = require('../../src/state-models/placement');
 
 
 describe('state-models/placement', () => {
-  describe('areSamePlace', () => {
+  describe('areSamePlacements', () => {
     it('should be executed correctly', () => {
       const p = createNewPlacementState();
 
@@ -29,16 +29,16 @@ describe('state-models/placement', () => {
       p4.boardType = BOARD_TYPES.BATTLE_BOARD;
       p4.coordinate = [0, 2];
 
-      assert(areSamePlace(p, cloneViaJson(p)));
-      assert(areSamePlace(p1, cloneViaJson(p1)));
-      assert(areSamePlace(p2, cloneViaJson(p2)));
-      assert(areSamePlace(p3, cloneViaJson(p3)));
-      assert(areSamePlace(p4, cloneViaJson(p4)));
+      assert(areSamePlacements(p, cloneViaJson(p)));
+      assert(areSamePlacements(p1, cloneViaJson(p1)));
+      assert(areSamePlacements(p2, cloneViaJson(p2)));
+      assert(areSamePlacements(p3, cloneViaJson(p3)));
+      assert(areSamePlacements(p4, cloneViaJson(p4)));
 
-      assert(areSamePlace(p, p1) === false);
-      assert(areSamePlace(p1, p2) === false);
-      assert(areSamePlace(p1, p3) === false);
-      assert(areSamePlace(p1, p4) === false);
+      assert(areSamePlacements(p, p1) === false);
+      assert(areSamePlacements(p1, p2) === false);
+      assert(areSamePlacements(p1, p3) === false);
+      assert(areSamePlacements(p1, p4) === false);
     });
   });
 });

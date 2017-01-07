@@ -4,7 +4,7 @@
 
 
 /** @module */
-const { areSamePlace } = require('./placement');
+const { areSamePlacements } = require('./placement');
 
 
 const createNewUnitCollectionState = () => {
@@ -13,7 +13,7 @@ const createNewUnitCollectionState = () => {
 
 
 const findUnitsByPlacement = (unitCollection, placement) => {
-  return unitCollection.filter(unit => areSamePlace(unit.placement, placement));
+  return unitCollection.filter(unit => areSamePlacements(unit.placement, placement));
 };
 
 /**

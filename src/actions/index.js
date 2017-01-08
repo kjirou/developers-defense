@@ -1,13 +1,12 @@
 /** @module */
 const { ACTION_TYPES, BOARD_TYPES, PARAMETERS, STYLES } = require('../immutable/constants');
 const { JOB_IDS } = require('../immutable/jobs');
-const { computeTick, findOneSquareFromBoardsByPlacement } = require('../state-models/complex-apis');
+const complexApisMethods = require('../state-models/complex-apis');
 const locationMethods = require('../state-models/location');
-const { areSamePlacements, isPlacedOnBoard } = require('../state-models/placement');
 const placementMethods = require('../state-models/placement');
-const { findSquareByCoordinate, parseMapText } = require('../state-models/square-matrix');
+const squareMatrixMethods = require('../state-models/square-matrix');
 const unitMethods = require('../state-models/unit');
-const { createNewUnitCollectionState, findUnitsByPlacement } = require('../state-models/unit-collection');
+const unitCollectionMethods = require('../state-models/unit-collection');
 
 
 const clearCursor = () => {
@@ -68,11 +67,11 @@ const touchSquare = (newPlacement) => {
   return (dispatch, getState) => {
     const { cursor, sortieBoard, allies, battleBoard } = getState();
     const currentPlacement = cursor.placement;
-    const isCurrentPlacementPlacedOnBoard = isPlacedOnBoard(currentPlacement);
-    const currentSquare = findOneSquareFromBoardsByPlacement(currentPlacement, sortieBoard, battleBoard);
-    const newSquare = findOneSquareFromBoardsByPlacement(newPlacement, sortieBoard, battleBoard);
-    const currentCursorHittingAlly = findUnitsByPlacement(allies, currentPlacement)[0] || null;
-    const newCursorHittingAlly = findUnitsByPlacement(allies, newPlacement)[0] || null;
+    const isCurrentPlacementPlacedOnBoard = placementMethods.isPlacedOnBoard(currentPlacement);
+    const currentSquare = complexApisMethods.findOneSquareFromBoardsByPlacement(currentPlacement, sortieBoard, battleBoard);
+    const newSquare = complexApisMethods.findOneSquareFromBoardsByPlacement(newPlacement, sortieBoard, battleBoard);
+    const currentCursorHittingAlly = unitCollectionMethods.findUnitsByPlacement(allies, currentPlacement)[0] || null;
+    const newCursorHittingAlly = unitCollectionMethods.findUnitsByPlacement(allies, newPlacement)[0] || null;
 
     // TODO: Probably, it becomes very verbose...
 
@@ -133,7 +132,7 @@ const touchSquare = (newPlacement) => {
       dispatch(clearCursor());
 
     // Just the cursor disappears
-    } else if (areSamePlacements(newPlacement, currentPlacement)) {
+    } else if (placementMethods.areSamePlacements(newPlacement, currentPlacement)) {
       dispatch(clearCursor());
 
     // Just move the cursor
@@ -160,7 +159,7 @@ const startGame = () => {
           return;
         }
 
-        const newState = computeTick({ allies, enemies, gameStatus });
+        const newState = complexApisMethods.computeTick({ allies, enemies, gameStatus });
 
         dispatch(tick(
           gameStatus.tickId + 1,
@@ -190,9 +189,9 @@ const initializeApp = () => {
     '.C    .',
     '.......',
   ].join('\n');
-  const squareMatrixExtension = parseMapText(mapText);
+  const squareMatrixExtension = squareMatrixMethods.parseMapText(mapText);
 
-  const allies = createNewUnitCollectionState().concat([
+  const allies = unitCollectionMethods.createNewUnitCollectionState().concat([
     Object.assign(unitMethods.createNewAllyState(), {
       jobId: JOB_IDS.FIGHTER,
       placement: placementMethods.createNewPlacementState(BOARD_TYPES.SORTIE_BOARD, [0, 0]),
@@ -211,7 +210,7 @@ const initializeApp = () => {
     });
   });
 
-  const enemies = createNewUnitCollectionState().concat([
+  const enemies = unitCollectionMethods.createNewUnitCollectionState().concat([
     Object.assign(unitMethods.createNewEnemyState(), {
       jobId: JOB_IDS.FIGHTER,
       destinations: [

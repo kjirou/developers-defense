@@ -205,7 +205,11 @@ const initializeApp = () => {
       jobId: JOB_IDS.MAGE,
       placement: placementMethods.createNewPlacementState(BOARD_TYPES.SORTIE_BOARD, [1, 3]),
     }),
-  ]);
+  ]).map(ally => {
+    return Object.assign({}, ally, {
+      hitPoints: unitMethods.getMaxHitPoints(ally),
+    });
+  });
 
   const enemies = createNewUnitCollectionState().concat([
     Object.assign(unitMethods.createNewEnemyState(), {
@@ -216,7 +220,11 @@ const initializeApp = () => {
         locationMethods.createNewLocationState(7 * 48, 1 * 48),
       ],
     }),
-  ]);
+  ]).map(enemy => {
+    return Object.assign({}, enemy, {
+      hitPoints: unitMethods.getMaxHitPoints(enemy),
+    });
+  });
 
   return (dispatch, getState) => {
     dispatch({ type: ACTION_TYPES.EXTEND_BATTLE_BOARD_SQUARE_MATRIX, extension: squareMatrixExtension });

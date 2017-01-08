@@ -72,6 +72,9 @@ const measureAngleWithTopAsZero = (from, to) => {
  * @return {State~Location} { y: movedY, x: movedX }
  */
 const performPseudoVectorAddition = (initial, terminal, scalar) => {
+  // 移動が4方向限定なのは、進行方向以外に座標の端数を出さないことの担保をするためでもある。
+  // 例えば横軸が 0.1px ずれたまま縦移動をした場合、ユニットサイズはマス目サイズと同じなため、
+  // マス目ベースの当たり判定が横軸 2 マスになってしまう。
   if (initial.y !== terminal.y && initial.x !== terminal.x) {
     throw new Error('It is possible to move only up / down / left / right.');
   }

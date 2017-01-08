@@ -219,6 +219,14 @@ const initializeApp = () => {
         locationMethods.createNewLocationState(7 * 48, 1 * 48),
       ],
     }),
+    Object.assign(unitMethods.createNewEnemyState(), {
+      jobId: JOB_IDS.MAGE,
+      destinations: [
+        locationMethods.createNewLocationState(-2 * 48, 5 * 48),
+        locationMethods.createNewLocationState(7 * 48, 5 * 48),
+        locationMethods.createNewLocationState(7 * 48, 1 * 48),
+      ],
+    }),
   ]).map(enemy => {
     return Object.assign({}, enemy, {
       hitPoints: unitMethods.getMaxHitPoints(enemy),

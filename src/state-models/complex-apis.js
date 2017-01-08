@@ -213,7 +213,8 @@ const computeTick = ({ allies, enemies, gameStatus }) => {
           console.debug(`${ newAlly.factionType }:${ newAlly.jobId } aims ${ act.id } at ${ aimedUnit.factionType }:${ aimedUnit.jobId }`);
         }
 
-        // TODO: 効果を発生させる
+        // TODO: 弾を発射する
+        // TODO: 対象が範囲の場合は範囲を持たす。
 
         // Comsume AP
         newAlly.actionPoints = unitMethods.calculateActionPointsConsumption(newAlly, act);
@@ -230,6 +231,8 @@ const computeTick = ({ allies, enemies, gameStatus }) => {
     return newAlly;
   });
 
+  // TODO: 弾移動/効果 -> 敵移動 -> 味方行動 -> 敵行動 というフローが
+  //       味方の弾発射と着弾にラグが無くてストレス感じなそう
   // Enemy's act or movement
   newEnemies = newEnemies.map(enemy => {
     const { location, destinationIndex } = unitMethods.calculateMovementResults(enemy);

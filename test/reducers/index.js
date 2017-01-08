@@ -9,6 +9,7 @@ describe('reducers/index', () => {
     const state = reducer(undefined, { type: ACTION_TYPES.NOOP });
     assert('allies' in state);
     assert('battleBoard' in state);
+    assert('bullets' in state);
     assert('cursor' in state);
     assert('enemies' in state);
     assert('sortieBoard' in state);

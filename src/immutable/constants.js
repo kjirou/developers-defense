@@ -26,6 +26,7 @@ const ACTION_TYPES = keymirror({
   TICK: null,
   UPDATE_ALLIES: null,
   UPDATE_ALLY: null,
+  UPDATE_BULLETS: null,
   UPDATE_ENEMIES: null,
 });
 

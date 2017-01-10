@@ -3,6 +3,7 @@ const assert = require('power-assert');
 const {
   addLocations,
   areSameLocations,
+  calculateCenterOfSquare,
   createNewLocationState,
   measureAngleWithTopAsZero,
   measureDistance,
@@ -19,6 +20,12 @@ describe('state-models/location', () => {
       assert.deepStrictEqual(addLocations(_loc(1, 0), _loc(0, 1)), _loc(1, 1));
       assert.deepStrictEqual(addLocations(_loc(0, 1), _loc(1, 0), _loc(1, 2)), _loc(2, 3));
       assert.deepStrictEqual(addLocations(_loc(10, 10), _loc(-1, -2)), _loc(9, 8));
+    });
+  });
+
+  describe('calculateCenterOfSquare', () => {
+    it('can execute correctly', () => {
+      assert.deepStrictEqual(calculateCenterOfSquare(_loc(0, 48)), _loc(24, 72));
     });
   });
 

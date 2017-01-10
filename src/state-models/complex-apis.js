@@ -215,6 +215,9 @@ const computeTick = ({ allies, enemies, bullets, gameStatus }) => {
         }
 
         // TODO: 弾を発射する
+        //       - 発射点・着弾点の算出
+        //       - 行動から bullet state の生成
+        //       - 対象が範囲のときに unit の位置から着弾するマス目を逆算して算出
         // TODO: 対象が範囲の場合は範囲を持たす。
 
         // Comsume AP

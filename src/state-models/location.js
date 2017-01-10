@@ -9,6 +9,8 @@
 /** @module */
 const angles = require('angles');
 
+const { STYLES } = require('../immutable/constants');
+
 
 const createNewLocationState = (y, x) => {
   return { y, x };
@@ -24,6 +26,7 @@ const areSameLocations = (...locations) => {
 };
 
 /**
+ * Add any locations as vectors
  * @param {...State~Location} locations
  * @return {State~Location}
  */
@@ -35,6 +38,14 @@ const addLocations = (...locations) => {
     x += v.x;
   });
   return createNewLocationState(y, x);
+};
+
+/**
+ * @param {...State~Location} squareLocation
+ * @return {State~Location}
+ */
+const calculateCenterOfSquare = (squareLocation) => {
+  return addLocations(squareLocation, createNewLocationState(STYLES.SQUARE_HEIGHT / 2, STYLES.SQUARE_WIDTH / 2));
 };
 
 /**
@@ -99,6 +110,7 @@ const performPseudoVectorAddition = (initial, terminal, scalar) => {
 module.exports = {
   addLocations,
   areSameLocations,
+  calculateCenterOfSquare,
   createNewLocationState,
   measureAngleWithTopAsZero,
   measureDistance,

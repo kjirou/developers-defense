@@ -50,12 +50,13 @@ const updateEnemies = (enemies) => {
   };
 };
 
-const tick = (tickId, allies, enemies) => {
+const tick = (tickId, allies, enemies, bullets) => {
   return {
     type: ACTION_TYPES.TICK,
     tickId,
     allies,
     enemies,
+    bullets,
   };
 };
 
@@ -152,19 +153,20 @@ const startGame = () => {
 
     const reserveTickTask = () => {
       setTimeout(() => {
-        const { allies, enemies, gameStatus } = getState();
+        const { allies, enemies, bullets, gameStatus } = getState();
 
         if (gameStatus.isPaused) {
           reserveTickTask();
           return;
         }
 
-        const newState = complexApisMethods.computeTick({ allies, enemies, gameStatus });
+        const newState = complexApisMethods.computeTick({ allies, enemies, bullets, gameStatus });
 
         dispatch(tick(
           gameStatus.tickId + 1,
           newState.allies,
-          newState.enemies
+          newState.enemies,
+          newState.bullets
         ));
 
         reserveTickTask();

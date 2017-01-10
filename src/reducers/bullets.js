@@ -12,6 +12,10 @@ const handlers = {
   [ACTION_TYPES.UPDATE_BULLETS]: (state, { bullets }) => {
     return bullets;
   },
+
+  [ACTION_TYPES.TICK]: (state, { bullets }) => {
+    return bullets;
+  },
 };
 
 

@@ -185,9 +185,10 @@ const choiceAimedUnit = (actor, act, units) => {
  * @param {Object} state - A plain object generated from `store.getState()`
  * @return {Object}
  */
-const computeTick = ({ allies, enemies, gameStatus }) => {
+const computeTick = ({ allies, enemies, bullets, gameStatus }) => {
   let newAllies = allies.slice();
   let newEnemies = enemies.slice();
+  let newBullets = bullets.slice();
 
   // TODO: 死亡者を盤上から除去するのは、ループの最初と最後どこで行う？または両方で？
   //       想定ケース)

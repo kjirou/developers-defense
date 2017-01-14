@@ -2,7 +2,8 @@
 const boxCollide = require('box-collide');
 
 const config = require('../config');
-const { ACT_AIM_RANGE_TYPES, ACT_EFFECT_RANGE_TYPES, BOARD_TYPES, STYLES } = require('../immutable/constants');
+const { ACT_AIM_RANGE_TYPES, ACT_EFFECT_RANGE_TYPES, BOARD_TYPES, FACTION_TYPES, FRIENDSHIP_TYPES, STYLES
+  } = require('../immutable/constants');
 const { expandReachToRelativeCoordinates } = require('../lib/core');
 const bulletMethods = require('./bullet');
 const coordinateMethods = require('./coordinate');
@@ -171,6 +172,25 @@ const isUnitInBattle = (unit) => {
 };
 
 /**
+ * @param {string} actFriendshipType - One of FRIENDSHIP_TYPES
+ * @param {string} actorFactionType - One of FACTION_TYPES
+ * @return {string[]} Some of FACTION_TYPES
+ */
+const judgeAffectableFractionTypes = (actFriendshipType, actorFactionType) => {
+  if (actFriendshipType === FRIENDSHIP_TYPES.FRIENDLY) {
+    return [actorFactionType];
+  } else if (actFriendshipType === FRIENDSHIP_TYPES.UNFRIENDLY) {
+    if (actorFactionType === FACTION_TYPES.ALLY) {
+      return [FACTION_TYPES.ENEMY];
+    } else if (actorFactionType === FACTION_TYPES.ENEMY) {
+      return [FACTION_TYPES.ALLY];
+    }
+  }
+
+  throw new Error('Invalid factionType');
+};
+
+/**
  * @param {State~Unit} actor - Only those in battle
  * @param {Act} act
  * @param {State~Unit} unit - Only those in battle
@@ -269,9 +289,17 @@ const fireBullets = (actor, act, aimedUnit, squareMatrixEndPointCoordinate) => {
 
   const bulletSpeed = act.effectRange.bulletSpeed;
 
-  let effect;
-  // TODO: effectRange.type 別
-  effect = {};
+  const effectOptions = {};
+  if (act.effectRange.type === ACT_EFFECT_RANGE_TYPES.UNIT) {
+    effectOptions.aimedUnitUid = aimedUnit.uid;
+  }
+
+  const effect = effectMethods.createNewEffectState(
+    toLocation,
+    act.effectRange.type,
+    judgeAffectableFractionTypes(act.friendshipType, actor.factionType),
+    effectOptions
+  );
 
   bullets.push(bulletMethods.createNewBulletState(fromLocation, toLocation, bulletSpeed, effect));
 
@@ -390,5 +418,6 @@ module.exports = {
   detectAllCollisionsBetweenRectangleAndCoordinate,
   findOneSquareFromBoardsByPlacement,
   fireBullets,
+  judgeAffectableFractionTypes,
   willActorAimActAtUnit,
 };

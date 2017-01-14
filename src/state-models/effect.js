@@ -1,10 +1,16 @@
 /**
  * @typedef {Object} State~Effect
+ * @property {string} uid
+ * @property {State~Location} impactedLocation
+ * @property {string} effectRangeType - One of ACT_EFFECT_RANGE_TYPES
  * @property {string[]} affectableFractionTypes - Some of FACTION_TYPES
+ * @property {?string} aimedUnitUid
  */
 
 
 /** @module */
+const uuidV4 = require('uuid/v4');
+
 const { ACT_EFFECT_RANGE_TYPES, FACTION_TYPES, FRIENDSHIP_TYPES, PARAMETERS } = require('../immutable/constants');
 
 
@@ -20,6 +26,7 @@ const createNewEffectState = (impactedLocation, effectRangeType, affectableFract
   }
 
   return {
+    uid: uuidV4(),
     impactedLocation,
     effectRangeType,
     affectableFractionTypes,

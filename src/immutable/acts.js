@@ -22,7 +22,7 @@ const fixture = [
       },
       effectRange: {
         type: 'BALL',
-        bulletSpeed: 24,
+        bulletSpeed: 12,
         radius: 2,
       },
     },

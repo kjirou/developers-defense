@@ -19,6 +19,7 @@ const {
   detectAllCollisionsBetweenRectangleAndCoordinate,
   findOneSquareFromBoardsByPlacement,
   fireBullets,
+  judgeAffectableFractionTypes,
   willActorAimActAtUnit,
 } = require('../../src/state-models/complex-apis');
 const placementMethods = require('../../src/state-models/placement');
@@ -371,6 +372,25 @@ describe('state-models/complex-apis', () => {
           sortieBoard
         );
       }, /SORTIE_BOARD/);
+    });
+  });
+
+  describe('judgeAffectableFractionTypes', () => {
+    it('can execute correctly', () => {
+      assert.deepStrictEqual(
+        judgeAffectableFractionTypes(FRIENDSHIP_TYPES.FRIENDLY, FACTION_TYPES.ALLY),
+        [ 'ALLY' ]
+      );
+
+      assert.deepStrictEqual(
+        judgeAffectableFractionTypes(FRIENDSHIP_TYPES.UNFRIENDLY, FACTION_TYPES.ALLY),
+        [ 'ENEMY' ]
+      );
+
+      assert.deepStrictEqual(
+        judgeAffectableFractionTypes(FRIENDSHIP_TYPES.UNFRIENDLY, FACTION_TYPES.ENEMY),
+        [ 'ALLY' ]
+      );
     });
   });
 

@@ -4,8 +4,13 @@ const { Provider } = require('react-redux');
 
 const { initializeApp } =  require('./actions');
 const Root =  require('./components/Root');
+const config =  require('./config');
 const { configureStore } =  require('./store');
 
+
+/**
+ * @namespace Immutable
+ */
 
 /**
  * @namespace State
@@ -15,7 +20,9 @@ const { configureStore } =  require('./store');
 window.document.addEventListener('DOMContentLoaded', () => {
   const store = configureStore();
 
-  window._store = store;  // For debug
+  // For development on your browser
+  window._config = config;
+  window._store = store;
 
   const app = React.createElement(
     Provider,

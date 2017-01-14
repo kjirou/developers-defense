@@ -1,7 +1,14 @@
+/**
+ * @typedef {Function} Immutable~Job
+ */
+
+
+/** @module */
 const { createClassBasedResourceList } = require('@kjirou/utils');
 const dictify = require('dictify');
 const keymirror = require('keymirror');
-const S = require('string');
+
+const { underscoredToClassName } = require('../lib/core');
 
 
 const fixture = [
@@ -9,7 +16,7 @@ const fixture = [
     constants: {
       id: 'FIGHTER',
       iconId: 'ra-sword',
-      maxHp: 10,
+      maxHitPoints: 10,
       attackPower: 3,
       defensePower: 2,
     },
@@ -18,7 +25,7 @@ const fixture = [
     constants: {
       id: 'HEALER',
       iconId: 'ra-health',
-      maxHp: 8,
+      maxHitPoints: 8,
       defensePower: 1,
     },
   },
@@ -26,7 +33,7 @@ const fixture = [
     constants: {
       id: 'MAGE',
       iconId: 'ra-crystal-wand',
-      maxHp: 3,
+      maxHitPoints: 3,
       mattackPower: 3,
       mdefensePower: 1,
     },
@@ -46,7 +53,7 @@ class Job {
 Object.assign(Job, {
   id: null,
   iconId: null,
-  maxHp: 0,
+  maxHitPoints: 0,
   attackPower: 0,
   defensePower: 0,
   mattackPower: 0,
@@ -55,12 +62,17 @@ Object.assign(Job, {
 
 
 const jobList = createClassBasedResourceList(Job, fixture, {
-  naming: ({ Resource }) => {
-    return S(Resource.id).capitalize().s + Job.name;
-  },
+  naming: ({ Resource }) => underscoredToClassName(Resource.id) + Job.name,
 });
 const jobs = dictify(jobList, 'id');
 const JOB_IDS = keymirror(jobs);
+
+
+jobList.forEach(job => {
+  if (!job.id || !job.iconId) {
+    throw new Error(`Job.id="${ job.id }" is invalid`);
+  }
+});
 
 
 module.exports = {

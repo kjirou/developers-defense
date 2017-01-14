@@ -1,11 +1,12 @@
 /** @module */
-const { ACTION_TYPES, BOARD_TYPES, FACTION_TYPES, PARAMETERS, STYLES } = require('../immutable/constants');
+const { ACTION_TYPES, BOARD_TYPES, PARAMETERS, STYLES } = require('../immutable/constants');
 const { JOB_IDS } = require('../immutable/jobs');
-const { computeTick, findOneSquareFromBoardsByPlacement } = require('../state-models/complex-apis');
-const { areSamePlace, isPlacedOnBoard } = require('../state-models/placement');
-const { findSquareByCoordinate, parseMapText } = require('../state-models/square-matrix');
-const { createNewUnitState } = require('../state-models/unit');
-const { createNewUnitCollectionState, findUnitsByPlacement } = require('../state-models/unit-collection');
+const complexApisMethods = require('../state-models/complex-apis');
+const locationMethods = require('../state-models/location');
+const placementMethods = require('../state-models/placement');
+const squareMatrixMethods = require('../state-models/square-matrix');
+const unitMethods = require('../state-models/unit');
+const unitCollectionMethods = require('../state-models/unit-collection');
 
 
 const clearCursor = () => {
@@ -49,11 +50,13 @@ const updateEnemies = (enemies) => {
   };
 };
 
-const tick = (tickId, enemies) => {
+const tick = (tickId, allies, enemies, bullets) => {
   return {
     type: ACTION_TYPES.TICK,
     tickId,
+    allies,
     enemies,
+    bullets,
   };
 };
 
@@ -65,11 +68,11 @@ const touchSquare = (newPlacement) => {
   return (dispatch, getState) => {
     const { cursor, sortieBoard, allies, battleBoard } = getState();
     const currentPlacement = cursor.placement;
-    const isCurrentPlacementPlacedOnBoard = isPlacedOnBoard(currentPlacement);
-    const currentSquare = findOneSquareFromBoardsByPlacement(currentPlacement, sortieBoard, battleBoard);
-    const newSquare = findOneSquareFromBoardsByPlacement(newPlacement, sortieBoard, battleBoard);
-    const currentCursorHittingAlly = findUnitsByPlacement(allies, currentPlacement)[0] || null;
-    const newCursorHittingAlly = findUnitsByPlacement(allies, newPlacement)[0] || null;
+    const isCurrentPlacementPlacedOnBoard = placementMethods.isPlacedOnBoard(currentPlacement);
+    const currentSquare = complexApisMethods.findOneSquareFromBoardsByPlacement(currentPlacement, sortieBoard, battleBoard);
+    const newSquare = complexApisMethods.findOneSquareFromBoardsByPlacement(newPlacement, sortieBoard, battleBoard);
+    const currentCursorHittingAlly = unitCollectionMethods.findUnitsByPlacement(allies, currentPlacement)[0] || null;
+    const newCursorHittingAlly = unitCollectionMethods.findUnitsByPlacement(allies, newPlacement)[0] || null;
 
     // TODO: Probably, it becomes very verbose...
 
@@ -130,7 +133,7 @@ const touchSquare = (newPlacement) => {
       dispatch(clearCursor());
 
     // Just the cursor disappears
-    } else if (areSamePlace(newPlacement, currentPlacement)) {
+    } else if (placementMethods.areSamePlacements(newPlacement, currentPlacement)) {
       dispatch(clearCursor());
 
     // Just move the cursor
@@ -150,23 +153,29 @@ const startGame = () => {
 
     const reserveTickTask = () => {
       setTimeout(() => {
-        const { allies, enemies, gameStatus } = getState();
+        const state = getState();
+        const { gameStatus } = state;
 
         if (gameStatus.isPaused) {
           reserveTickTask();
           return;
         }
 
-        const newState = computeTick({ allies, enemies, gameStatus });
+        const newState = complexApisMethods.computeTick(state);
 
-        dispatch(tick(
-          gameStatus.tickId + 1,
-          newState.enemies
-        ));
+        dispatch(
+          tick(
+            gameStatus.tickId + 1,
+            newState.allies,
+            newState.enemies,
+            newState.bullets
+          )
+        );
 
         reserveTickTask();
       }, PARAMETERS.TICK_INTERVAL);
     };
+
     reserveTickTask();
   };
 };
@@ -186,33 +195,49 @@ const initializeApp = () => {
     '.C    .',
     '.......',
   ].join('\n');
-  const squareMatrixExtension = parseMapText(mapText);
+  const squareMatrixExtension = squareMatrixMethods.parseMapText(mapText);
 
-  const allies = createNewUnitCollectionState().concat([
-    Object.assign(createNewUnitState(), {
-      factionType: FACTION_TYPES.ALLY,
+  const allies = unitCollectionMethods.createNewUnitCollectionState().concat([
+    Object.assign(unitMethods.createNewAllyState(), {
       jobId: JOB_IDS.FIGHTER,
-      placement: { boardType: BOARD_TYPES.SORTIE_BOARD, coordinate: [0, 0] },
+      placement: placementMethods.createNewPlacementState(BOARD_TYPES.SORTIE_BOARD, [0, 0]),
     }),
-    Object.assign(createNewUnitState(), {
-      factionType: FACTION_TYPES.ALLY,
+    Object.assign(unitMethods.createNewAllyState(), {
       jobId: JOB_IDS.HEALER,
-      placement: { boardType: BOARD_TYPES.SORTIE_BOARD, coordinate: [0, 1] },
+      placement: placementMethods.createNewPlacementState(BOARD_TYPES.SORTIE_BOARD, [0, 1]),
     }),
-    Object.assign(createNewUnitState(), {
-      factionType: FACTION_TYPES.ALLY,
+    Object.assign(unitMethods.createNewAllyState(), {
       jobId: JOB_IDS.MAGE,
-      placement: { boardType: BOARD_TYPES.SORTIE_BOARD, coordinate: [1, 3] },
+      placement: placementMethods.createNewPlacementState(BOARD_TYPES.SORTIE_BOARD, [1, 3]),
     }),
-  ]);
+  ]).map(ally => {
+    return Object.assign({}, ally, {
+      hitPoints: unitMethods.getMaxHitPoints(ally),
+    });
+  });
 
-  const enemies = createNewUnitCollectionState().concat([
-    Object.assign(createNewUnitState(), {
-      factionType: FACTION_TYPES.ENEMY,
+  const enemies = unitCollectionMethods.createNewUnitCollectionState().concat([
+    Object.assign(unitMethods.createNewEnemyState(), {
       jobId: JOB_IDS.FIGHTER,
-      destinations: [[0 * 48, 5 * 48], [7 * 48, 5 * 48], [7 * 48, 1 * 48]],
+      destinations: [
+        locationMethods.createNewLocationState(0 * 48, 5 * 48),
+        locationMethods.createNewLocationState(7 * 48, 5 * 48),
+        locationMethods.createNewLocationState(7 * 48, 1 * 48),
+      ],
     }),
-  ]);
+    Object.assign(unitMethods.createNewEnemyState(), {
+      jobId: JOB_IDS.MAGE,
+      destinations: [
+        locationMethods.createNewLocationState(-2 * 48, 5 * 48),
+        locationMethods.createNewLocationState(7 * 48, 5 * 48),
+        locationMethods.createNewLocationState(7 * 48, 1 * 48),
+      ],
+    }),
+  ]).map(enemy => {
+    return Object.assign({}, enemy, {
+      hitPoints: unitMethods.getMaxHitPoints(enemy),
+    });
+  });
 
   return (dispatch, getState) => {
     dispatch({ type: ACTION_TYPES.EXTEND_BATTLE_BOARD_SQUARE_MATRIX, extension: squareMatrixExtension });

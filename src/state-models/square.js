@@ -1,7 +1,7 @@
 /**
  * @typedef {Object} State~Square
  * @property {?string} uid
- * @property {number[]} coordinate
+ * @property {State~Coordinate} coordinate
  * @property {?string} landformType - One of the LANDFORM_TYPES
  */
 
@@ -9,11 +9,13 @@
 /** @module */
 const uuidV4 = require('uuid/v4');
 
+const { createNewCoordinateState } = require('./coordinate');
+
 
 const createNewSquareState = (rowIndex, columnIndex) => {
   return {
     uid: uuidV4(),
-    coordinate: [rowIndex, columnIndex],
+    coordinate: createNewCoordinateState(rowIndex, columnIndex),
     landformType: null,
   };
 };

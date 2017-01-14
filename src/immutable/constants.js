@@ -1,6 +1,21 @@
 const keymirror = require('keymirror');
 
 
+const ACT_AIM_RANGE_TYPES = keymirror({
+  CONE: null,
+  LINE: null,
+  REACHABLE: null,
+  SLANTING_LINE: null,
+});
+
+const ACT_EFFECT_RANGE_TYPES = keymirror({
+  BALL: null,
+  CONE: null,
+  LINE: null,
+  SLANTING_LINE: null,
+  UNIT: null,
+});
+
 const ACTION_TYPES = keymirror({
   ALTER_PROGRESS: null,
   CLEAR_CURSOR: null,
@@ -11,6 +26,7 @@ const ACTION_TYPES = keymirror({
   TICK: null,
   UPDATE_ALLIES: null,
   UPDATE_ALLY: null,
+  UPDATE_BULLETS: null,
   UPDATE_ENEMIES: null,
 });
 
@@ -22,6 +38,11 @@ const BOARD_TYPES = keymirror({
 const FACTION_TYPES = keymirror({
   ALLY: null,
   ENEMY: null,
+});
+
+const FRIENDSHIP_TYPES = keymirror({
+  FRIENDLY: null,
+  UNFRIENDLY: null,
 });
 
 const LANDFORM_TYPES = keymirror({
@@ -44,9 +65,9 @@ if (Math.ceil(tickInterval) !== tickInterval) {
 const PARAMETERS = {
   BATTLE_BOARD_COLUMN_LENGTH: 7,
   BATTLE_BOARD_ROW_LENGTH: 9,
-  MAX_MAX_HP: 999,
+  MIN_MAX_HIT_POINTS: 1,
+  MAX_MAX_HIT_POINTS: 999,
   MAX_PROGRESS: 100,
-  MIN_MAX_HP: 1,
   MIN_PROGRESS: 0,
   SORTIE_BOARD_COLUMN_LENGTH: 7,
   SORTIE_BOARD_ROW_LENGTH: 2,
@@ -62,9 +83,12 @@ const STYLES = {
 
 
 module.exports = {
+  ACT_AIM_RANGE_TYPES,
+  ACT_EFFECT_RANGE_TYPES,
   ACTION_TYPES,
   BOARD_TYPES,
   FACTION_TYPES,
+  FRIENDSHIP_TYPES,
   LANDFORM_TYPES,
   STYLES,
   PARAMETERS,

@@ -1,14 +1,25 @@
 const assert = require('power-assert');
 
+const { createNewCoordinateState } = require('../../src/state-models/coordinate');
 const {
   createNewSquareMatrixState,
   findSquareByCoordinate,
   findSquareByUid,
+  getEndPointCoordinate,
   parseMapText,
 } = require('../../src/state-models/square-matrix');
 
 
 describe('state-models/square-matrix', () => {
+  describe('getEndPointCoordinate', () => {
+    it('can execute correctly', () => {
+      assert.deepStrictEqual(
+        getEndPointCoordinate(createNewSquareMatrixState(1, 2)),
+        createNewCoordinateState(0, 1)
+      );
+    });
+  });
+
   describe('findSquareByCoordinate', () => {
     it('should be executed correctly', () => {
       const matrix = createNewSquareMatrixState(2, 3);

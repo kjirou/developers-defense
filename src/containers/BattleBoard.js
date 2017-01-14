@@ -26,6 +26,7 @@ class BattleBoard extends React.Component {
       <SquareMatrix
         squareMatrix={ this.props.battleBoard.squareMatrix }
         cursorCoordinate={ this.props.cursorCoordinate }
+        bullets={ this.props.bullets }
         units={ this.props.enemiesInBattle }
         unitsOnSquares={ this.props.unitsOnSquares }
         handleTouchStartPad={ handleTouchStartPad }

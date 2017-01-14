@@ -67,7 +67,8 @@
 
 .square-matrix
   $z-index-touchpad: 9999
-  $z-index-cursor: 3
+  $z-index-cursor: 4
+  $z-index-bullet: 3
   $z-index-unit: 2
   $z-index-unit-on-square: 1
   position: relative;
@@ -84,9 +85,17 @@
     height: $square-height
     z-index: $z-index-cursor
     border: 2px solid #ff5f00
+  &__bullet
+    position: absolute
+    z-index: $z-index-bullet
   &__unit
     position: absolute;
     z-index: $z-index-unit
   &__unit--unit-on-square
     position: absolute;
     z-index: $z-index-unit-on-square
+
+.bullet
+  width: 8px
+  height: 8px
+  background-color: red

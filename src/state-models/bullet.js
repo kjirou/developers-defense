@@ -1,5 +1,6 @@
 /**
  * @typedef {Object} State~Bullet
+ * @property {string} uid
  * @property {State~Location} location
  * @property {State~Location} fromLocation
  * @property {State~Location} toLocation
@@ -10,12 +11,14 @@
 
 /** @module */
 const Victor = require('victor');
+const uuidV4 = require('uuid/v4');
 
 const { areSameLocations, createNewLocationState } = require('./location');
 
 
 const createNewBulletState = (fromLocation, toLocation, speed, effect) => {
   return {
+    uid: uuidV4(),
     location: fromLocation,
     fromLocation,
     toLocation,

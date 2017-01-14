@@ -2,11 +2,12 @@ const React = require('react');
 
 const { STYLES } = require('../immutable/constants');
 const { getIconId, isAlly } = require('../state-models/unit');
+const Bullet = require('./Bullet');
 const Square = require('./Square');
 const Unit = require('./Unit');
 
 
-const SquareMatrix = ({ squareMatrix, cursorCoordinate, units, unitsOnSquares, handleTouchStartPad }) => {
+const SquareMatrix = ({ squareMatrix, cursorCoordinate, bullets, units, unitsOnSquares, handleTouchStartPad }) => {
   const props = {
     className: 'square-matrix',
   };
@@ -41,6 +42,17 @@ const SquareMatrix = ({ squareMatrix, cursorCoordinate, units, unitsOnSquares, h
       },
     });
   }
+
+  const bulletComponents = bullets.map(bullet => {
+    return React.createElement(Bullet, {
+      key: 'square-matrix-bullet-' + bullet.uid,
+      top: bullet.location.y,
+      left: bullet.location.x,
+      classNames: [
+        'square-matrix__bullet',
+      ],
+    });
+  });
 
   const unitComponents = units.map(unit => {
     return React.createElement(Unit, {
@@ -82,6 +94,7 @@ const SquareMatrix = ({ squareMatrix, cursorCoordinate, units, unitsOnSquares, h
   const components = [
     touchpad,
     ...(cursor ? [cursor] : []),
+    ...bulletComponents,
     ...unitComponents,
     ...unitComponentsOnSquares,
     serialSquareComponents,
@@ -92,6 +105,9 @@ const SquareMatrix = ({ squareMatrix, cursorCoordinate, units, unitsOnSquares, h
 
 Object.assign(SquareMatrix, {
   propTypes: {
+    bullets: React.PropTypes.arrayOf(
+      React.PropTypes.object.isRequired
+    ),
     cursorCoordinate: React.PropTypes.arrayOf(React.PropTypes.number.isRequired),
     handleTouchStartPad: React.PropTypes.func,
     squareMatrix: React.PropTypes.arrayOf(
@@ -107,6 +123,7 @@ Object.assign(SquareMatrix, {
     ),
   },
   defaultProps: {
+    bullets: [],
     cursorCoordinate: null,
     handleTouchStartPad: () => {},
     units: [],

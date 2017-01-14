@@ -301,6 +301,9 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }) => {
 
   // Bullets movement and effect
   newBullets = newBullets
+    // Cleaning
+    //   Since at least bullets are drawn for 2 ticks, do not clean at the end.
+    .filter(bullet => !bulletMethods.isArrivedToDestination(bullet))
     // Movement
     .map(bullet => {
       return Object.assign({}, bullet, {
@@ -317,8 +320,6 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }) => {
 
       return bullet;
     })
-    // Removal
-    .filter(bullet => !bulletMethods.isArrivedToDestination(bullet))
   ;
 
   // Ally's act

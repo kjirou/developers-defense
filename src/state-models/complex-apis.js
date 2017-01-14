@@ -289,14 +289,37 @@ const fireBullets = (actor, act, aimedUnit, squareMatrixEndPointCoordinate) => {
 const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }) => {
   const battleBoardEndPointCoordinate = squareMatrixMethods.getEndPointCoordinate(battleBoard.squareMatrix);
 
+  let newBullets = bullets.slice();
   let newAllies = allies.slice();
   let newEnemies = enemies.slice();
-  let newBullets = bullets.slice();
 
-  // TODO: 死亡者を盤上から除去するのは、ループの最初と最後どこで行う？または両方で？
-  //       想定ケース)
-  //       - 味方の手動退却 || 味方の死亡 -> 盤上から取り除かれてHP回復/出撃ゲージ空
-  //       - 既に前の味方の攻撃で倒している敵を攻撃してしまう
+  // TODO: 適宜、死亡者を盤上から除去する必要がある
+  //       ユニットの状態を変えうる全ての行動後に必要になりそう
+  //       - 弾の効果
+  //       - バフやステージギミックの効果
+  //       - プレイヤーの手動操作による効果（退却とか）
+
+  // Bullets movement and effect
+  newBullets = newBullets
+    // Movement
+    .map(bullet => {
+      return Object.assign({}, bullet, {
+        location: bulletMethods.calculateNextLocation(bullet),
+      });
+    })
+    // Effect
+    .map(bullet => {
+      if (!bulletMethods.isArrivedToDestination(bullet)) {
+        return bullet;
+      };
+
+      // TODO
+
+      return bullet;
+    })
+    // Removal
+    .filter(bullet => !bulletMethods.isArrivedToDestination(bullet))
+  ;
 
   // Ally's act
   newAllies = newAllies.map(ally => {

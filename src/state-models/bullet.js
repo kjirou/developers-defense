@@ -11,7 +11,7 @@
 /** @module */
 const Victor = require('victor');
 
-const { createNewLocationState } = require('./location');
+const { areSameLocations, createNewLocationState } = require('./location');
 
 
 const createNewBulletState = (fromLocation, toLocation, speed, effect) => {
@@ -48,8 +48,13 @@ const calculateNextLocation = (bullet) => {
   }
 };
 
+const isArrivedToDestination = (bullet) => {
+  return areSameLocations(bullet.location, bullet.toLocation);
+};
+
 
 module.exports = {
   createNewBulletState,
   calculateNextLocation,
+  isArrivedToDestination,
 };

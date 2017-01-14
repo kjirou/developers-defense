@@ -22,6 +22,7 @@ const fixture = [
       },
       effectRange: {
         type: 'BALL',
+        bulletSpeed: 24,
         radius: 2,
       },
     },
@@ -36,6 +37,7 @@ const fixture = [
       },
       effectRange: {
         type: 'UNIT',
+        bulletSpeed: 9999,
         count: 1,
       },
     },
@@ -50,6 +52,7 @@ const fixture = [
       },
       effectRange: {
         type: 'UNIT',
+        bulletSpeed: 9999,
         count: 1,
       },
     },

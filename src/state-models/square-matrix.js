@@ -1,15 +1,21 @@
 /**
- * @typedef {Array[]} State~SquareMatrix
+ * @typedef {Array<Array<State~Square>>} State~SquareMatrix
+ * @description Each side is at least 1 or more in length.
  */
 
 
 /** @module */
 const { LANDFORM_TYPES } = require('../immutable/constants');
 const { areSameSizeMatrices } = require('../lib/core');
+const { createNewCoordinateState } = require('./coordinate');
 const { createNewSquareState, extendSquare } = require('./square');
 
 
 const createNewSquareMatrixState = (rowLength, columnLength) => {
+  if (rowLength <= 0 || columnLength <= 0) {
+    throw new Error('Each side is at least 1 or more in length');
+  }
+
   return Array.from({ length: rowLength }).map((notUsed, rowIndex) => {
     return Array.from({ length: columnLength }).map((notUsed, columnIndex) => {
       return createNewSquareState(rowIndex, columnIndex);
@@ -17,6 +23,12 @@ const createNewSquareMatrixState = (rowLength, columnLength) => {
   });
 };
 
+/**
+ * @return {State~Coordinate}
+ */
+const getEndPointCoordinate = (squareMatrix) => {
+  return createNewCoordinateState(squareMatrix.length - 1, squareMatrix[0].length - 1);
+};
 
 const mapSquareMatrix = (squareMatrix, callback) => {
   return squareMatrix.map(rowSquares => {
@@ -110,8 +122,9 @@ module.exports = {
   cloneSquareMatrix,
   createNewSquareMatrixState,
   extendSquareMatrix,
+  getEndPointCoordinate,
   findSquareByCoordinate,
   findSquareByUid,
-  parseMapText,
   mapSquareMatrix,
+  parseMapText,
 };

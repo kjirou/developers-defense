@@ -1,10 +1,12 @@
 /** @module */
-const angles = require('angles');
 const boxCollide = require('box-collide');
 
 const config = require('../config');
-const { ACT_AIM_RANGE_TYPES, BOARD_TYPES, STYLES } = require('../immutable/constants');
+const { ACT_AIM_RANGE_TYPES, ACT_EFFECT_RANGE_TYPES, BOARD_TYPES, STYLES } = require('../immutable/constants');
 const { expandReachToRelativeCoordinates } = require('../lib/core');
+const bulletMethods = require('./bullet');
+const coordinateMethods = require('./coordinate');
+const effectMethods = require('./effect');
 const locationMethods = require('./location');
 const squareMatrixMethods = require('./square-matrix');
 const unitMethods = require('./unit');
@@ -22,6 +24,7 @@ const coordinateToSquareLocation = (coordinate) => {
 /**
  * @param {State~Location} squareLocation
  * @return {{x, y, width, height}} This is mainly used to `substack/box-collide`
+ * @todo Use State~Rectangle
  */
 const squareLocationToRect = (squareLocation) => {
   return {
@@ -34,6 +37,7 @@ const squareLocationToRect = (squareLocation) => {
 
 /**
  * @param {State~Coordinate} coordinate
+ * @todo Use State~Rectangle
  */
 const coordinateToRect = (coordinate) => {
   return squareLocationToRect(coordinateToSquareLocation(coordinate));
@@ -50,6 +54,65 @@ const getUnitPositionAsLocation = (unit) => {
     return coordinateToSquareLocation(unit.placement.coordinate);
   }
   throw new Error(`The unit does not have either \`location\` or \`placement\``);
+};
+
+/**
+ * Detect collisions between rectangle and coordinate,
+ *   assuming that the size of the square-matrix is infinite.
+ * @param {State~Rectangle} rectangle
+ * @param {State~Coordinate} endPointCoordinate
+ * @return {State~Coordinate[]}
+ */
+const detectAllCollisionsBetweenRectangleAndCoordinate = (rectangle, endPointCoordinate) => {
+  const collidedCoordinates = [];
+
+  for (let rowIndex = 0; rowIndex <= endPointCoordinate[0]; rowIndex += 1) {
+    for (let columnIndex = 0; columnIndex <= endPointCoordinate[1]; columnIndex += 1) {
+      const coordinate = coordinateMethods.createNewCoordinateState(rowIndex, columnIndex);
+      if (boxCollide(rectangle, coordinateToRect(coordinate))) {
+        collidedCoordinates.push(coordinate);
+      }
+    }
+  }
+
+  return collidedCoordinates;
+};
+
+/**
+ * @param {State~Unit} actor
+ * @param {State~Unit} targetedUnit
+ * @param {State~Coordinate} endPointCoordinate
+ * @return {?State~Coordinate}
+ */
+const choiceClosestCoordinateUnderTargetedUnit = (actor, targetedUnit, endPointCoordinate) => {
+  const actorLocation = getUnitPositionAsLocation(actor);
+  const targetedUnitLocation = getUnitPositionAsLocation(targetedUnit);
+  const targetedUnitRectangle = squareLocationToRect(targetedUnitLocation);
+
+  const candidates = detectAllCollisionsBetweenRectangleAndCoordinate(
+    targetedUnitRectangle, endPointCoordinate);
+
+  // Since enemies can only move up / down / left / right,
+  //   it should not be more than 2 coordinates.
+  // Ref) calculateMovementResults
+  if (candidates.length !== 1 && candidates.length !== 2) {
+    throw new Error('Enemy position is wrong');
+  }
+
+  // Sort in order of closeness
+  return candidates.sort((a, b) => {
+    const aLocation = coordinateToSquareLocation(a);
+    const bLocation = coordinateToSquareLocation(b);
+    const distanceToA = locationMethods.measureDistance(actorLocation, aLocation);
+    const distanceToB = locationMethods.measureDistance(actorLocation, bLocation);
+
+    if (distanceToA < distanceToB) {
+      return -1;
+    } else if (distanceToA > distanceToB) {
+      return 1;
+    }
+    return 0;
+  })[0] || null
 };
 
 /**
@@ -178,6 +241,44 @@ const choiceAimedUnit = (actor, act, units) => {
 };
 
 /**
+ * Create bullets carrying effects on each
+ * @param {State~Unit} actor
+ * @param {Function} act
+ * @param {State~Unit} aimedUnit
+ * @param {State~Coordinate} squareMatrixEndPointCoordinate
+ * @return {State~Bullet[]}
+ */
+const fireBullets = (actor, act, aimedUnit, squareMatrixEndPointCoordinate) => {
+  const bullets = [];
+
+  const actorLocation = getUnitPositionAsLocation(actor);
+  const aimedUnitLocation = getUnitPositionAsLocation(aimedUnit);
+
+  const fromLocation = locationMethods.calculateCenterOfSquare(actorLocation);
+
+  let toLocation;
+  if (act.effectRange.type === ACT_EFFECT_RANGE_TYPES.UNIT) {
+    toLocation = locationMethods.calculateCenterOfSquare(aimedUnitLocation);
+  } else {
+    toLocation = locationMethods.calculateCenterOfSquare(
+      coordinateToSquareLocation(
+        choiceClosestCoordinateUnderTargetedUnit(actor, aimedUnit, squareMatrixEndPointCoordinate)
+      )
+    );
+  }
+
+  const bulletSpeed = act.effectRange.bulletSpeed;
+
+  let effect;
+  // TODO: effectRange.type 別
+  effect = {};
+
+  bullets.push(bulletMethods.createNewBulletState(fromLocation, toLocation, bulletSpeed, effect));
+
+  return bullets;
+};
+
+/**
  * Compute the state transition during the "tick"
  * <section>
  *   The "tick" is a coined word, which means so-called "one game loop".
@@ -185,7 +286,9 @@ const choiceAimedUnit = (actor, act, units) => {
  * @param {Object} state - A plain object generated from `store.getState()`
  * @return {Object}
  */
-const computeTick = ({ allies, enemies, bullets, gameStatus }) => {
+const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }) => {
+  const battleBoardEndPointCoordinate = squareMatrixMethods.getEndPointCoordinate(battleBoard.squareMatrix);
+
   let newAllies = allies.slice();
   let newEnemies = enemies.slice();
   let newBullets = bullets.slice();
@@ -214,11 +317,8 @@ const computeTick = ({ allies, enemies, bullets, gameStatus }) => {
           console.debug(`${ newAlly.factionType }:${ newAlly.jobId } aims ${ act.id } at ${ aimedUnit.factionType }:${ aimedUnit.jobId }`);
         }
 
-        // TODO: 弾を発射する
-        //       - 発射点・着弾点の算出
-        //       - 行動から bullet state の生成
-        //       - 対象が範囲のときに unit の位置から着弾するマス目を逆算して算出
-        // TODO: 対象が範囲の場合は範囲を持たす。
+        // Create bullets carrying effect on each
+        newBullets = newBullets.concat(fireBullets(newAlly, act, aimedUnit, battleBoardEndPointCoordinate));
 
         // Comsume AP
         newAlly.actionPoints = unitMethods.calculateActionPointsConsumption(newAlly, act);
@@ -250,6 +350,7 @@ const computeTick = ({ allies, enemies, bullets, gameStatus }) => {
   return {
     allies: newAllies,
     enemies: newEnemies,
+    bullets: newBullets,
   };
 };
 
@@ -257,10 +358,13 @@ const computeTick = ({ allies, enemies, bullets, gameStatus }) => {
 module.exports = {
   canActorAimActAtTargetedUnit,
   choiceAimedUnit,
+  choiceClosestCoordinateUnderTargetedUnit,
   computeTick,
   coordinateToSquareLocation,
   coordinateToRect,
   createReachableRects,
+  detectAllCollisionsBetweenRectangleAndCoordinate,
   findOneSquareFromBoardsByPlacement,
+  fireBullets,
   willActorAimActAtUnit,
 };

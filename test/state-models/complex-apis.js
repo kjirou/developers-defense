@@ -1,8 +1,9 @@
 const assert = require('power-assert');
 
 const { Act } = require('../../src/immutable/acts');
-const { ACT_AIM_RANGE_TYPES, ACTION_TYPES, BOARD_TYPES, FACTION_TYPES, FRIENDSHIP_TYPES
-  } = require('../../src/immutable/constants');
+const {
+  ACT_AIM_RANGE_TYPES, ACT_EFFECT_RANGE_TYPES, ACTION_TYPES, BOARD_TYPES, FACTION_TYPES, FRIENDSHIP_TYPES
+} = require('../../src/immutable/constants');
 const reducer = require('../../src/reducers');
 const boardMethods = require('../../src/state-models/board');
 const coordinateMethods = require('../../src/state-models/coordinate');
@@ -10,14 +11,18 @@ const locationMethods = require('../../src/state-models/location');
 const {
   canActorAimActAtTargetedUnit,
   choiceAimedUnit,
+  choiceClosestCoordinateUnderTargetedUnit,
   computeTick,
   coordinateToRect,
   coordinateToSquareLocation,
   createReachableRects,
+  detectAllCollisionsBetweenRectangleAndCoordinate,
   findOneSquareFromBoardsByPlacement,
+  fireBullets,
   willActorAimActAtUnit,
 } = require('../../src/state-models/complex-apis');
 const placementMethods = require('../../src/state-models/placement');
+const rectangleMethods = require('../../src/state-models/rectangle');
 const unitMethods = require('../../src/state-models/unit');
 
 
@@ -91,6 +96,187 @@ describe('state-models/complex-apis', () => {
           width: 48,
           height: 48,
         }
+      );
+    });
+  });
+
+  describe('detectAllCollisionsBetweenRectangleAndCoordinate', () => {
+    it('can execute correctly', () => {
+      //  o | - | -
+      // ---+---+---
+      //  - | - | -
+      // ---+---+---
+      //  - | - | -
+      assert.deepStrictEqual(
+        detectAllCollisionsBetweenRectangleAndCoordinate(
+          rectangleMethods.createNewRectangleState({ x: 0, y: 0, width: 48, height: 48 }),
+          coordinateMethods.createNewCoordinateState(2, 2)
+        ),
+        [
+          coordinateMethods.createNewCoordinateState(0, 0),
+        ]
+      );
+
+      //  o | o | -
+      // ---+---+---
+      //  - | - | -
+      // ---+---+---
+      //  - | - | -
+      assert.deepStrictEqual(
+        detectAllCollisionsBetweenRectangleAndCoordinate(
+          rectangleMethods.createNewRectangleState({ x: 1, y: 0, width: 48, height: 48 }),
+          coordinateMethods.createNewCoordinateState(2, 2)
+        ),
+        [
+          coordinateMethods.createNewCoordinateState(0, 0),
+          coordinateMethods.createNewCoordinateState(0, 1),
+        ]
+      );
+
+      //  - | - | -
+      // ---+---+---
+      //  - | o | -
+      // ---+---+---
+      //  - | - | -
+      assert.deepStrictEqual(
+        detectAllCollisionsBetweenRectangleAndCoordinate(
+          rectangleMethods.createNewRectangleState({ x: 48, y: 48, width: 48, height: 48 }),
+          coordinateMethods.createNewCoordinateState(2, 2)
+        ),
+        [
+          coordinateMethods.createNewCoordinateState(1, 1),
+        ]
+      );
+
+      //  - | - | -
+      // ---+---+---
+      //  - | - | -
+      // ---+---+---
+      //  - | o | o
+      assert.deepStrictEqual(
+        detectAllCollisionsBetweenRectangleAndCoordinate(
+          rectangleMethods.createNewRectangleState({ x: 95, y: 96, width: 48, height: 48 }),
+          coordinateMethods.createNewCoordinateState(2, 2)
+        ),
+        [
+          coordinateMethods.createNewCoordinateState(2, 1),
+          coordinateMethods.createNewCoordinateState(2, 2),
+        ]
+      );
+
+      //  - | - | -
+      // ---+---+---
+      //  o | o | -
+      // ---+---+---
+      //  o | o | -
+      assert.deepStrictEqual(
+        detectAllCollisionsBetweenRectangleAndCoordinate(
+          rectangleMethods.createNewRectangleState({ x: 24, y: 72, width: 48, height: 48 }),
+          coordinateMethods.createNewCoordinateState(2, 2)
+        ),
+        [
+          coordinateMethods.createNewCoordinateState(1, 0),
+          coordinateMethods.createNewCoordinateState(1, 1),
+          coordinateMethods.createNewCoordinateState(2, 0),
+          coordinateMethods.createNewCoordinateState(2, 1),
+        ]
+      );
+
+      //  - | - |
+      // ---+---+
+      //  - | o | x
+      // ---+---+
+      //      x   x
+      assert.deepStrictEqual(
+        detectAllCollisionsBetweenRectangleAndCoordinate(
+          rectangleMethods.createNewRectangleState({ x: 49, y: 49, width: 48, height: 48 }),
+          coordinateMethods.createNewCoordinateState(1, 1)
+        ),
+        [
+          coordinateMethods.createNewCoordinateState(1, 1),
+        ]
+      );
+    });
+  });
+
+  describe('choiceClosestCoordinateUnderTargetedUnit', () => {
+    //  - | - | -
+    // ---+---+---
+    //  a | t | -
+    // ---+---+---
+    //  - | - | -
+    it('can choice a coordinate between placed units', () => {
+      const actor = _createPlacedUnit(1, 0);
+      const target = _createPlacedUnit(1, 1);
+      const endPointCoordinate = coordinateMethods.createNewCoordinateState(2, 2);
+
+      assert.deepStrictEqual(
+        choiceClosestCoordinateUnderTargetedUnit(actor, target, endPointCoordinate),
+        coordinateMethods.createNewCoordinateState(1, 1)
+      );
+    });
+
+    //  - | - | -
+    // ---+---+---
+    //  - | - | t
+    // ---+---+---
+    //  - | - | a
+    it('can choice a coordinate between located units', () => {
+      const actor = _createLocatedUnit(96, 96);
+      const target = _createLocatedUnit(48, 96);
+      const endPointCoordinate = coordinateMethods.createNewCoordinateState(2, 2);
+
+      assert.deepStrictEqual(
+        choiceClosestCoordinateUnderTargetedUnit(actor, target, endPointCoordinate),
+        coordinateMethods.createNewCoordinateState(1, 2)
+      );
+    });
+
+    //  - t - | -
+    // ---+---+---
+    //  - | - | -
+    // ---+---+---
+    //  - | a | -
+    it('can choice a coordinate from a unit located on the vertical boundary line', () => {
+      const actor = _createPlacedUnit(2, 1);
+      const target = _createLocatedUnit(0, 24);
+      const endPointCoordinate = coordinateMethods.createNewCoordinateState(2, 2);
+
+      assert.deepStrictEqual(
+        choiceClosestCoordinateUnderTargetedUnit(actor, target, endPointCoordinate),
+        coordinateMethods.createNewCoordinateState(0, 1)
+      );
+    });
+
+    //  - | - | -
+    // ---+-t-+---
+    //  a | - | -
+    // ---+---+---
+    //  - | - | -
+    it('can choice a coordinate from a unit located on the horizontal boundary line', () => {
+      const actor = _createLocatedUnit(48, 0);
+      const target = _createLocatedUnit(24, 48);
+      const endPointCoordinate = coordinateMethods.createNewCoordinateState(2, 2);
+
+      assert.deepStrictEqual(
+        choiceClosestCoordinateUnderTargetedUnit(actor, target, endPointCoordinate),
+        coordinateMethods.createNewCoordinateState(1, 1)
+      );
+    });
+
+    //  - a t | -
+    // ---+---+---
+    //  - | - | -
+    // ---+---+---
+    //  - | - | -
+    it('can choice a coordinate by an actor on the boundary line', () => {
+      const actor = _createLocatedUnit(0, 24);
+      const target = _createPlacedUnit(0, 1);
+      const endPointCoordinate = coordinateMethods.createNewCoordinateState(2, 2);
+
+      assert.deepStrictEqual(
+        choiceClosestCoordinateUnderTargetedUnit(actor, target, endPointCoordinate),
+        coordinateMethods.createNewCoordinateState(0, 1)
       );
     });
   });
@@ -445,6 +631,57 @@ describe('state-models/complex-apis', () => {
 
         assert.strictEqual(choiceAimedUnit(_createPlacedAlly(1, 1), OneReachAct, targets), targets[0]);
       });
+    });
+  });
+
+  describe('fireBullets', () => {
+    class ActTargetingOneUnit extends Act {}
+    Object.assign(ActTargetingOneUnit, {
+      effectRange: {
+        type: ACT_EFFECT_RANGE_TYPES.UNIT,
+        bulletSpeed: 9999,
+        count: 1,
+      },
+    });
+
+    class ActTargetingOneSquare extends Act {}
+    Object.assign(ActTargetingOneSquare, {
+      effectRange: {
+        type: ACT_EFFECT_RANGE_TYPES.BALL,
+        bulletSpeed: 9999,
+        radius: 1,
+      },
+    });
+
+    const endPointCoordinate = coordinateMethods.createNewCoordinateState(10, 10);
+
+    describe('generation of trajectory and speed', () => {
+      context('act.effectRange.type is ACT_EFFECT_RANGE_TYPES.UNIT', () => {
+        it('can execute correctly', () => {
+          const actor = _createPlacedUnit(0, 1);
+          const target = _createPlacedUnit(1, 0);
+          const [ bullet ] = fireBullets(actor, ActTargetingOneUnit, target, endPointCoordinate);
+
+          assert.deepStrictEqual(bullet.fromLocation, locationMethods.createNewLocationState(24, 72))
+          assert.deepStrictEqual(bullet.toLocation, locationMethods.createNewLocationState(72, 24))
+          assert.strictEqual(bullet.speed, 9999);
+        });
+      });
+
+      context('act.effectRange.type is one of others', () => {
+        it('can execute correctly', () => {
+          const actor = _createPlacedUnit(0, 1);
+          const target = _createPlacedUnit(2, 3);
+          const [ bullet ] = fireBullets(actor, ActTargetingOneSquare, target, endPointCoordinate);
+
+          assert.deepStrictEqual(bullet.fromLocation, locationMethods.createNewLocationState(24, 72))
+          assert.deepStrictEqual(bullet.toLocation, locationMethods.createNewLocationState(120, 168))
+          assert.strictEqual(bullet.speed, 9999);
+        });
+      });
+    });
+
+    describe('generation of effect', () => {
     });
   });
 

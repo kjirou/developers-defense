@@ -153,25 +153,29 @@ const startGame = () => {
 
     const reserveTickTask = () => {
       setTimeout(() => {
-        const { allies, enemies, bullets, gameStatus } = getState();
+        const state = getState();
+        const { gameStatus } = state;
 
         if (gameStatus.isPaused) {
           reserveTickTask();
           return;
         }
 
-        const newState = complexApisMethods.computeTick({ allies, enemies, bullets, gameStatus });
+        const newState = complexApisMethods.computeTick(state);
 
-        dispatch(tick(
-          gameStatus.tickId + 1,
-          newState.allies,
-          newState.enemies,
-          newState.bullets
-        ));
+        dispatch(
+          tick(
+            gameStatus.tickId + 1,
+            newState.allies,
+            newState.enemies,
+            newState.bullets
+          )
+        );
 
         reserveTickTask();
       }, PARAMETERS.TICK_INTERVAL);
     };
+
     reserveTickTask();
   };
 };

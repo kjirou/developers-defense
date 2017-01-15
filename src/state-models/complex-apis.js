@@ -350,6 +350,20 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }) => {
     })
   ;
 
+  // Enemy's movement
+  //   この処理は「弾の移動・効果発生」の後で、かつ「弾の発射」の前であることが望ましい。
+  //   「弾の移動・効果発生」前に実行する場合、着弾場所と敵の位置が必ずずれることになるし、
+  //   「弾の発射」後に実行する場合、照準がずれることになる。
+  //   ということで、1 tick 分だが、プレイヤーにとって最も自然で有利になるから。
+  newEnemies = newEnemies.map(enemy => {
+    const { location, destinationIndex } = unitMethods.calculateMovementResults(enemy);
+
+    return Object.assign({}, enemy, {
+      location,
+      destinationIndex,
+    });
+  });
+
   // Ally's act
   newAllies = newAllies.map(ally => {
     const newAlly = Object.assign({}, ally);
@@ -360,10 +374,12 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }) => {
     }
 
     const act = unitMethods.getAct(newAlly);
+
     let didAct = false;
 
     if (unitMethods.canDoAct(newAlly)) {
       const aimedUnit = choiceAimedUnit(newAlly, act, newAllies.concat(newEnemies));
+
       if (aimedUnit) {
         if (config.isEnabledTickLog) {
           console.debug(`${ newAlly.factionType }:${ newAlly.jobId } aims ${ act.id } at ${ aimedUnit.factionType }:${ aimedUnit.jobId }`);
@@ -372,7 +388,7 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }) => {
         // Create bullets carrying effect on each
         newBullets = newBullets.concat(fireBullets(newAlly, act, aimedUnit, battleBoardEndPointCoordinate));
 
-        // Comsume AP
+        // Comsume APs
         newAlly.actionPoints = unitMethods.calculateActionPointsConsumption(newAlly, act);
 
         didAct = true;
@@ -380,24 +396,15 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }) => {
     }
 
     if (!didAct) {
-      // Recover AP
+      // Recover APs
       newAlly.actionPoints = unitMethods.calculateActionPointsRecovery(newAlly);
     }
 
     return newAlly;
   });
 
-  // TODO: 弾移動/効果 -> 敵移動 -> 味方行動 -> 敵行動 というフローが
-  //       味方の弾発射と着弾にラグが無くてストレス感じなそう
-  // Enemy's act or movement
-  newEnemies = newEnemies.map(enemy => {
-    const { location, destinationIndex } = unitMethods.calculateMovementResults(enemy);
-
-    return Object.assign({}, enemy, {
-      location,
-      destinationIndex,
-    });
-  });
+  // Enemy's act
+  // TODO
 
   return {
     allies: newAllies,

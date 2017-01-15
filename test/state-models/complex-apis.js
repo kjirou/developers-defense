@@ -680,7 +680,7 @@ describe('state-models/complex-apis', () => {
         it('can execute correctly', () => {
           const actor = _createPlacedUnit(0, 1);
           const target = _createPlacedUnit(1, 0);
-          const [ bullet ] = fireBullets(actor, ActTargetingOneUnit, target, endPointCoordinate);
+          const [ bullet ] = fireBullets(actor, ActTargetingOneUnit, target, endPointCoordinate, { effect: {} });
 
           assert.deepStrictEqual(bullet.fromLocation, locationMethods.createNewLocationState(24, 72))
           assert.deepStrictEqual(bullet.toLocation, locationMethods.createNewLocationState(72, 24))
@@ -692,7 +692,7 @@ describe('state-models/complex-apis', () => {
         it('can execute correctly', () => {
           const actor = _createPlacedUnit(0, 1);
           const target = _createPlacedUnit(2, 3);
-          const [ bullet ] = fireBullets(actor, ActTargetingOneSquare, target, endPointCoordinate);
+          const [ bullet ] = fireBullets(actor, ActTargetingOneSquare, target, endPointCoordinate, { effect: {} });
 
           assert.deepStrictEqual(bullet.fromLocation, locationMethods.createNewLocationState(24, 72))
           assert.deepStrictEqual(bullet.toLocation, locationMethods.createNewLocationState(120, 168))

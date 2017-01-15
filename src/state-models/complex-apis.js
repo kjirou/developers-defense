@@ -187,7 +187,7 @@ const judgeAffectableFractionTypes = (actFriendshipType, actorFactionType) => {
     }
   }
 
-  throw new Error('Invalid factionType');
+  throw new Error(`Invalid actFriendshipType=${ actFriendshipType } or actorFactionType=${ actorFactionType }`);
 };
 
 /**
@@ -266,9 +266,15 @@ const choiceAimedUnit = (actor, act, units) => {
  * @param {Function} act
  * @param {State~Unit} aimedUnit
  * @param {State~Coordinate} squareMatrixEndPointCoordinate
+ * @param {(Object|undefined)} options
+ * @param {?State~Effect} [options.effect] - Pass the effect from the outside. It is mainly for testing.
  * @return {State~Bullet[]}
  */
-const fireBullets = (actor, act, aimedUnit, squareMatrixEndPointCoordinate) => {
+const fireBullets = (actor, act, aimedUnit, squareMatrixEndPointCoordinate, options = {}) => {
+  const defaultedOptions = Object.assign({
+    effect: null,
+  }, options);
+
   const bullets = [];
 
   const actorLocation = getUnitPositionAsLocation(actor);
@@ -294,7 +300,7 @@ const fireBullets = (actor, act, aimedUnit, squareMatrixEndPointCoordinate) => {
     effectOptions.aimedUnitUid = aimedUnit.uid;
   }
 
-  const effect = effectMethods.createNewEffectState(
+  const effect = options.effect || effectMethods.createNewEffectState(
     toLocation,
     act.effectRange.type,
     judgeAffectableFractionTypes(act.friendshipType, actor.factionType),

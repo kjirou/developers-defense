@@ -22,8 +22,13 @@ const fixture = [
       },
       effectRange: {
         type: 'BALL',
+        // TODO: -> bullet: { speed } ?
         bulletSpeed: 12,
         radius: 2,
+      },
+      effectParameters: {
+        damagePoints: 1,
+        healingPoints: 0,
       },
     },
   },
@@ -38,7 +43,10 @@ const fixture = [
       effectRange: {
         type: 'UNIT',
         bulletSpeed: 9999,
-        count: 1,
+      },
+      effectParameters: {
+        damagePoints: 1,
+        healingPoints: 0,
       },
     },
   },
@@ -53,7 +61,10 @@ const fixture = [
       effectRange: {
         type: 'UNIT',
         bulletSpeed: 9999,
-        count: 1,
+      },
+      effectParameters: {
+        damagePoints: 0,
+        healingPoints: 1,
       },
     },
   },

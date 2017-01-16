@@ -295,21 +295,49 @@ const fireBullets = (actor, act, aimedUnit, squareMatrixEndPointCoordinate, opti
 
   const bulletSpeed = act.effectRange.bulletSpeed;
 
-  const effectOptions = {};
-  if (act.effectRange.type === ACT_EFFECT_RANGE_TYPES.UNIT) {
-    effectOptions.aimedUnitUid = aimedUnit.uid;
-  }
+  let effect;
+  if (options.effect) {
+    effect = options.effect;
+  } else {
+    const effectOptions = {
+      damagePoints: act.effectParameters.damagePoints,
+      healingPoints: act.effectParameters.healingPoints,
+    };
+    if (act.effectRange.type === ACT_EFFECT_RANGE_TYPES.UNIT) {
+      effectOptions.aimedUnitUid = aimedUnit.uid;
+    } else {
+      effectOptions.relativeCoordinates = [];
+    }
 
-  const effect = options.effect || effectMethods.createNewEffectState(
-    toLocation,
-    act.effectRange.type,
-    judgeAffectableFractionTypes(act.friendshipType, actor.factionType),
-    effectOptions
-  );
+    effect = effectMethods.createNewEffectState(
+      judgeAffectableFractionTypes(act.friendshipType, actor.factionType),
+      toLocation,
+      effectOptions
+    );
+  }
 
   bullets.push(bulletMethods.createNewBulletState(fromLocation, toLocation, bulletSpeed, effect));
 
   return bullets;
+};
+
+/**
+ * @param {State~Effect} effect
+ * @param {State~Unit[]} units
+ * @return {{units:<State~Unit[]>, effectResults:<Array<{}>>}}
+ */
+const applyEffectToUnits = (effect, units) => {
+  // TODO: 単体の場合の unit.uid 指定を優先する
+  // TODO: 範囲の場合の範囲計算
+  const newUnits = units.map(unit => {
+    return unit;
+  });
+
+  return {
+    units: newUnits,
+    // TODO: 各種修正後の実ダメージ/回復値や、それがどの位置で誰に発生したかを記録する。主に表示用
+    effectLogs: [],
+  };
 };
 
 /**
@@ -350,7 +378,9 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }) => {
         return bullet;
       };
 
-      // TODO
+      const effectResult = applyEffectToUnits(bullet.effect, newAllies.concat(newEnemies));
+      newAllies = effectResult.units.filter(unit => unit.factionType === FACTION_TYPES.ALLY);
+      newEnemies = effectResult.units.filter(unit => unit.factionType === FACTION_TYPES.ENEMY);
 
       return bullet;
     })
@@ -421,6 +451,7 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }) => {
 
 
 module.exports = {
+  applyEffectToUnits,
   canActorAimActAtTargetedUnit,
   choiceAimedUnit,
   choiceClosestCoordinateUnderTargetedUnit,

@@ -9,6 +9,7 @@ const boardMethods = require('../../src/state-models/board');
 const coordinateMethods = require('../../src/state-models/coordinate');
 const locationMethods = require('../../src/state-models/location');
 const {
+  applyEffectToUnits,
   canActorAimActAtTargetedUnit,
   choiceAimedUnit,
   choiceClosestCoordinateUnderTargetedUnit,
@@ -660,7 +661,6 @@ describe('state-models/complex-apis', () => {
       effectRange: {
         type: ACT_EFFECT_RANGE_TYPES.UNIT,
         bulletSpeed: 9999,
-        count: 1,
       },
     });
 
@@ -702,6 +702,13 @@ describe('state-models/complex-apis', () => {
     });
 
     describe('generation of effect', () => {
+    });
+  });
+
+  describe('applyEffectToUnits', () => {
+    describe('aaa', () => {
+      it('aaaaa', () => {
+      });
     });
   });
 

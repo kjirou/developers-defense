@@ -80,6 +80,7 @@ const createNewEnemyState = () => {
 //          Place methods into the `complex-apis` if necessary.
 //
 
+// DEPRECATED:
 const isAlly = (unit) => unit.factionType === FACTION_TYPES.ALLY;
 
 const getJob = (unit) => {

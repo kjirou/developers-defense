@@ -653,16 +653,20 @@ describe('state-models/complex-apis', () => {
 
   describe('fireBullets', () => {
     const actTargetingOneUnit = Object.assign({}, baseAct, {
+      bullet: {
+        speed: 9999,
+      },
       effectRange: {
         type: ACT_EFFECT_RANGE_TYPES.UNIT,
-        bulletSpeed: 9999,
       },
     });
 
     const actTargetingOneSquare = Object.assign({}, baseAct, {
+      bullet: {
+        speed: 9999,
+      },
       effectRange: {
         type: ACT_EFFECT_RANGE_TYPES.BALL,
-        bulletSpeed: 9999,
         radius: 1,
       },
     });

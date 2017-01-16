@@ -16,10 +16,11 @@ const fixtures = [
       type: 'REACHABLE',
       reach: 2,
     },
+    bullet: {
+      speed: 12,
+    },
     effectRange: {
       type: 'BALL',
-      // TODO: -> bullet: { speed } ?
-      bulletSpeed: 12,
       radius: 2,
     },
     effectParameters: {
@@ -34,9 +35,11 @@ const fixtures = [
       type: 'REACHABLE',
       reach: 1,
     },
+    bullet: {
+      speed: 9999,
+    },
     effectRange: {
       type: 'UNIT',
-      bulletSpeed: 9999,
     },
     effectParameters: {
       damagePoints: 1,
@@ -50,9 +53,11 @@ const fixtures = [
       type: 'REACHABLE',
       reach: 1,
     },
+    bullet: {
+      speed: 9999,
+    },
     effectRange: {
       type: 'UNIT',
-      bulletSpeed: 9999,
     },
     effectParameters: {
       damagePoints: 0,

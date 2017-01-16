@@ -293,8 +293,6 @@ const fireBullets = (actor, act, aimedUnit, squareMatrixEndPointCoordinate, opti
     );
   }
 
-  const bulletSpeed = act.effectRange.bulletSpeed;
-
   let effect;
   if (options.effect) {
     effect = options.effect;
@@ -316,7 +314,7 @@ const fireBullets = (actor, act, aimedUnit, squareMatrixEndPointCoordinate, opti
     );
   }
 
-  bullets.push(bulletMethods.createNewBulletState(fromLocation, toLocation, bulletSpeed, effect));
+  bullets.push(bulletMethods.createNewBulletState(fromLocation, toLocation, act.bullet.speed, effect));
 
   return bullets;
 };

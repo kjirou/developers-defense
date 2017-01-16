@@ -1,6 +1,6 @@
 const assert = require('power-assert');
 
-const { Act } = require('../../src/immutable/acts');
+const { baseAct } = require('../../src/immutable/acts');
 const {
   ACT_AIM_RANGE_TYPES, ACT_EFFECT_RANGE_TYPES, ACTION_TYPES, BOARD_TYPES, FACTION_TYPES, FRIENDSHIP_TYPES
 } = require('../../src/immutable/constants');
@@ -53,8 +53,7 @@ describe('state-models/complex-apis', () => {
   const _createNReachAct = (n, options = {}) => {
     const friendshipType = options.friendshipType || null;
 
-    class NReachAct extends Act {}
-    return Object.assign(NReachAct, {
+    return Object.assign({}, baseAct, {
       friendshipType,
       aimRange: {
         type: ACT_AIM_RANGE_TYPES.REACHABLE,
@@ -396,13 +395,10 @@ describe('state-models/complex-apis', () => {
   });
 
   describe('willActorAimActAtUnit', () => {
-    class FriendlyAct extends Act {}
-    Object.assign(FriendlyAct, {
+    const friendlyAct = Object.assign({}, baseAct, {
       friendshipType: FRIENDSHIP_TYPES.FRIENDLY,
     });
-
-    class UnfriendlyAct extends Act {}
-    Object.assign(UnfriendlyAct, {
+    const unfriendlyAct = Object.assign({}, baseAct, {
       friendshipType: FRIENDSHIP_TYPES.UNFRIENDLY,
     });
 
@@ -419,35 +415,35 @@ describe('state-models/complex-apis', () => {
     });
 
     it('should return true in the case of `ally -(friendly act)-> ally`', () => {
-      assert.strictEqual(willActorAimActAtUnit(ally1, FriendlyAct, ally2), true);
+      assert.strictEqual(willActorAimActAtUnit(ally1, friendlyAct, ally2), true);
     });
 
     it('should return false in the case of `ally -(friendly act)-> enemy`', () => {
-      assert.strictEqual(willActorAimActAtUnit(ally1, FriendlyAct, enemy1), false);
+      assert.strictEqual(willActorAimActAtUnit(ally1, friendlyAct, enemy1), false);
     });
 
     it('should return false in the case of `enemy -(friendly act)-> ally`', () => {
-      assert.strictEqual(willActorAimActAtUnit(enemy1, FriendlyAct, ally1), false);
+      assert.strictEqual(willActorAimActAtUnit(enemy1, friendlyAct, ally1), false);
     });
 
     it('should return true in the case of `enemy -(friendly act)-> enemy`', () => {
-      assert.strictEqual(willActorAimActAtUnit(enemy1, FriendlyAct, enemy2), true);
+      assert.strictEqual(willActorAimActAtUnit(enemy1, friendlyAct, enemy2), true);
     });
 
     it('should return false in the case of `ally -(unfriendly act)-> ally`', () => {
-      assert.strictEqual(willActorAimActAtUnit(ally1, UnfriendlyAct, ally2), false);
+      assert.strictEqual(willActorAimActAtUnit(ally1, unfriendlyAct, ally2), false);
     });
 
     it('should return true in the case of `ally -(unfriendly act)-> enemy`', () => {
-      assert.strictEqual(willActorAimActAtUnit(ally1, UnfriendlyAct, enemy1), true);
+      assert.strictEqual(willActorAimActAtUnit(ally1, unfriendlyAct, enemy1), true);
     });
 
     it('should return true in the case of `enemy -(unfriendly act)-> ally`', () => {
-      assert.strictEqual(willActorAimActAtUnit(enemy1, UnfriendlyAct, ally1), true);
+      assert.strictEqual(willActorAimActAtUnit(enemy1, unfriendlyAct, ally1), true);
     });
 
     it('should return false in the case of `enemy -(unfriendly act)-> enemy`', () => {
-      assert.strictEqual(willActorAimActAtUnit(enemy1, UnfriendlyAct, enemy2), false);
+      assert.strictEqual(willActorAimActAtUnit(enemy1, unfriendlyAct, enemy2), false);
     });
   });
 
@@ -656,16 +652,14 @@ describe('state-models/complex-apis', () => {
   });
 
   describe('fireBullets', () => {
-    class ActTargetingOneUnit extends Act {}
-    Object.assign(ActTargetingOneUnit, {
+    const actTargetingOneUnit = Object.assign({}, baseAct, {
       effectRange: {
         type: ACT_EFFECT_RANGE_TYPES.UNIT,
         bulletSpeed: 9999,
       },
     });
 
-    class ActTargetingOneSquare extends Act {}
-    Object.assign(ActTargetingOneSquare, {
+    const actTargetingOneSquare = Object.assign({}, baseAct, {
       effectRange: {
         type: ACT_EFFECT_RANGE_TYPES.BALL,
         bulletSpeed: 9999,
@@ -680,7 +674,7 @@ describe('state-models/complex-apis', () => {
         it('can execute correctly', () => {
           const actor = _createPlacedUnit(0, 1);
           const target = _createPlacedUnit(1, 0);
-          const [ bullet ] = fireBullets(actor, ActTargetingOneUnit, target, endPointCoordinate, { effect: {} });
+          const [ bullet ] = fireBullets(actor, actTargetingOneUnit, target, endPointCoordinate, { effect: {} });
 
           assert.deepStrictEqual(bullet.fromLocation, locationMethods.createNewLocationState(24, 72))
           assert.deepStrictEqual(bullet.toLocation, locationMethods.createNewLocationState(72, 24))
@@ -692,7 +686,7 @@ describe('state-models/complex-apis', () => {
         it('can execute correctly', () => {
           const actor = _createPlacedUnit(0, 1);
           const target = _createPlacedUnit(2, 3);
-          const [ bullet ] = fireBullets(actor, ActTargetingOneSquare, target, endPointCoordinate, { effect: {} });
+          const [ bullet ] = fireBullets(actor, actTargetingOneSquare, target, endPointCoordinate, { effect: {} });
 
           assert.deepStrictEqual(bullet.fromLocation, locationMethods.createNewLocationState(24, 72))
           assert.deepStrictEqual(bullet.toLocation, locationMethods.createNewLocationState(120, 168))

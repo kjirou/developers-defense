@@ -1,56 +1,42 @@
 /**
- * @typedef {Function} Immutable~Job
+ * @typedef {Object} Immutable~Job
  */
 
 
 /** @module */
-const { createClassBasedResourceList } = require('@kjirou/utils');
 const dictify = require('dictify');
 const keymirror = require('keymirror');
 
-const { underscoredToClassName } = require('../lib/core');
 
-
-const fixture = [
+const fixtures = [
   {
-    constants: {
-      id: 'FIGHTER',
-      iconId: 'ra-sword',
-      maxHitPoints: 10,
-      attackPower: 3,
-      defensePower: 2,
-    },
+    id: 'FIGHTER',
+    iconId: 'ra-sword',
+    maxHitPoints: 10,
+    attackPower: 3,
+    defensePower: 2,
   },
   {
-    constants: {
-      id: 'HEALER',
-      iconId: 'ra-health',
-      maxHitPoints: 8,
-      defensePower: 1,
-    },
+    id: 'HEALER',
+    iconId: 'ra-health',
+    maxHitPoints: 8,
+    defensePower: 1,
   },
   {
-    constants: {
-      id: 'MAGE',
-      iconId: 'ra-crystal-wand',
-      maxHitPoints: 3,
-      mattackPower: 3,
-      mdefensePower: 1,
-    },
+    id: 'MAGE',
+    iconId: 'ra-crystal-wand',
+    maxHitPoints: 3,
+    mattackPower: 3,
+    mdefensePower: 1,
   },
   {
-    constants: {
-      id: 'NONE',
-      iconId: 'ra-player',
-    },
+    id: 'NONE',
+    iconId: 'ra-player',
   },
 ];
 
 
-class Job {
-}
-
-Object.assign(Job, {
+const baseJob = {
   id: null,
   iconId: null,
   maxHitPoints: 0,
@@ -58,26 +44,24 @@ Object.assign(Job, {
   defensePower: 0,
   mattackPower: 0,
   mdefensePower: 0,
-});
+};
 
+const jobList = fixtures.map(fixture => {
+  const job = Object.assign({}, baseJob, fixture);
 
-const jobList = createClassBasedResourceList(Job, fixture, {
-  naming: ({ Resource }) => underscoredToClassName(Resource.id) + Job.name,
+  if (!job.id || !job.iconId) {
+    throw new Error(`job.id="${ job.id }" is invalid`);
+  }
+
+  return job;
 });
 const jobs = dictify(jobList, 'id');
 const JOB_IDS = keymirror(jobs);
 
 
-jobList.forEach(job => {
-  if (!job.id || !job.iconId) {
-    throw new Error(`Job.id="${ job.id }" is invalid`);
-  }
-});
-
-
 module.exports = {
   JOB_IDS,
-  Job,
+  baseJob,
   jobList,
   jobs,
 };

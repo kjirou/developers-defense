@@ -1,5 +1,5 @@
 /**
- * @typedef {Function} Immutable~Act
+ * @typedef {Object} Immutable~Act
  */
 
 
@@ -74,7 +74,7 @@ const actList = fixtures.map(fixture => {
   const act =  Object.assign({}, baseAct, fixture);
 
   if (!act.id || !act.friendshipType || !act.aimRange || !act.effectRange) {
-    throw new Error(`Act.id="${ act.id }" is invalid`);
+    throw new Error(`act.id="${ act.id }" is invalid`);
   }
 
   return act;

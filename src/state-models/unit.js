@@ -6,6 +6,8 @@
  * @property {State~Location[]} destinations - x and y should be defined by integer
  * @property {number} destinationIndex
  *   The index of the currently active element in destinations. 0 ~ (destinations.length - 1)
+ * @property {number} hitPoints - A integer >= 0
+ * @property {?number} fixedMaxHitPoints - A integer >= 0
  * @property {number} movingSpeed - 1.0=2px/1tick
  * @property {number} actionPoints - A integer >= 0
  * @property {number} maxActionPoints - A integer >= 0

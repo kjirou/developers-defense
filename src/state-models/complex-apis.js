@@ -1,5 +1,5 @@
 /** @module */
-const boxCollide = require('box-collide');
+const { areBoxesOverlapping } = require('box-overlap');
 
 const config = require('../config');
 const { ACT_AIM_RANGE_TYPES, ACT_EFFECT_RANGE_TYPES, BOARD_TYPES, FACTION_TYPES, FRIENDSHIP_TYPES, STYLES
@@ -70,7 +70,7 @@ const detectAllCollisionsBetweenRectangleAndCoordinate = (rectangle, endPointCoo
   for (let rowIndex = 0; rowIndex <= endPointCoordinate[0]; rowIndex += 1) {
     for (let columnIndex = 0; columnIndex <= endPointCoordinate[1]; columnIndex += 1) {
       const coordinate = coordinateMethods.createNewCoordinateState(rowIndex, columnIndex);
-      if (boxCollide(rectangle, coordinateToRect(coordinate))) {
+      if (areBoxesOverlapping(rectangle, coordinateToRect(coordinate))) {
         collidedCoordinates.push(coordinate);
       }
     }
@@ -213,7 +213,7 @@ const canActorAimActAtTargetedUnit = (actor, act, target) => {
     const reachableRects = createReachableRects(actorLocation, act.aimRange.reach);
     const targetLocation = getUnitPositionAsLocation(target);
     const targetRect = squareLocationToRect(targetLocation);
-    return reachableRects.some(rect => boxCollide(rect, targetRect));
+    return reachableRects.some(rect => areBoxesOverlapping(rect, targetRect));
   }
 
   throw new Error(`Invalid aim-range-type`);

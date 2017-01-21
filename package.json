@@ -7,7 +7,6 @@
     "url": "https://github.com/kjirou/developers-defense/issues"
   },
   "devDependencies": {
-    "@kjirou/utils": "0.0.3",
     "angles": "0.2.0",
     "autoprefixer": "6.5.3",
     "babel-core": "6.18.2",

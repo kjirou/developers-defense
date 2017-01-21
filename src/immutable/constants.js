@@ -35,6 +35,13 @@ const BOARD_TYPES = keymirror({
   BATTLE_BOARD: null,
 });
 
+const EFFECT_DIRECTIONS = keymirror({
+  UP: null,
+  RIGHT: null,
+  DOWN: null,
+  LEFT: null,
+});
+
 const FACTION_TYPES = keymirror({
   ALLY: null,
   ENEMY: null,
@@ -87,6 +94,7 @@ module.exports = {
   ACT_EFFECT_RANGE_TYPES,
   ACTION_TYPES,
   BOARD_TYPES,
+  EFFECT_DIRECTIONS,
   FACTION_TYPES,
   FRIENDSHIP_TYPES,
   LANDFORM_TYPES,

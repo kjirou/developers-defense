@@ -9,7 +9,7 @@
 /** @module */
 const angles = require('angles');
 
-const { STYLES } = require('../immutable/constants');
+const { EFFECT_DIRECTIONS, STYLES } = require('../immutable/constants');
 
 
 const createNewLocationState = (y, x) => {
@@ -74,6 +74,36 @@ const measureAngleWithTopAsZero = (from, to) => {
 };
 
 /**
+ * @return {string} One of EFFECT_DIRECTIONS
+ */
+const measureAngleAsEffectDirection = (from, to) => {
+  const angle = measureAngleWithTopAsZero(from, to);
+
+  if (angle !== null) {
+    if (
+      315 <= angle && angle < 360 ||
+      0 <= angle && angle < 45
+    ) {
+      return EFFECT_DIRECTIONS.UP;
+    } else if (
+      45 <= angle && angle < 135
+    ) {
+      return EFFECT_DIRECTIONS.RIGHT;
+    } else if (
+      135 <= angle && angle < 225
+    ) {
+      return EFFECT_DIRECTIONS.DOWN;
+    } else if (
+      225 <= angle && angle < 315
+    ) {
+      return EFFECT_DIRECTIONS.LEFT;
+    }
+  }
+
+  throw new Error(`Invalid angle=${ angle }`);
+};
+
+/**
  * ベクトルの和を行うが、方向は上下左右に限定する。
  * 大量に呼び出されるので処理の速さに配慮する。
  * @param {State~Location} initial
@@ -112,6 +142,7 @@ module.exports = {
   areSameLocations,
   calculateCenterOfSquare,
   createNewLocationState,
+  measureAngleAsEffectDirection,
   measureAngleWithTopAsZero,
   measureDistance,
   performPseudoVectorAddition,

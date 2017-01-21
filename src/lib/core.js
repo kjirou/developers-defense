@@ -155,6 +155,11 @@ const expandDistanceToRelativeCoordinatesWithoutMemoization = (distance) => {
 
 const expandDistanceToRelativeCoordinates = memoize(expandDistanceToRelativeCoordinatesWithoutMemoization);
 
+/**
+ * @param {number} minReach - An integer of 0 or more
+ * @param {number} maxReach
+ * @return {Array<Array<number>>}
+ */
 const expandReachToRelativeCoordinates = (minReach, maxReach) => {
   let coordinates = [];
 

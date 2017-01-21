@@ -293,6 +293,8 @@ const fireBullets = (actor, act, aimedUnit, squareMatrixEndPointCoordinate, opti
     );
   }
 
+  const direction = locationMethods.measureAngleAsEffectDirection(fromLocation, toLocation);
+
   let effect;
   if (options.effect) {
     effect = options.effect;
@@ -304,7 +306,7 @@ const fireBullets = (actor, act, aimedUnit, squareMatrixEndPointCoordinate, opti
     if (act.effectRange.type === ACT_EFFECT_RANGE_TYPES.UNIT) {
       effectOptions.aimedUnitUid = aimedUnit.uid;
     } else {
-      effectOptions.relativeCoordinates = [];
+      effectOptions.relativeCoordinates = act.expandEffectRangeToRelativeCoordinates(direction);
     }
 
     effect = effectMethods.createNewEffectState(

@@ -7,17 +7,21 @@ const {
 const reducer = require('../../src/reducers');
 const boardMethods = require('../../src/state-models/board');
 const coordinateMethods = require('../../src/state-models/coordinate');
+const effectMethods = require('../../src/state-models/effect');
+const effectLogMethods = require('../../src/state-models/effect-log');
 const locationMethods = require('../../src/state-models/location');
 const {
-  applyEffectToUnits,
+  applyEffectToUnit,
   canActorAimActAtTargetedUnit,
   choiceAimedUnit,
   choiceClosestCoordinateUnderTargetedUnit,
   computeTick,
-  coordinateToRect,
-  coordinateToSquareLocation,
+  coordinateToRectangle,
+  coordinateToLocationOfSquare,
   createReachableRects,
+  createRectangleWithLocationAsCenterPoint,
   detectAllCollisionsBetweenRectangleAndCoordinate,
+  effectOccurs,
   findOneSquareFromBoardsByPlacement,
   fireBullets,
   judgeAffectableFractionTypes,
@@ -29,6 +33,10 @@ const unitMethods = require('../../src/state-models/unit');
 
 
 describe('state-models/complex-apis', () => {
+  const _loc = locationMethods.createNewLocationState;
+  const _log = effectLogMethods.createNewEffectLogState;
+  const _rect = rectangleMethods.createNewRectangleState;
+
   const _createPlacedUnit = (rowIndex, columnIndex) => {
     return Object.assign(unitMethods.createNewUnitState(), {
       placement: Object.assign(placementMethods.createNewPlacementState(), {
@@ -62,41 +70,65 @@ describe('state-models/complex-apis', () => {
     });
   };
 
+  const _createEffectTemplate = () => {
+    return effectMethods.createNewEffectState([], _loc(0, 0), {
+      relativeCoordinates: [0, 0],
+    });
+  };
 
-  describe('coordinateToSquareLocation', () => {
+
+  describe('createRectangleWithLocationAsCenterPoint', () => {
     it('can execute correctly', () => {
       assert.deepStrictEqual(
-        coordinateToSquareLocation(coordinateMethods.createNewCoordinateState(0, 0)),
+        createRectangleWithLocationAsCenterPoint(_loc(0, 0), 2, 4),
+        _rect({ x: -1, y: -2, width: 2, height: 4 })
+      );
+    });
+
+    it('should throw an error if `width` or `height` can be divided by 2', () => {
+      assert.throws(() => {
+        createRectangleWithLocationAsCenterPoint(_loc(0, 0), 2, 3);
+      }, /divisible/);
+      assert.throws(() => {
+        createRectangleWithLocationAsCenterPoint(_loc(0, 0), 1, 4);
+      }, /divisible/);
+    });
+  });
+
+  describe('coordinateToLocationOfSquare', () => {
+    it('can execute correctly', () => {
+      assert.deepStrictEqual(
+        coordinateToLocationOfSquare(coordinateMethods.createNewCoordinateState(0, 0)),
         locationMethods.createNewLocationState(0, 0)
       );
 
       assert.deepStrictEqual(
-        coordinateToSquareLocation(coordinateMethods.createNewCoordinateState(1, 2)),
+        coordinateToLocationOfSquare(coordinateMethods.createNewCoordinateState(1, 2)),
         locationMethods.createNewLocationState(48, 96)
       );
     });
   });
 
-  describe('coordinateToRect', () => {
+  describe('coordinateToRectangle', () => {
     it('can execute correctly', () => {
       assert.deepStrictEqual(
-        coordinateToRect(coordinateMethods.createNewCoordinateState(0, 0)),
-        {
-          x: 0,
-          y: 0,
-          width: 48,
-          height: 48,
-        }
+        coordinateToRectangle(coordinateMethods.createNewCoordinateState(0, 0)),
+        _rect({
+          top: 0,
+          left: 0,
+          bottom: 48,
+          right: 48,
+        })
       );
 
       assert.deepStrictEqual(
-        coordinateToRect(coordinateMethods.createNewCoordinateState(1, 2)),
-        {
-          x: 96,
-          y: 48,
-          width: 48,
-          height: 48,
-        }
+        coordinateToRectangle(coordinateMethods.createNewCoordinateState(1, 2)),
+        _rect({
+          top: 48,
+          left: 96,
+          bottom: 96,
+          right: 144,
+        })
       );
     });
   });
@@ -287,25 +319,25 @@ describe('state-models/complex-apis', () => {
       assert.deepStrictEqual(
         createReachableRects(locationMethods.createNewLocationState(0, 0), 0),
         [
-          { x: 0, y: 0, width: 48, height: 48 },
+          _rect({ x: 0, y: 0, width: 48, height: 48 }),
         ]
       );
 
       assert.deepStrictEqual(
         createReachableRects(locationMethods.createNewLocationState(0, 0), 1),
         [
-          { x: 0, y: 0, width: 48, height: 48 },
-          { x: 0, y: -48, width: 48, height: 48 },
-          { x: 48, y: 0, width: 48, height: 48 },
-          { x: 0, y: 48, width: 48, height: 48 },
-          { x: -48, y: 0, width: 48, height: 48 },
+          _rect({ x: 0, y: 0, width: 48, height: 48 }),
+          _rect({ x: 0, y: -48, width: 48, height: 48 }),
+          _rect({ x: 48, y: 0, width: 48, height: 48 }),
+          _rect({ x: 0, y: 48, width: 48, height: 48 }),
+          _rect({ x: -48, y: 0, width: 48, height: 48 }),
         ]
       );
 
       assert.deepStrictEqual(
         createReachableRects(locationMethods.createNewLocationState(100, 150), 0),
         [
-          { x: 150, y: 100, width: 48, height: 48 },
+          _rect({ x: 150, y: 100, width: 48, height: 48 }),
         ]
       );
     });
@@ -703,7 +735,54 @@ describe('state-models/complex-apis', () => {
     });
   });
 
-  describe('applyEffectToUnits', () => {
+  describe('applyEffectToUnit', () => {
+    let healthyUnit;
+    let woundedUnit;
+    let effect;
+
+    beforeEach(() => {
+      healthyUnit = _createLocatedUnit(0, 0);
+      Object.assign(healthyUnit, {
+        hitPoints: unitMethods.calculateHealingByRate(healthyUnit, 1.0).hitPoints,
+      });
+
+      woundedUnit = Object.assign(_createLocatedUnit(0, 0), {
+        hitPoints: 1,
+      });
+
+      effect = _createEffectTemplate();
+    });
+
+    describe('healing', () => {
+      it('can heal 1 pont', () => {
+        Object.assign(effect, {
+          healingPoints: 1,
+        });
+
+        const { newUnit, effectLogs } = applyEffectToUnit(effect, woundedUnit);
+
+        assert(newUnit.hitPoints > woundedUnit.hitPoints);
+        assert.strictEqual(effectLogs.length, 1);
+        assert.strictEqual(effectLogs[0].healingPoints, 1);
+      });
+    });
+
+    describe('damaging', () => {
+      it('can damage 1 point', () => {
+        Object.assign(effect, {
+          damagePoints: 1,
+        });
+
+        const { newUnit, effectLogs } = applyEffectToUnit(effect, healthyUnit);
+
+        assert(healthyUnit.hitPoints > newUnit.hitPoints);
+        assert.strictEqual(effectLogs.length, 1);
+        assert.strictEqual(effectLogs[0].damagePoints, 1);
+      });
+    });
+  });
+
+  describe('effectOccurs', () => {
     describe('aaa', () => {
       it('aaaaa', () => {
       });

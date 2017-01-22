@@ -24,7 +24,7 @@ const fixtures = [
     },
     effectRange: {
       type: 'BALL',
-      radius: 2,
+      radius: 1,
     },
     effectParameters: {
       damagePoints: 1,

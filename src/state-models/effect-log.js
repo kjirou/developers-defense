@@ -1,19 +1,18 @@
 /**
  * @typedef {Object} State~EffectLog
- * @property {?string} unitUid
+ * @description Log of the effect occured for the unit
+ * @property {string} unitUid
  * @property {?number} damagePoints
  * @property {?number} healingPoints
  */
 
 
 /** @module */
-const createNewEffectLogState = (options = {}) => {
+const createNewEffectLogState = (unitUid, options = {}) => {
   const {
-    unitUid,
     damagePoints,
     healingPoints,
   } = Object.assign({
-    unitUid: null,
     damagePoints: null,
     healingPoints: null,
   }, options);

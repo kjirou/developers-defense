@@ -9,16 +9,15 @@ const bulletMethods = require('./bullet');
 const coordinateMethods = require('./coordinate');
 const effectMethods = require('./effect');
 const effectLogMethods = require('./effect-log');
+const geometricApis = require('./geometric-apis');
 const {
   coordinateToLocation,
   coordinateToRectangle,
-  createReachableRectangles,
-  findCoordinatesWhereRectangleOverlaps,
   locationToCoordinate,
   locationToRectangle,
   rectangleToCoordinate,
   rectangleToLocation,
-} = require('./geometric-apis');
+} = geometricApis;  // Expand only useful methods
 const locationMethods = require('./location');
 const rectangleMethods = require('./rectangle');
 const squareMatrixMethods = require('./square-matrix');
@@ -49,7 +48,7 @@ const choiceClosestCoordinateUnderTargetedUnit = (actor, targetedUnit, endPointC
   const targetedUnitLocation = getUnitPositionAsLocation(targetedUnit);
   const targetedUnitRectangle = locationToRectangle(targetedUnitLocation);
 
-  const candidates = findCoordinatesWhereRectangleOverlaps(
+  const candidates = geometricApis.findCoordinatesWhereRectangleOverlaps(
     targetedUnitRectangle, endPointCoordinate);
 
   // Since enemies can only move up / down / left / right,
@@ -155,7 +154,7 @@ const canActorAimActAtTargetedUnit = (actor, act, target) => {
   if (act.aimRange.type === ACT_AIM_RANGE_TYPES.REACHABLE) {
     // TODO: 暗黙的にユニットのサイズをマス目と同じとしているが、これで問題ないのか不明。
     const actorLocation = getUnitPositionAsLocation(actor);
-    const reachableRects = createReachableRectangles(actorLocation, act.aimRange.reach);
+    const reachableRects = geometricApis.createReachableRectangles(actorLocation, act.aimRange.reach);
     const targetLocation = getUnitPositionAsLocation(target);
     const targetRect = locationToRectangle(targetLocation);
     return reachableRects.some(rect => areBoxesOverlapping(rect, targetRect));

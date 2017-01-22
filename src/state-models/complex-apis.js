@@ -301,20 +301,6 @@ const applyEffectToUnit = (effect, unit) => {
 };
 
 /**
- * @param {State~Effect} effect
- * @return {State~Rectangle[]}
- */
-const createEffectiveRectangles = (effect) => {
-  const impactedCoordinate = locationToCoordinate(effect.impactedLocation);
-
-  return (effect.relativeCoordinates || [])
-    .map(([ m, n ]) => coordinateMethods.tryToMoveCoordinate(impactedCoordinate, m, n))
-    .filter(coordinate => coordinate !== null)
-    .map(coordinate => coordinateToRectangle(coordinate))
-  ;
-};
-
-/**
  * Apply effect to units within the effective range
  * @param {State~Effect} effect
  * @param {State~Unit[]} units
@@ -323,7 +309,7 @@ const createEffectiveRectangles = (effect) => {
 const effectOccurs = (effect, units) => {
   const effectLogs = [];
 
-  const effectiveRectangles = createEffectiveRectangles(effect);
+  const effectiveRectangles = effectMethods.createEffectiveRectangles(effect);
 
   const newUnits = units.map(unit => {
     const unitLocation = getUnitPositionAsLocation(unit);
@@ -477,7 +463,6 @@ module.exports = {
   choiceAimedUnit,
   choiceClosestCoordinateUnderTargetedUnit,
   computeTick,
-  createEffectiveRectangles,
   effectOccurs,
   findOneSquareFromBoardsByPlacement,
   fireBullets,

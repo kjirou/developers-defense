@@ -5,6 +5,7 @@ const {
   areSameLocations,
   calculateCenterOfSquare,
   createNewLocationState,
+  measureAngleAsEffectDirection,
   measureAngleWithTopAsZero,
   measureDistance,
   performPseudoVectorAddition,
@@ -76,6 +77,16 @@ describe('state-models/location', () => {
     it('should return null if two points are same locations', () => {
       assert.strictEqual(measureAngleWithTopAsZero(_loc(0, 0), _loc(0, 0)), null);
       assert.strictEqual(measureAngleWithTopAsZero(_loc(1.2, 3.4), _loc(1.2, 3.4)), null);
+    });
+  });
+
+  describe('measureAngleWithTopAsZero', () => {
+    it('can execute correctly', () => {
+      const from = createNewLocationState(0, 0);
+      assert.strictEqual(measureAngleAsEffectDirection(from, createNewLocationState(-1, 0)), 'UP');
+      assert.strictEqual(measureAngleAsEffectDirection(from, createNewLocationState(0, 1)), 'RIGHT');
+      assert.strictEqual(measureAngleAsEffectDirection(from, createNewLocationState(1, 0)), 'DOWN');
+      assert.strictEqual(measureAngleAsEffectDirection(from, createNewLocationState(0, -1)), 'LEFT');
     });
   });
 

@@ -1,22 +1,22 @@
 const assert = require('power-assert');
 
-const { Act } = require('../../src/immutable/acts');
+const { baseAct } = require('../../src/immutable/acts');
 const {
   ACT_AIM_RANGE_TYPES, ACT_EFFECT_RANGE_TYPES, ACTION_TYPES, BOARD_TYPES, FACTION_TYPES, FRIENDSHIP_TYPES
 } = require('../../src/immutable/constants');
 const reducer = require('../../src/reducers');
 const boardMethods = require('../../src/state-models/board');
 const coordinateMethods = require('../../src/state-models/coordinate');
+const effectMethods = require('../../src/state-models/effect');
+const effectLogMethods = require('../../src/state-models/effect-log');
 const locationMethods = require('../../src/state-models/location');
 const {
+  applyEffectToUnit,
   canActorAimActAtTargetedUnit,
   choiceAimedUnit,
   choiceClosestCoordinateUnderTargetedUnit,
   computeTick,
-  coordinateToRect,
-  coordinateToSquareLocation,
-  createReachableRects,
-  detectAllCollisionsBetweenRectangleAndCoordinate,
+  effectOccurs,
   findOneSquareFromBoardsByPlacement,
   fireBullets,
   judgeAffectableFractionTypes,
@@ -28,6 +28,10 @@ const unitMethods = require('../../src/state-models/unit');
 
 
 describe('state-models/complex-apis', () => {
+  const _loc = locationMethods.createNewLocationState;
+  const _log = effectLogMethods.createNewEffectLogState;
+  const _rect = rectangleMethods.createNewRectangleState;
+
   const _createPlacedUnit = (rowIndex, columnIndex) => {
     return Object.assign(unitMethods.createNewUnitState(), {
       placement: Object.assign(placementMethods.createNewPlacementState(), {
@@ -52,8 +56,7 @@ describe('state-models/complex-apis', () => {
   const _createNReachAct = (n, options = {}) => {
     const friendshipType = options.friendshipType || null;
 
-    class NReachAct extends Act {}
-    return Object.assign(NReachAct, {
+    return Object.assign({}, baseAct, {
       friendshipType,
       aimRange: {
         type: ACT_AIM_RANGE_TYPES.REACHABLE,
@@ -62,143 +65,12 @@ describe('state-models/complex-apis', () => {
     });
   };
 
-
-  describe('coordinateToSquareLocation', () => {
-    it('can execute correctly', () => {
-      assert.deepStrictEqual(
-        coordinateToSquareLocation(coordinateMethods.createNewCoordinateState(0, 0)),
-        locationMethods.createNewLocationState(0, 0)
-      );
-
-      assert.deepStrictEqual(
-        coordinateToSquareLocation(coordinateMethods.createNewCoordinateState(1, 2)),
-        locationMethods.createNewLocationState(48, 96)
-      );
+  const _createEffectTemplate = () => {
+    return effectMethods.createNewEffectState([], _loc(0, 0), {
+      relativeCoordinates: [0, 0],
     });
-  });
+  };
 
-  describe('coordinateToRect', () => {
-    it('can execute correctly', () => {
-      assert.deepStrictEqual(
-        coordinateToRect(coordinateMethods.createNewCoordinateState(0, 0)),
-        {
-          x: 0,
-          y: 0,
-          width: 48,
-          height: 48,
-        }
-      );
-
-      assert.deepStrictEqual(
-        coordinateToRect(coordinateMethods.createNewCoordinateState(1, 2)),
-        {
-          x: 96,
-          y: 48,
-          width: 48,
-          height: 48,
-        }
-      );
-    });
-  });
-
-  describe('detectAllCollisionsBetweenRectangleAndCoordinate', () => {
-    it('can execute correctly', () => {
-      //  o | - | -
-      // ---+---+---
-      //  - | - | -
-      // ---+---+---
-      //  - | - | -
-      assert.deepStrictEqual(
-        detectAllCollisionsBetweenRectangleAndCoordinate(
-          rectangleMethods.createNewRectangleState({ x: 0, y: 0, width: 48, height: 48 }),
-          coordinateMethods.createNewCoordinateState(2, 2)
-        ),
-        [
-          coordinateMethods.createNewCoordinateState(0, 0),
-        ]
-      );
-
-      //  o | o | -
-      // ---+---+---
-      //  - | - | -
-      // ---+---+---
-      //  - | - | -
-      assert.deepStrictEqual(
-        detectAllCollisionsBetweenRectangleAndCoordinate(
-          rectangleMethods.createNewRectangleState({ x: 1, y: 0, width: 48, height: 48 }),
-          coordinateMethods.createNewCoordinateState(2, 2)
-        ),
-        [
-          coordinateMethods.createNewCoordinateState(0, 0),
-          coordinateMethods.createNewCoordinateState(0, 1),
-        ]
-      );
-
-      //  - | - | -
-      // ---+---+---
-      //  - | o | -
-      // ---+---+---
-      //  - | - | -
-      assert.deepStrictEqual(
-        detectAllCollisionsBetweenRectangleAndCoordinate(
-          rectangleMethods.createNewRectangleState({ x: 48, y: 48, width: 48, height: 48 }),
-          coordinateMethods.createNewCoordinateState(2, 2)
-        ),
-        [
-          coordinateMethods.createNewCoordinateState(1, 1),
-        ]
-      );
-
-      //  - | - | -
-      // ---+---+---
-      //  - | - | -
-      // ---+---+---
-      //  - | o | o
-      assert.deepStrictEqual(
-        detectAllCollisionsBetweenRectangleAndCoordinate(
-          rectangleMethods.createNewRectangleState({ x: 95, y: 96, width: 48, height: 48 }),
-          coordinateMethods.createNewCoordinateState(2, 2)
-        ),
-        [
-          coordinateMethods.createNewCoordinateState(2, 1),
-          coordinateMethods.createNewCoordinateState(2, 2),
-        ]
-      );
-
-      //  - | - | -
-      // ---+---+---
-      //  o | o | -
-      // ---+---+---
-      //  o | o | -
-      assert.deepStrictEqual(
-        detectAllCollisionsBetweenRectangleAndCoordinate(
-          rectangleMethods.createNewRectangleState({ x: 24, y: 72, width: 48, height: 48 }),
-          coordinateMethods.createNewCoordinateState(2, 2)
-        ),
-        [
-          coordinateMethods.createNewCoordinateState(1, 0),
-          coordinateMethods.createNewCoordinateState(1, 1),
-          coordinateMethods.createNewCoordinateState(2, 0),
-          coordinateMethods.createNewCoordinateState(2, 1),
-        ]
-      );
-
-      //  - | - |
-      // ---+---+
-      //  - | o | x
-      // ---+---+
-      //      x   x
-      assert.deepStrictEqual(
-        detectAllCollisionsBetweenRectangleAndCoordinate(
-          rectangleMethods.createNewRectangleState({ x: 49, y: 49, width: 48, height: 48 }),
-          coordinateMethods.createNewCoordinateState(1, 1)
-        ),
-        [
-          coordinateMethods.createNewCoordinateState(1, 1),
-        ]
-      );
-    });
-  });
 
   describe('choiceClosestCoordinateUnderTargetedUnit', () => {
     //  - | - | -
@@ -278,35 +150,6 @@ describe('state-models/complex-apis', () => {
       assert.deepStrictEqual(
         choiceClosestCoordinateUnderTargetedUnit(actor, target, endPointCoordinate),
         coordinateMethods.createNewCoordinateState(0, 1)
-      );
-    });
-  });
-
-  describe('createReachableRects', () => {
-    it('can execute correctly', () => {
-      assert.deepStrictEqual(
-        createReachableRects(locationMethods.createNewLocationState(0, 0), 0),
-        [
-          { x: 0, y: 0, width: 48, height: 48 },
-        ]
-      );
-
-      assert.deepStrictEqual(
-        createReachableRects(locationMethods.createNewLocationState(0, 0), 1),
-        [
-          { x: 0, y: 0, width: 48, height: 48 },
-          { x: 0, y: -48, width: 48, height: 48 },
-          { x: 48, y: 0, width: 48, height: 48 },
-          { x: 0, y: 48, width: 48, height: 48 },
-          { x: -48, y: 0, width: 48, height: 48 },
-        ]
-      );
-
-      assert.deepStrictEqual(
-        createReachableRects(locationMethods.createNewLocationState(100, 150), 0),
-        [
-          { x: 150, y: 100, width: 48, height: 48 },
-        ]
       );
     });
   });
@@ -395,13 +238,10 @@ describe('state-models/complex-apis', () => {
   });
 
   describe('willActorAimActAtUnit', () => {
-    class FriendlyAct extends Act {}
-    Object.assign(FriendlyAct, {
+    const friendlyAct = Object.assign({}, baseAct, {
       friendshipType: FRIENDSHIP_TYPES.FRIENDLY,
     });
-
-    class UnfriendlyAct extends Act {}
-    Object.assign(UnfriendlyAct, {
+    const unfriendlyAct = Object.assign({}, baseAct, {
       friendshipType: FRIENDSHIP_TYPES.UNFRIENDLY,
     });
 
@@ -418,35 +258,35 @@ describe('state-models/complex-apis', () => {
     });
 
     it('should return true in the case of `ally -(friendly act)-> ally`', () => {
-      assert.strictEqual(willActorAimActAtUnit(ally1, FriendlyAct, ally2), true);
+      assert.strictEqual(willActorAimActAtUnit(ally1, friendlyAct, ally2), true);
     });
 
     it('should return false in the case of `ally -(friendly act)-> enemy`', () => {
-      assert.strictEqual(willActorAimActAtUnit(ally1, FriendlyAct, enemy1), false);
+      assert.strictEqual(willActorAimActAtUnit(ally1, friendlyAct, enemy1), false);
     });
 
     it('should return false in the case of `enemy -(friendly act)-> ally`', () => {
-      assert.strictEqual(willActorAimActAtUnit(enemy1, FriendlyAct, ally1), false);
+      assert.strictEqual(willActorAimActAtUnit(enemy1, friendlyAct, ally1), false);
     });
 
     it('should return true in the case of `enemy -(friendly act)-> enemy`', () => {
-      assert.strictEqual(willActorAimActAtUnit(enemy1, FriendlyAct, enemy2), true);
+      assert.strictEqual(willActorAimActAtUnit(enemy1, friendlyAct, enemy2), true);
     });
 
     it('should return false in the case of `ally -(unfriendly act)-> ally`', () => {
-      assert.strictEqual(willActorAimActAtUnit(ally1, UnfriendlyAct, ally2), false);
+      assert.strictEqual(willActorAimActAtUnit(ally1, unfriendlyAct, ally2), false);
     });
 
     it('should return true in the case of `ally -(unfriendly act)-> enemy`', () => {
-      assert.strictEqual(willActorAimActAtUnit(ally1, UnfriendlyAct, enemy1), true);
+      assert.strictEqual(willActorAimActAtUnit(ally1, unfriendlyAct, enemy1), true);
     });
 
     it('should return true in the case of `enemy -(unfriendly act)-> ally`', () => {
-      assert.strictEqual(willActorAimActAtUnit(enemy1, UnfriendlyAct, ally1), true);
+      assert.strictEqual(willActorAimActAtUnit(enemy1, unfriendlyAct, ally1), true);
     });
 
     it('should return false in the case of `enemy -(unfriendly act)-> enemy`', () => {
-      assert.strictEqual(willActorAimActAtUnit(enemy1, UnfriendlyAct, enemy2), false);
+      assert.strictEqual(willActorAimActAtUnit(enemy1, unfriendlyAct, enemy2), false);
     });
   });
 
@@ -655,20 +495,21 @@ describe('state-models/complex-apis', () => {
   });
 
   describe('fireBullets', () => {
-    class ActTargetingOneUnit extends Act {}
-    Object.assign(ActTargetingOneUnit, {
+    const actTargetingOneUnit = Object.assign({}, baseAct, {
+      bullet: {
+        speed: 9999,
+      },
       effectRange: {
         type: ACT_EFFECT_RANGE_TYPES.UNIT,
-        bulletSpeed: 9999,
-        count: 1,
       },
     });
 
-    class ActTargetingOneSquare extends Act {}
-    Object.assign(ActTargetingOneSquare, {
+    const actTargetingOneSquare = Object.assign({}, baseAct, {
+      bullet: {
+        speed: 9999,
+      },
       effectRange: {
         type: ACT_EFFECT_RANGE_TYPES.BALL,
-        bulletSpeed: 9999,
         radius: 1,
       },
     });
@@ -680,7 +521,7 @@ describe('state-models/complex-apis', () => {
         it('can execute correctly', () => {
           const actor = _createPlacedUnit(0, 1);
           const target = _createPlacedUnit(1, 0);
-          const [ bullet ] = fireBullets(actor, ActTargetingOneUnit, target, endPointCoordinate);
+          const [ bullet ] = fireBullets(actor, actTargetingOneUnit, target, endPointCoordinate, { effect: {} });
 
           assert.deepStrictEqual(bullet.fromLocation, locationMethods.createNewLocationState(24, 72))
           assert.deepStrictEqual(bullet.toLocation, locationMethods.createNewLocationState(72, 24))
@@ -692,7 +533,7 @@ describe('state-models/complex-apis', () => {
         it('can execute correctly', () => {
           const actor = _createPlacedUnit(0, 1);
           const target = _createPlacedUnit(2, 3);
-          const [ bullet ] = fireBullets(actor, ActTargetingOneSquare, target, endPointCoordinate);
+          const [ bullet ] = fireBullets(actor, actTargetingOneSquare, target, endPointCoordinate, { effect: {} });
 
           assert.deepStrictEqual(bullet.fromLocation, locationMethods.createNewLocationState(24, 72))
           assert.deepStrictEqual(bullet.toLocation, locationMethods.createNewLocationState(120, 168))
@@ -702,6 +543,60 @@ describe('state-models/complex-apis', () => {
     });
 
     describe('generation of effect', () => {
+    });
+  });
+
+  describe('applyEffectToUnit', () => {
+    let healthyUnit;
+    let woundedUnit;
+    let effect;
+
+    beforeEach(() => {
+      healthyUnit = _createLocatedUnit(0, 0);
+      Object.assign(healthyUnit, {
+        hitPoints: unitMethods.calculateHealingByRate(healthyUnit, 1.0).hitPoints,
+      });
+
+      woundedUnit = Object.assign(_createLocatedUnit(0, 0), {
+        hitPoints: 1,
+      });
+
+      effect = _createEffectTemplate();
+    });
+
+    describe('healing', () => {
+      it('can heal 1 pont', () => {
+        Object.assign(effect, {
+          healingPoints: 1,
+        });
+
+        const { newUnit, effectLogs } = applyEffectToUnit(effect, woundedUnit);
+
+        assert(newUnit.hitPoints > woundedUnit.hitPoints);
+        assert.strictEqual(effectLogs.length, 1);
+        assert.strictEqual(effectLogs[0].healingPoints, 1);
+      });
+    });
+
+    describe('damaging', () => {
+      it('can damage 1 point', () => {
+        Object.assign(effect, {
+          damagePoints: 1,
+        });
+
+        const { newUnit, effectLogs } = applyEffectToUnit(effect, healthyUnit);
+
+        assert(healthyUnit.hitPoints > newUnit.hitPoints);
+        assert.strictEqual(effectLogs.length, 1);
+        assert.strictEqual(effectLogs[0].damagePoints, 1);
+      });
+    });
+  });
+
+  describe('effectOccurs', () => {
+    describe('aaa', () => {
+      it('aaaaa', () => {
+      });
     });
   });
 

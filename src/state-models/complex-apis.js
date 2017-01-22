@@ -1,5 +1,5 @@
 /** @module */
-const boxCollide = require('box-collide');
+const { areBoxesOverlapping } = require('box-overlap');
 
 const config = require('../config');
 const { ACT_AIM_RANGE_TYPES, ACT_EFFECT_RANGE_TYPES, BOARD_TYPES, FACTION_TYPES, FRIENDSHIP_TYPES, STYLES
@@ -8,41 +8,21 @@ const { expandReachToRelativeCoordinates } = require('../lib/core');
 const bulletMethods = require('./bullet');
 const coordinateMethods = require('./coordinate');
 const effectMethods = require('./effect');
+const effectLogMethods = require('./effect-log');
+const geometricApis = require('./geometric-apis');
+const {
+  coordinateToLocation,
+  coordinateToRectangle,
+  locationToCoordinate,
+  locationToRectangle,
+  rectangleToCoordinate,
+  rectangleToLocation,
+} = geometricApis;  // Expand only useful methods
 const locationMethods = require('./location');
+const rectangleMethods = require('./rectangle');
 const squareMatrixMethods = require('./square-matrix');
 const unitMethods = require('./unit');
 
-
-/**
- * @param {State~Coordinate}
- * @return {State~Location} A location of square
- */
-const coordinateToSquareLocation = (coordinate) => {
-  return locationMethods.createNewLocationState(
-    coordinate[0] * STYLES.SQUARE_HEIGHT, coordinate[1] * STYLES.SQUARE_WIDTH);
-};
-
-/**
- * @param {State~Location} squareLocation
- * @return {{x, y, width, height}} This is mainly used to `substack/box-collide`
- * @todo Use State~Rectangle
- */
-const squareLocationToRect = (squareLocation) => {
-  return {
-    x: squareLocation.x,
-    y: squareLocation.y,
-    width: STYLES.SQUARE_WIDTH,
-    height: STYLES.SQUARE_HEIGHT,
-  };
-};
-
-/**
- * @param {State~Coordinate} coordinate
- * @todo Use State~Rectangle
- */
-const coordinateToRect = (coordinate) => {
-  return squareLocationToRect(coordinateToSquareLocation(coordinate));
-};
 
 /**
  * @param {State~Unit} unit
@@ -52,31 +32,9 @@ const getUnitPositionAsLocation = (unit) => {
   if (unit.location) {
     return unit.location;
   } else if (unit.placement) {
-    return coordinateToSquareLocation(unit.placement.coordinate);
+    return coordinateToLocation(unit.placement.coordinate);
   }
   throw new Error(`The unit does not have either \`location\` or \`placement\``);
-};
-
-/**
- * Detect collisions between rectangle and coordinate,
- *   assuming that the size of the square-matrix is infinite.
- * @param {State~Rectangle} rectangle
- * @param {State~Coordinate} endPointCoordinate
- * @return {State~Coordinate[]}
- */
-const detectAllCollisionsBetweenRectangleAndCoordinate = (rectangle, endPointCoordinate) => {
-  const collidedCoordinates = [];
-
-  for (let rowIndex = 0; rowIndex <= endPointCoordinate[0]; rowIndex += 1) {
-    for (let columnIndex = 0; columnIndex <= endPointCoordinate[1]; columnIndex += 1) {
-      const coordinate = coordinateMethods.createNewCoordinateState(rowIndex, columnIndex);
-      if (boxCollide(rectangle, coordinateToRect(coordinate))) {
-        collidedCoordinates.push(coordinate);
-      }
-    }
-  }
-
-  return collidedCoordinates;
 };
 
 /**
@@ -88,9 +46,9 @@ const detectAllCollisionsBetweenRectangleAndCoordinate = (rectangle, endPointCoo
 const choiceClosestCoordinateUnderTargetedUnit = (actor, targetedUnit, endPointCoordinate) => {
   const actorLocation = getUnitPositionAsLocation(actor);
   const targetedUnitLocation = getUnitPositionAsLocation(targetedUnit);
-  const targetedUnitRectangle = squareLocationToRect(targetedUnitLocation);
+  const targetedUnitRectangle = locationToRectangle(targetedUnitLocation);
 
-  const candidates = detectAllCollisionsBetweenRectangleAndCoordinate(
+  const candidates = geometricApis.findCoordinatesWhereRectangleOverlaps(
     targetedUnitRectangle, endPointCoordinate);
 
   // Since enemies can only move up / down / left / right,
@@ -102,8 +60,8 @@ const choiceClosestCoordinateUnderTargetedUnit = (actor, targetedUnit, endPointC
 
   // Sort in order of closeness
   return candidates.sort((a, b) => {
-    const aLocation = coordinateToSquareLocation(a);
-    const bLocation = coordinateToSquareLocation(b);
+    const aLocation = coordinateToLocation(a);
+    const bLocation = coordinateToLocation(b);
     const distanceToA = locationMethods.measureDistance(actorLocation, aLocation);
     const distanceToB = locationMethods.measureDistance(actorLocation, bLocation);
 
@@ -114,20 +72,6 @@ const choiceClosestCoordinateUnderTargetedUnit = (actor, targetedUnit, endPointC
     }
     return 0;
   })[0] || null
-};
-
-/**
- * @param {State~Location} centerSquareLocation
- * @param {number} reach - A integer >= 0
- * @return {Array<{x, y, width, height}>}
- * @todo Remove overflowed coordinates from result?
- */
-const createReachableRects = (centerSquareLocation, reach) => {
-  return expandReachToRelativeCoordinates(0, reach)
-    .map(relativeCoordinate =>
-      locationMethods.addLocations(centerSquareLocation, coordinateToSquareLocation(relativeCoordinate))
-    )
-    .map(location => squareLocationToRect(location));
 };
 
 /**
@@ -187,7 +131,7 @@ const judgeAffectableFractionTypes = (actFriendshipType, actorFactionType) => {
     }
   }
 
-  throw new Error('Invalid factionType');
+  throw new Error(`Invalid actFriendshipType=${ actFriendshipType } or actorFactionType=${ actorFactionType }`);
 };
 
 /**
@@ -210,10 +154,10 @@ const canActorAimActAtTargetedUnit = (actor, act, target) => {
   if (act.aimRange.type === ACT_AIM_RANGE_TYPES.REACHABLE) {
     // TODO: 暗黙的にユニットのサイズをマス目と同じとしているが、これで問題ないのか不明。
     const actorLocation = getUnitPositionAsLocation(actor);
-    const reachableRects = createReachableRects(actorLocation, act.aimRange.reach);
+    const reachableRects = geometricApis.createReachableRectangles(actorLocation, act.aimRange.reach);
     const targetLocation = getUnitPositionAsLocation(target);
-    const targetRect = squareLocationToRect(targetLocation);
-    return reachableRects.some(rect => boxCollide(rect, targetRect));
+    const targetRect = locationToRectangle(targetLocation);
+    return reachableRects.some(rect => areBoxesOverlapping(rect, targetRect));
   }
 
   throw new Error(`Invalid aim-range-type`);
@@ -266,9 +210,15 @@ const choiceAimedUnit = (actor, act, units) => {
  * @param {Function} act
  * @param {State~Unit} aimedUnit
  * @param {State~Coordinate} squareMatrixEndPointCoordinate
+ * @param {(Object|undefined)} options
+ * @param {?State~Effect} [options.effect] - Pass the effect from the outside. It is mainly for testing.
  * @return {State~Bullet[]}
  */
-const fireBullets = (actor, act, aimedUnit, squareMatrixEndPointCoordinate) => {
+const fireBullets = (actor, act, aimedUnit, squareMatrixEndPointCoordinate, options = {}) => {
+  const defaultedOptions = Object.assign({
+    effect: null,
+  }, options);
+
   const bullets = [];
 
   const actorLocation = getUnitPositionAsLocation(actor);
@@ -281,29 +231,133 @@ const fireBullets = (actor, act, aimedUnit, squareMatrixEndPointCoordinate) => {
     toLocation = locationMethods.calculateCenterOfSquare(aimedUnitLocation);
   } else {
     toLocation = locationMethods.calculateCenterOfSquare(
-      coordinateToSquareLocation(
+      coordinateToLocation(
         choiceClosestCoordinateUnderTargetedUnit(actor, aimedUnit, squareMatrixEndPointCoordinate)
       )
     );
   }
 
-  const bulletSpeed = act.effectRange.bulletSpeed;
+  const direction = locationMethods.measureAngleAsEffectDirection(fromLocation, toLocation);
 
-  const effectOptions = {};
-  if (act.effectRange.type === ACT_EFFECT_RANGE_TYPES.UNIT) {
-    effectOptions.aimedUnitUid = aimedUnit.uid;
+  let effect;
+  if (options.effect) {
+    effect = options.effect;
+  } else {
+    const effectOptions = {
+      damagePoints: act.effectParameters.damagePoints,
+      healingPoints: act.effectParameters.healingPoints,
+    };
+    if (act.effectRange.type === ACT_EFFECT_RANGE_TYPES.UNIT) {
+      effectOptions.aimedUnitUid = aimedUnit.uid;
+    } else {
+      effectOptions.relativeCoordinates = act.expandEffectRangeToRelativeCoordinates(direction);
+    }
+
+    effect = effectMethods.createNewEffectState(
+      judgeAffectableFractionTypes(act.friendshipType, actor.factionType),
+      toLocation,
+      effectOptions
+    );
   }
 
-  const effect = effectMethods.createNewEffectState(
-    toLocation,
-    act.effectRange.type,
-    judgeAffectableFractionTypes(act.friendshipType, actor.factionType),
-    effectOptions
-  );
-
-  bullets.push(bulletMethods.createNewBulletState(fromLocation, toLocation, bulletSpeed, effect));
+  bullets.push(bulletMethods.createNewBulletState(fromLocation, toLocation, act.bullet.speed, effect));
 
   return bullets;
+};
+
+/**
+ * @param {State~Effect} effect
+ * @param {State~Unit} unit
+ * @return {{newUnit, effectLogs}}
+ */
+const applyEffectToUnit = (effect, unit) => {
+  let newUnit = Object.assign({}, unit);
+  const effectLogs = [];
+
+  const log = (options) => {
+    effectLogs.push(effectLogMethods.createNewEffectLogState(unit.uid, options));
+  };
+
+  // Healing
+  if (effect.healingPoints > 0) {
+    const result = unitMethods.calculateHealing(unit, effect.healingPoints);
+
+    newUnit = Object.assign(newUnit, { hitPoints: result.hitPoints });
+    log({ healingPoints: result.healingPoints });
+  }
+
+  // Damaging
+  if (effect.damagePoints > 0) {
+    const result = unitMethods.calculateDamage(unit, effect.damagePoints);
+
+    newUnit = Object.assign(newUnit, { hitPoints: result.hitPoints });
+    log({ damagePoints: result.damagePoints });
+  }
+
+  return {
+    newUnit,
+    effectLogs,
+  };
+};
+
+/**
+ * @param {State~Effect} effect
+ * @return {State~Rectangle[]}
+ */
+const createEffectiveRectangles = (effect) => {
+  const impactedCoordinate = locationToCoordinate(effect.impactedLocation);
+
+  return (effect.relativeCoordinates || [])
+    .map(([ m, n ]) => coordinateMethods.tryToMoveCoordinate(impactedCoordinate, m, n))
+    .filter(coordinate => coordinate !== null)
+    .map(coordinate => coordinateToRectangle(coordinate))
+  ;
+};
+
+/**
+ * Apply effect to units within the effective range
+ * @param {State~Effect} effect
+ * @param {State~Unit[]} units
+ * @return {{units:<State~Unit[]>, effectLogs:<State~EffectLog[]>}}
+ */
+const effectOccurs = (effect, units) => {
+  const effectLogs = [];
+
+  const effectiveRectangles = createEffectiveRectangles(effect);
+
+  const newUnits = units.map(unit => {
+    const unitLocation = getUnitPositionAsLocation(unit);
+    const unitRectangle = locationToRectangle(unitLocation);
+
+    if (
+      (
+        effect.aimedUnitUid &&
+        unit.uid === effect.aimedUnitUid &&
+        areBoxesOverlapping(
+          // TODO: bullet size
+          locationToRectangle(effect.impactedLocation, { width: 4, height: 4, asCenterPoint: true }),
+          locationToRectangle(unitLocation)
+        )
+      )
+      ||
+      (
+        effectiveRectangles.some(rect => areBoxesOverlapping(rect, unitRectangle))
+      )
+    ) {
+      const resultApplied = applyEffectToUnit(effect, unit);
+
+      resultApplied.effectLogs.forEach(v => effectLogs.push(v));
+
+      return resultApplied.newUnit;
+    }
+
+    return unit;
+  });
+
+  return {
+    units: newUnits,
+    effectLogs,
+  };
 };
 
 /**
@@ -344,11 +398,28 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }) => {
         return bullet;
       };
 
-      // TODO
+      // TODO: effectLogs
+      const effectResult = effectOccurs(bullet.effect, newAllies.concat(newEnemies));
+      newAllies = effectResult.units.filter(unit => unit.factionType === FACTION_TYPES.ALLY);
+      newEnemies = effectResult.units.filter(unit => unit.factionType === FACTION_TYPES.ENEMY);
 
       return bullet;
     })
   ;
+
+  // Enemy's movement
+  //   この処理は「弾の移動・効果発生」の後で、かつ「弾の発射」の前であることが望ましい。
+  //   「弾の移動・効果発生」前に実行する場合、着弾場所と敵の位置が必ずずれることになるし、
+  //   「弾の発射」後に実行する場合、照準がずれることになる。
+  //   ということで、1 tick 分だが、プレイヤーにとって最も自然で有利になるから。
+  newEnemies = newEnemies.map(enemy => {
+    const { location, destinationIndex } = unitMethods.calculateMovementResults(enemy);
+
+    return Object.assign({}, enemy, {
+      location,
+      destinationIndex,
+    });
+  });
 
   // Ally's act
   newAllies = newAllies.map(ally => {
@@ -360,10 +431,12 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }) => {
     }
 
     const act = unitMethods.getAct(newAlly);
+
     let didAct = false;
 
     if (unitMethods.canDoAct(newAlly)) {
       const aimedUnit = choiceAimedUnit(newAlly, act, newAllies.concat(newEnemies));
+
       if (aimedUnit) {
         if (config.isEnabledTickLog) {
           console.debug(`${ newAlly.factionType }:${ newAlly.jobId } aims ${ act.id } at ${ aimedUnit.factionType }:${ aimedUnit.jobId }`);
@@ -372,7 +445,7 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }) => {
         // Create bullets carrying effect on each
         newBullets = newBullets.concat(fireBullets(newAlly, act, aimedUnit, battleBoardEndPointCoordinate));
 
-        // Comsume AP
+        // Comsume APs
         newAlly.actionPoints = unitMethods.calculateActionPointsConsumption(newAlly, act);
 
         didAct = true;
@@ -380,24 +453,15 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }) => {
     }
 
     if (!didAct) {
-      // Recover AP
+      // Recover APs
       newAlly.actionPoints = unitMethods.calculateActionPointsRecovery(newAlly);
     }
 
     return newAlly;
   });
 
-  // TODO: 弾移動/効果 -> 敵移動 -> 味方行動 -> 敵行動 というフローが
-  //       味方の弾発射と着弾にラグが無くてストレス感じなそう
-  // Enemy's act or movement
-  newEnemies = newEnemies.map(enemy => {
-    const { location, destinationIndex } = unitMethods.calculateMovementResults(enemy);
-
-    return Object.assign({}, enemy, {
-      location,
-      destinationIndex,
-    });
-  });
+  // Enemy's act
+  // TODO
 
   return {
     allies: newAllies,
@@ -408,14 +472,13 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }) => {
 
 
 module.exports = {
+  applyEffectToUnit,
   canActorAimActAtTargetedUnit,
   choiceAimedUnit,
   choiceClosestCoordinateUnderTargetedUnit,
   computeTick,
-  coordinateToSquareLocation,
-  coordinateToRect,
-  createReachableRects,
-  detectAllCollisionsBetweenRectangleAndCoordinate,
+  createEffectiveRectangles,
+  effectOccurs,
   findOneSquareFromBoardsByPlacement,
   fireBullets,
   judgeAffectableFractionTypes,

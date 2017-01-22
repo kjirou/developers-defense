@@ -1,93 +1,125 @@
 /**
- * @typedef {Function} Immutable~Act
+ * @typedef {Object} Immutable~Act
  */
 
 
 /** @module */
-const { createClassBasedResourceList } = require('@kjirou/utils');
 const dictify = require('dictify');
 const keymirror = require('keymirror');
 
-const { underscoredToClassName } = require('../lib/core');
+const { ACT_EFFECT_RANGE_TYPES, EFFECT_DIRECTIONS } = require('./constants');
+const { expandReachToRelativeCoordinates } = require('../lib/core');
 
 
-const fixture = [
+const fixtures = [
   {
-    constants: {
-      id: 'MAGICAL_BLAST',
-      friendshipType: 'UNFRIENDLY',
-      aimRange: {
-        type: 'REACHABLE',
-        reach: 2,
-      },
-      effectRange: {
-        type: 'BALL',
-        bulletSpeed: 12,
-        radius: 2,
-      },
+    id: 'MAGICAL_BLAST',
+    friendshipType: 'UNFRIENDLY',
+    aimRange: {
+      type: 'REACHABLE',
+      reach: 2,
+    },
+    bullet: {
+      speed: 12,
+    },
+    effectRange: {
+      type: 'BALL',
+      radius: 1,
+    },
+    effectParameters: {
+      damagePoints: 1,
+      healingPoints: 0,
     },
   },
   {
-    constants: {
-      id: 'MELEE_ATTACK',
-      friendshipType: 'UNFRIENDLY',
-      aimRange: {
-        type: 'REACHABLE',
-        reach: 1,
-      },
-      effectRange: {
-        type: 'UNIT',
-        bulletSpeed: 9999,
-        count: 1,
-      },
+    id: 'MELEE_ATTACK',
+    friendshipType: 'UNFRIENDLY',
+    aimRange: {
+      type: 'REACHABLE',
+      reach: 1,
+    },
+    bullet: {
+      speed: 9999,
+    },
+    effectRange: {
+      type: 'UNIT',
+    },
+    effectParameters: {
+      damagePoints: 1,
+      healingPoints: 0,
     },
   },
   {
-    constants: {
-      id: 'TREATMENT',
-      friendshipType: 'FRIENDLY',
-      aimRange: {
-        type: 'REACHABLE',
-        reach: 1,
-      },
-      effectRange: {
-        type: 'UNIT',
-        bulletSpeed: 9999,
-        count: 1,
-      },
+    id: 'TREATMENT',
+    friendshipType: 'FRIENDLY',
+    aimRange: {
+      type: 'REACHABLE',
+      reach: 1,
+    },
+    bullet: {
+      speed: 9999,
+    },
+    effectRange: {
+      type: 'UNIT',
+    },
+    effectParameters: {
+      damagePoints: 0,
+      healingPoints: 1,
     },
   },
 ];
 
 
-class Act {
-}
+/**
+ * @param {Object} effectRange - Props are determined for each `effectRange.type`
+ * @param {?string} effectDirection - One of EFFECT_DIRECTIONS
+ * @return {Array<Array<number>>}
+ */
+const _expandEffectRangeToRelativeCoordinates = (effectRange, direction) => {
+  let relativeCoordinates = [];
 
-Object.assign(Act, {
+  if (effectRange.type === ACT_EFFECT_RANGE_TYPES.BALL) {
+    const {
+      radius
+    } = effectRange;
+    relativeCoordinates = expandReachToRelativeCoordinates(0, radius);
+  } else {
+    throw new Error(`Invalid effectRange.type=${ effectRange.type }`);
+  }
+
+  return relativeCoordinates;
+};
+
+
+const baseAct = {
   id: null,
   friendshipType: null,
   aimRange: null,
   effectRange: null,
-});
+  effectParameters: null,
 
+  expandEffectRangeToRelativeCoordinates(direction) {
+    return _expandEffectRangeToRelativeCoordinates(this.effectRange, direction);
+  },
+};
 
-const actList = createClassBasedResourceList(Act, fixture, {
-  naming: ({ Resource }) => underscoredToClassName(Resource.id) + Act.name,
+const actList = fixtures.map(fixture => {
+  const act =  Object.assign({}, baseAct, fixture);
+
+  if (!act.id || !act.friendshipType || !act.aimRange || !act.effectRange || !act.effectParameters) {
+    throw new Error(`act.id="${ act.id }" is invalid`);
+  }
+
+  return act;
 });
 const acts = dictify(actList, 'id');
 const ACT_IDS = keymirror(acts);
 
 
-actList.forEach(act => {
-  if (!act.id || !act.friendshipType || !act.aimRange || !act.effectRange) {
-    throw new Error(`Act.id="${ act.id }" is invalid`);
-  }
-});
-
-
 module.exports = {
+  _expandEffectRangeToRelativeCoordinates,
   ACT_IDS,
-  Act,
   actList,
   acts,
+  baseAct,
 };

@@ -7,7 +7,6 @@
     "url": "https://github.com/kjirou/developers-defense/issues"
   },
   "devDependencies": {
-    "@kjirou/utils": "0.0.3",
     "angles": "0.2.0",
     "autoprefixer": "6.5.3",
     "babel-core": "6.18.2",
@@ -16,7 +15,7 @@
     "babel-preset-react": "6.16.0",
     "babel-register": "6.18.0",
     "babelify": "7.3.0",
-    "box-collide": "git://github.com/kjirou/box-collide.git#e076894ac49fad555bcf715f50b705f4c6582b8c",
+    "box-overlap": "1.1.0",
     "browser-sync": "2.18.2",
     "browserify": "13.1.1",
     "dictify": "1.1.0",
@@ -71,5 +70,6 @@
     "test": "npm run test:fastest",
     "test:fastest": "$(npm bin)/mocha --recursive",
     "test:power-assert": "$(npm bin)/mocha --require ./enable-power-assert.js --recursive"
-  }
+  },
+  "dependencies": {}
 }

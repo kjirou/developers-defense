@@ -6,6 +6,7 @@
   "bugs": {
     "url": "https://github.com/kjirou/developers-defense/issues"
   },
+  "dependencies": {},
   "devDependencies": {
     "angles": "0.2.0",
     "autoprefixer": "6.5.3",
@@ -20,6 +21,7 @@
     "browserify": "13.1.1",
     "dictify": "1.1.0",
     "eslint": "3.12.2",
+    "eslint-plugin-dependencies": "2.2.0",
     "espower-loader": "1.2.0",
     "fixpack": "2.3.1",
     "gulp": "3.9.1",
@@ -70,6 +72,5 @@
     "test": "npm run test:fastest",
     "test:fastest": "$(npm bin)/mocha --recursive",
     "test:power-assert": "$(npm bin)/mocha --require ./enable-power-assert.js --recursive"
-  },
-  "dependencies": {}
+  }
 }

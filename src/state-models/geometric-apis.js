@@ -9,60 +9,12 @@ const rectangleMethods = require('./rectangle');
 
 
 /**
- * @param {State~Location} location
- * @return {State~Rectangle}
- */
-const createSquareSizeRectangleFromLocation = (location) => {
-  return rectangleMethods.createNewRectangleState({
-    x: location.x,
-    y: location.y,
-    width: STYLES.SQUARE_WIDTH,
-    height: STYLES.SQUARE_HEIGHT,
-  });
-};
-
-/**
- * Create a rectangle with the location as the center point
- * @param {State~Location} location
- * @param {number} width - Only numbers divisible by 2
- * @param {number} height - Only numbers divisible by 2
- * @return {State~Rectangle}
- */
-const createRectangleWithLocationAsCenterPoint = (location, width, height) => {
-  if (width % 2 || height % 2) {
-    throw new Error('`width` and `height` are only numbers divisible by 2');
-  }
-
-  return rectangleMethods.createNewRectangleState({
-    x: location.x - width / 2,
-    y: location.y - height / 2,
-    width,
-    height,
-  });
-};
-
-/**
- * @param {State~Coordinate} coordinate
- * @return {State~Location}
- */
-const coordinateToLocationOfSquare = (coordinate) => {
-  return locationMethods.createNewLocationState(
-    coordinate[0] * STYLES.SQUARE_HEIGHT, coordinate[1] * STYLES.SQUARE_WIDTH);
-};
-
-/**
- * @param {State~Coordinate} coordinate
- * @return {State~Rectangle}
- */
-const coordinateToRectangle = (coordinate) => {
-  return createSquareSizeRectangleFromLocation(coordinateToLocationOfSquare(coordinate));
-};
-
-/**
+ * Where is the location as coordinates
  * @param {State~Location} location
  * @return {State~Coordinate}
+ * @throws {Error} If clearly invalid as coordinate
  */
-const findCoordinateByLocation = (location) => {
+const locationToCoordinate = (location) => {
   return coordinateMethods.createNewCoordinateState(
     Math.floor(location.y / STYLES.SQUARE_HEIGHT),
     Math.floor(location.x / STYLES.SQUARE_WIDTH)
@@ -70,13 +22,106 @@ const findCoordinateByLocation = (location) => {
 };
 
 /**
- * Detect collisions between rectangle and coordinate,
- *   assuming that the size of the square-matrix is infinite.
+ * Generate a rectangle starting from a location
+ * @param {State~Location} location
+ * @param {(Object|undefined)} options
+ * @return {State~Rectangle}
+ * @throws {Error} The width and the height are not divisible if `asCenterPoint` is specified.
+ */
+const locationToRectangle = (location, options = {}) => {
+  const {
+    width,
+    height,
+    asCenterPoint,
+  } = Object.assign({
+    width: STYLES.SQUARE_WIDTH,
+    height: STYLES.SQUARE_HEIGHT,
+    asCenterPoint: false,
+  }, options);
+
+  let x;
+  let y;
+
+  if (asCenterPoint) {
+    if (width % 2 || height % 2) {
+      throw new Error('`width` and `height` are only numbers divisible by 2');
+    }
+
+    x = location.x - width / 2;
+    y = location.y - height / 2;
+  } else {
+    x = location.x;
+    y = location.y;
+  }
+
+  return rectangleMethods.createNewRectangleState({ x, y, width, height });
+};
+
+/**
+ * Returns the upper left position of the coordinate
+ * @param {State~Coordinate} coordinate
+ * @return {State~Location}
+ */
+const coordinateToLocation = (coordinate) => {
+  return locationMethods.createNewLocationState(
+    STYLES.SQUARE_HEIGHT * coordinate[0],
+    STYLES.SQUARE_WIDTH * coordinate[1]
+  );
+};
+
+/**
+ * @param {State~Coordinate} coordinate
+ * @return {State~Rectangle}
+ */
+const coordinateToRectangle = (coordinate) => {
+  return rectangleMethods.createNewRectangleState({
+    x: STYLES.SQUARE_WIDTH * coordinate[1],
+    y: STYLES.SQUARE_HEIGHT * coordinate[0],
+    width: STYLES.SQUARE_WIDTH,
+    height: STYLES.SQUARE_HEIGHT,
+  });
+};
+
+/**
+ * Returns the upper left position of the rectangle
+ * @param {State~Rectangle} rectangle
+ * @return {State~Location}
+ */
+const rectangleToLocation = (rectangle) => {
+  return locationMethods.createNewLocationState(rectangle.top, rectangle.left);
+};
+
+/**
+ * Convert the rectangle to a coordinate if possible
+ * @param {State~Rectangle} rectangle
+ * @return {State~Coordinate}
+ * @throws {Error} The shape and the position of the rectangle does not match any square
+ */
+const rectangleToCoordinate = (rectangle) => {
+  const { x, y, width, height } = rectangleMethods.toXYWidthHeight(rectangle);
+
+  if (
+    x % STYLES.SQUARE_WIDTH ||
+    y % STYLES.SQUARE_HEIGHT ||
+    width !== STYLES.SQUARE_WIDTH ||
+    height !== STYLES.SQUARE_HEIGHT
+  ) {
+    throw new Error('There is no square that fits this rectangle');
+  }
+
+  return coordinateMethods.createNewCoordinateState(
+    Math.floor(y / STYLES.SQUARE_HEIGHT),
+    Math.floor(x / STYLES.SQUARE_WIDTH)
+  );
+};
+
+/**
+ * Whether the rectangle overlaps the coordinates of which square
  * @param {State~Rectangle} rectangle
  * @param {State~Coordinate} endPointCoordinate
  * @return {State~Coordinate[]}
  */
-const detectAllCollisionsBetweenRectangleAndCoordinate = (rectangle, endPointCoordinate) => {
+const findCoordinatesWhereRectangleOverlaps = (rectangle, endPointCoordinate) => {
   const collidedCoordinates = [];
 
   for (let rowIndex = 0; rowIndex <= endPointCoordinate[0]; rowIndex += 1) {
@@ -97,21 +142,23 @@ const detectAllCollisionsBetweenRectangleAndCoordinate = (rectangle, endPointCoo
  * @return {State~Rectangle[]}
  * @todo Remove overflowed coordinates from result?
  */
-const createReachableRects = (centerSquareLocation, reach) => {
+const createReachableRectangles = (centerSquareLocation, reach) => {
   return expandReachToRelativeCoordinates(0, reach)
     .map(relativeCoordinate =>
-      locationMethods.addLocations(centerSquareLocation, coordinateToLocationOfSquare(relativeCoordinate))
+      locationMethods.addLocations(centerSquareLocation, coordinateToLocation(relativeCoordinate))
     )
-    .map(location => createSquareSizeRectangleFromLocation(location));
+    .map(location => locationToRectangle(location))
+  ;
 };
 
 
 module.exports = {
-  coordinateToLocationOfSquare,
+  coordinateToLocation,
   coordinateToRectangle,
-  createSquareSizeRectangleFromLocation,
-  createReachableRects,
-  createRectangleWithLocationAsCenterPoint,
-  detectAllCollisionsBetweenRectangleAndCoordinate,
-  findCoordinateByLocation,
+  createReachableRectangles,
+  findCoordinatesWhereRectangleOverlaps,
+  locationToCoordinate,
+  locationToRectangle,
+  rectangleToCoordinate,
+  rectangleToLocation,
 };

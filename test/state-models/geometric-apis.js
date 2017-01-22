@@ -4,48 +4,78 @@ const { STYLES } = require('../../src/immutable/constants');
 const coordinateMethods = require('../../src/state-models/coordinate');
 const locationMethods = require('../../src/state-models/location');
 const {
+  coordinateToLocation,
   coordinateToRectangle,
-  coordinateToLocationOfSquare,
-  createReachableRects,
-  createRectangleWithLocationAsCenterPoint,
-  detectAllCollisionsBetweenRectangleAndCoordinate,
+  createReachableRectangles,
+  findCoordinatesWhereRectangleOverlaps,
+  locationToCoordinate,
+  locationToRectangle,
+  rectangleToCoordinate,
+  rectangleToLocation,
 } = require('../../src/state-models/geometric-apis');
 const rectangleMethods = require('../../src/state-models/rectangle');
 
 
 describe('state-models/geometric-apis', () => {
   const _loc = locationMethods.createNewLocationState;
+  const _coord = coordinateMethods.createNewCoordinateState;
   const _rect = rectangleMethods.createNewRectangleState;
 
 
-  describe('createRectangleWithLocationAsCenterPoint', () => {
+  describe('locationToCoordinate', () => {
     it('can execute correctly', () => {
       assert.deepStrictEqual(
-        createRectangleWithLocationAsCenterPoint(_loc(0, 0), 2, 4),
-        _rect({ x: -1, y: -2, width: 2, height: 4 })
+        locationToCoordinate(_loc(0, 0)),
+        _coord(0, 0)
+      );
+      assert.deepStrictEqual(
+        locationToCoordinate(_loc(48, 96)),
+        _coord(1, 2)
+      );
+      assert.deepStrictEqual(
+        locationToCoordinate(_loc(47.9, 95.9)),
+        _coord(0, 1)
+      );
+      assert.throws(() => {
+        locationToCoordinate(_loc(-0.1, 1));
+      }, /negative/i);
+    });
+  });
+
+  describe('locationToRectangle', () => {
+    it('can create a square-sized rectangle from upper left', () => {
+      assert.deepStrictEqual(
+        locationToRectangle(_loc(1, 2)),
+        _rect({ x: 2, y: 1, width: 48, height: 48 })
       );
     });
 
-    it('should throw an error if `width` or `height` can be divided by 2', () => {
+    it('can create a square-sized rectangle from center', () => {
+      assert.deepStrictEqual(
+        locationToRectangle(_loc(24, 48), { asCenterPoint: true }),
+        _rect({ x: 24, y: 0, width: 48, height: 48 })
+      );
+    });
+
+    it('can create a rectangle with size specification', () => {
+      assert.deepStrictEqual(
+        locationToRectangle(_loc(1, 2), { width: 1, height: 2 }),
+        _rect({ x: 2, y: 1, width: 1, height: 2 })
+      );
+    });
+
+    it('should throw an error if the coordinate of the center point are fractions', () => {
       assert.throws(() => {
-        createRectangleWithLocationAsCenterPoint(_loc(0, 0), 2, 3);
-      }, /divisible/);
-      assert.throws(() => {
-        createRectangleWithLocationAsCenterPoint(_loc(0, 0), 1, 4);
+        locationToRectangle(_loc(0, 0), { width: 47, asCenterPoint: true });
       }, /divisible/);
     });
   });
 
-  describe('coordinateToLocationOfSquare', () => {
+  describe('coordinateToLocation', () => {
     it('can execute correctly', () => {
       assert.deepStrictEqual(
-        coordinateToLocationOfSquare(coordinateMethods.createNewCoordinateState(0, 0)),
-        locationMethods.createNewLocationState(0, 0)
-      );
-
-      assert.deepStrictEqual(
-        coordinateToLocationOfSquare(coordinateMethods.createNewCoordinateState(1, 2)),
-        locationMethods.createNewLocationState(48, 96)
+        coordinateToLocation(_coord(2, 1)),
+        _loc(96, 48)
       );
     });
   });
@@ -53,28 +83,43 @@ describe('state-models/geometric-apis', () => {
   describe('coordinateToRectangle', () => {
     it('can execute correctly', () => {
       assert.deepStrictEqual(
-        coordinateToRectangle(coordinateMethods.createNewCoordinateState(0, 0)),
-        _rect({
-          top: 0,
-          left: 0,
-          bottom: 48,
-          right: 48,
-        })
-      );
-
-      assert.deepStrictEqual(
-        coordinateToRectangle(coordinateMethods.createNewCoordinateState(1, 2)),
-        _rect({
-          top: 48,
-          left: 96,
-          bottom: 96,
-          right: 144,
-        })
+        coordinateToRectangle(_coord(2, 1)),
+        _rect({ x: 48, y: 96, width: 48, height: 48 })
       );
     });
   });
 
-  describe('detectAllCollisionsBetweenRectangleAndCoordinate', () => {
+  describe('rectangleToLocation', () => {
+    it('can execute correctly', () => {
+      assert.deepStrictEqual(
+        rectangleToLocation(_rect({ x: 1, y: 2, width: 3, height: 4 })),
+        _loc(2, 1)
+      );
+    });
+  });
+
+  describe('rectangleToCoordinate', () => {
+    it('can execute correctly', () => {
+      assert.deepStrictEqual(
+        rectangleToCoordinate(_rect({ x: 48, y: 96, width: 48, height: 48 })),
+        _coord(2, 1)
+      );
+      assert.throws(() => {
+        rectangleToCoordinate(_rect({ x: 49, y: 96, width: 48, height: 48 }));
+      }, /no square/);
+      assert.throws(() => {
+        rectangleToCoordinate(_rect({ x: 48, y: 97, width: 48, height: 48 }));
+      }, /no square/);
+      assert.throws(() => {
+        rectangleToCoordinate(_rect({ x: 48, y: 96, width: 49, height: 48 }));
+      }, /no square/);
+      assert.throws(() => {
+        rectangleToCoordinate(_rect({ x: 48, y: 96, width: 48, height: 49 }));
+      }, /no square/);
+    });
+  });
+
+  describe('findCoordinatesWhereRectangleOverlaps', () => {
     it('can execute correctly', () => {
       //  o | - | -
       // ---+---+---
@@ -82,7 +127,7 @@ describe('state-models/geometric-apis', () => {
       // ---+---+---
       //  - | - | -
       assert.deepStrictEqual(
-        detectAllCollisionsBetweenRectangleAndCoordinate(
+        findCoordinatesWhereRectangleOverlaps(
           rectangleMethods.createNewRectangleState({ x: 0, y: 0, width: 48, height: 48 }),
           coordinateMethods.createNewCoordinateState(2, 2)
         ),
@@ -97,7 +142,7 @@ describe('state-models/geometric-apis', () => {
       // ---+---+---
       //  - | - | -
       assert.deepStrictEqual(
-        detectAllCollisionsBetweenRectangleAndCoordinate(
+        findCoordinatesWhereRectangleOverlaps(
           rectangleMethods.createNewRectangleState({ x: 1, y: 0, width: 48, height: 48 }),
           coordinateMethods.createNewCoordinateState(2, 2)
         ),
@@ -113,7 +158,7 @@ describe('state-models/geometric-apis', () => {
       // ---+---+---
       //  - | - | -
       assert.deepStrictEqual(
-        detectAllCollisionsBetweenRectangleAndCoordinate(
+        findCoordinatesWhereRectangleOverlaps(
           rectangleMethods.createNewRectangleState({ x: 48, y: 48, width: 48, height: 48 }),
           coordinateMethods.createNewCoordinateState(2, 2)
         ),
@@ -128,7 +173,7 @@ describe('state-models/geometric-apis', () => {
       // ---+---+---
       //  - | o | o
       assert.deepStrictEqual(
-        detectAllCollisionsBetweenRectangleAndCoordinate(
+        findCoordinatesWhereRectangleOverlaps(
           rectangleMethods.createNewRectangleState({ x: 95, y: 96, width: 48, height: 48 }),
           coordinateMethods.createNewCoordinateState(2, 2)
         ),
@@ -144,7 +189,7 @@ describe('state-models/geometric-apis', () => {
       // ---+---+---
       //  o | o | -
       assert.deepStrictEqual(
-        detectAllCollisionsBetweenRectangleAndCoordinate(
+        findCoordinatesWhereRectangleOverlaps(
           rectangleMethods.createNewRectangleState({ x: 24, y: 72, width: 48, height: 48 }),
           coordinateMethods.createNewCoordinateState(2, 2)
         ),
@@ -162,7 +207,7 @@ describe('state-models/geometric-apis', () => {
       // ---+---+
       //      x   x
       assert.deepStrictEqual(
-        detectAllCollisionsBetweenRectangleAndCoordinate(
+        findCoordinatesWhereRectangleOverlaps(
           rectangleMethods.createNewRectangleState({ x: 49, y: 49, width: 48, height: 48 }),
           coordinateMethods.createNewCoordinateState(1, 1)
         ),
@@ -173,17 +218,17 @@ describe('state-models/geometric-apis', () => {
     });
   });
 
-  describe('createReachableRects', () => {
+  describe('createReachableRectangles', () => {
     it('can execute correctly', () => {
       assert.deepStrictEqual(
-        createReachableRects(locationMethods.createNewLocationState(0, 0), 0),
+        createReachableRectangles(locationMethods.createNewLocationState(0, 0), 0),
         [
           _rect({ x: 0, y: 0, width: 48, height: 48 }),
         ]
       );
 
       assert.deepStrictEqual(
-        createReachableRects(locationMethods.createNewLocationState(0, 0), 1),
+        createReachableRectangles(locationMethods.createNewLocationState(0, 0), 1),
         [
           _rect({ x: 0, y: 0, width: 48, height: 48 }),
           _rect({ x: 0, y: -48, width: 48, height: 48 }),
@@ -194,7 +239,7 @@ describe('state-models/geometric-apis', () => {
       );
 
       assert.deepStrictEqual(
-        createReachableRects(locationMethods.createNewLocationState(100, 150), 0),
+        createReachableRectangles(locationMethods.createNewLocationState(100, 150), 0),
         [
           _rect({ x: 150, y: 100, width: 48, height: 48 }),
         ]

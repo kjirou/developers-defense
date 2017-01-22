@@ -10,13 +10,14 @@ const coordinateMethods = require('./coordinate');
 const effectMethods = require('./effect');
 const effectLogMethods = require('./effect-log');
 const {
-  coordinateToLocationOfSquare,
+  coordinateToLocation,
   coordinateToRectangle,
-  createReachableRects,
-  createRectangleWithLocationAsCenterPoint,
-  createSquareSizeRectangleFromLocation,
-  detectAllCollisionsBetweenRectangleAndCoordinate,
-  findCoordinateByLocation,
+  createReachableRectangles,
+  findCoordinatesWhereRectangleOverlaps,
+  locationToCoordinate,
+  locationToRectangle,
+  rectangleToCoordinate,
+  rectangleToLocation,
 } = require('./geometric-apis');
 const locationMethods = require('./location');
 const rectangleMethods = require('./rectangle');
@@ -32,7 +33,7 @@ const getUnitPositionAsLocation = (unit) => {
   if (unit.location) {
     return unit.location;
   } else if (unit.placement) {
-    return coordinateToLocationOfSquare(unit.placement.coordinate);
+    return coordinateToLocation(unit.placement.coordinate);
   }
   throw new Error(`The unit does not have either \`location\` or \`placement\``);
 };
@@ -46,9 +47,9 @@ const getUnitPositionAsLocation = (unit) => {
 const choiceClosestCoordinateUnderTargetedUnit = (actor, targetedUnit, endPointCoordinate) => {
   const actorLocation = getUnitPositionAsLocation(actor);
   const targetedUnitLocation = getUnitPositionAsLocation(targetedUnit);
-  const targetedUnitRectangle = createSquareSizeRectangleFromLocation(targetedUnitLocation);
+  const targetedUnitRectangle = locationToRectangle(targetedUnitLocation);
 
-  const candidates = detectAllCollisionsBetweenRectangleAndCoordinate(
+  const candidates = findCoordinatesWhereRectangleOverlaps(
     targetedUnitRectangle, endPointCoordinate);
 
   // Since enemies can only move up / down / left / right,
@@ -60,8 +61,8 @@ const choiceClosestCoordinateUnderTargetedUnit = (actor, targetedUnit, endPointC
 
   // Sort in order of closeness
   return candidates.sort((a, b) => {
-    const aLocation = coordinateToLocationOfSquare(a);
-    const bLocation = coordinateToLocationOfSquare(b);
+    const aLocation = coordinateToLocation(a);
+    const bLocation = coordinateToLocation(b);
     const distanceToA = locationMethods.measureDistance(actorLocation, aLocation);
     const distanceToB = locationMethods.measureDistance(actorLocation, bLocation);
 
@@ -154,9 +155,9 @@ const canActorAimActAtTargetedUnit = (actor, act, target) => {
   if (act.aimRange.type === ACT_AIM_RANGE_TYPES.REACHABLE) {
     // TODO: 暗黙的にユニットのサイズをマス目と同じとしているが、これで問題ないのか不明。
     const actorLocation = getUnitPositionAsLocation(actor);
-    const reachableRects = createReachableRects(actorLocation, act.aimRange.reach);
+    const reachableRects = createReachableRectangles(actorLocation, act.aimRange.reach);
     const targetLocation = getUnitPositionAsLocation(target);
-    const targetRect = createSquareSizeRectangleFromLocation(targetLocation);
+    const targetRect = locationToRectangle(targetLocation);
     return reachableRects.some(rect => areBoxesOverlapping(rect, targetRect));
   }
 
@@ -231,7 +232,7 @@ const fireBullets = (actor, act, aimedUnit, squareMatrixEndPointCoordinate, opti
     toLocation = locationMethods.calculateCenterOfSquare(aimedUnitLocation);
   } else {
     toLocation = locationMethods.calculateCenterOfSquare(
-      coordinateToLocationOfSquare(
+      coordinateToLocation(
         choiceClosestCoordinateUnderTargetedUnit(actor, aimedUnit, squareMatrixEndPointCoordinate)
       )
     );
@@ -305,7 +306,7 @@ const applyEffectToUnit = (effect, unit) => {
  * @return {State~Rectangle[]}
  */
 const createEffectiveRectangles = (effect) => {
-  const impactedCoordinate = findCoordinateByLocation(effect.impactedLocation);
+  const impactedCoordinate = locationToCoordinate(effect.impactedLocation);
 
   return (effect.relativeCoordinates || [])
     .map(([ m, n ]) => coordinateMethods.tryToMoveCoordinate(impactedCoordinate, m, n))
@@ -327,15 +328,16 @@ const effectOccurs = (effect, units) => {
 
   const newUnits = units.map(unit => {
     const unitLocation = getUnitPositionAsLocation(unit);
-    const unitRectangle = createSquareSizeRectangleFromLocation(unitLocation);
+    const unitRectangle = locationToRectangle(unitLocation);
 
     if (
       (
         effect.aimedUnitUid &&
         unit.uid === effect.aimedUnitUid &&
         areBoxesOverlapping(
-          createRectangleWithLocationAsCenterPoint(effect.impactedLocation, 4, 4),  // TODO: bullet size
-          createSquareSizeRectangleFromLocation(unitLocation)
+          // TODO: bullet size
+          locationToRectangle(effect.impactedLocation, { width: 4, height: 4, asCenterPoint: true }),
+          locationToRectangle(unitLocation)
         )
       )
       ||

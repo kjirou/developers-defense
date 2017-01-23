@@ -363,13 +363,6 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }) => {
   let newAllies = allies.slice();
   let newEnemies = enemies.slice();
 
-  // Send dead enemies to the graveyard
-  // TODO: Move to another part of the state instead of delete
-  newEnemies = newEnemies.filter(unitMethods.isAlive);
-
-  // Send dead allies to the sortie board
-  // TODO
-
   // Bullets movement and effect
   newBullets = newBullets
     // Cleaning
@@ -395,6 +388,15 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }) => {
       return bullet;
     })
   ;
+
+  // Send dead enemies to the graveyard
+  // TODO: Move to another part of the state instead of delete.
+  // TODO: 死亡アニメーションは墓場に送りにしたユニット情報を使って描画する
+  //       死亡のアニメではなくとも1描画はしないと、弾は表示上届いてない位置にあるのに敵が消えて変
+  newEnemies = newEnemies.filter(unitMethods.isAlive);
+
+  // Send dead allies to the sortie board
+  // TODO
 
   // Enemy's movement
   //   この処理は「弾の移動・効果発生」の後で、かつ「弾の発射」の前であることが望ましい。

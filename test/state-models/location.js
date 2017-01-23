@@ -87,6 +87,7 @@ describe('state-models/location', () => {
       assert.strictEqual(measureAngleAsEffectDirection(from, createNewLocationState(0, 1)), 'RIGHT');
       assert.strictEqual(measureAngleAsEffectDirection(from, createNewLocationState(1, 0)), 'DOWN');
       assert.strictEqual(measureAngleAsEffectDirection(from, createNewLocationState(0, -1)), 'LEFT');
+      assert.strictEqual(measureAngleAsEffectDirection(from, createNewLocationState(0, 0)), 'NONE');
     });
   });
 

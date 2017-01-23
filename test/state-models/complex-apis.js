@@ -28,15 +28,18 @@ const unitMethods = require('../../src/state-models/unit');
 
 
 describe('state-models/complex-apis', () => {
+  const _coord = coordinateMethods.createNewCoordinateState;
   const _loc = locationMethods.createNewLocationState;
   const _log = effectLogMethods.createNewEffectLogState;
+  const _effect = effectMethods.createNewEffectState;
   const _rect = rectangleMethods.createNewRectangleState;
+  const _unit = unitMethods.createNewUnitState;
 
   const _createPlacedUnit = (rowIndex, columnIndex) => {
-    return Object.assign(unitMethods.createNewUnitState(), {
+    return Object.assign(_unit(), {
       placement: Object.assign(placementMethods.createNewPlacementState(), {
         boardType: BOARD_TYPES.BATTLE_BOARD,
-        coordinate: coordinateMethods.createNewCoordinateState(rowIndex, columnIndex),
+        coordinate: _coord(rowIndex, columnIndex),
       }),
     });
   };
@@ -48,8 +51,14 @@ describe('state-models/complex-apis', () => {
   };
 
   const _createLocatedUnit = (y, x) => {
-    return Object.assign(unitMethods.createNewUnitState(), {
-      location: locationMethods.createNewLocationState(y, x),
+    return Object.assign(_unit(), {
+      location: _loc(y, x),
+    });
+  };
+
+  const _createLocatedEnemy = (y, x) => {
+    return Object.assign(_createLocatedUnit(y, x), {
+      factionType: FACTION_TYPES.ENEMY,
     });
   };
 
@@ -594,8 +603,114 @@ describe('state-models/complex-apis', () => {
   });
 
   describe('effectOccurs', () => {
-    describe('aaa', () => {
-      it('aaaaa', () => {
+    describe('affectableFractionTypes', () => {
+      let ally;
+      let enemy;
+
+      beforeEach(() => {
+        ally = Object.assign(_createPlacedAlly(1, 2), {
+          fixedMaxHitPoints: 5,
+          hitPoints: 5,
+        });
+        enemy = Object.assign(_createLocatedEnemy(48, 96), {
+          fixedMaxHitPoints: 5,
+          hitPoints: 5,
+        });
+      });
+
+      it('can affect to an ally', () => {
+        const effect = _effect([FACTION_TYPES.ALLY], _loc(48, 96), {
+          relativeCoordinates: [[0, 0]],
+          damagePoints: 1,
+        });
+        const { units } = effectOccurs(effect, [ally, enemy]);
+
+        assert(units[0].hitPoints < ally.hitPoints);
+        assert(units[1].hitPoints === enemy.hitPoints);
+      });
+
+      it('can affect to an enemy', () => {
+        const effect = _effect([FACTION_TYPES.ENEMY], _loc(48, 96), {
+          relativeCoordinates: [[0, 0]],
+          damagePoints: 1,
+        });
+        const { units } = effectOccurs(effect, [ally, enemy]);
+
+        assert(units[0].hitPoints === ally.hitPoints);
+        assert(units[1].hitPoints < enemy.hitPoints);
+      });
+    });
+
+    describe('target type', () => {
+      let enemy;
+      let effect;
+
+      beforeEach(() => {
+        enemy = Object.assign(_createLocatedEnemy(48, 96), {
+          fixedMaxHitPoints: 5,
+          hitPoints: 5,
+        });
+
+        effect = _effect([FACTION_TYPES.ENEMY], _loc(72, 120), {
+          aimedUnitUid: enemy.uid,
+          damagePoints: 1,
+        });
+      });
+
+      it('can affect', () => {
+        const { units: [ newEnemy ] } = effectOccurs(effect, [enemy]);
+
+        assert(newEnemy.hitPoints < enemy.hitPoints);
+      });
+
+      it('can not affect if uids are different', () => {
+        enemy.uid = 'another_uid';
+
+        const { units: [ newEnemy ] } = effectOccurs(effect, [enemy]);
+
+        assert(newEnemy.hitPoints === enemy.hitPoints);
+      });
+
+      it('can not affect if the bullet does not hit', () => {
+        effect.impactedLocation = _loc(0, 0);
+
+        const { units: [ newEnemy ] } = effectOccurs(effect, [enemy]);
+
+        assert(newEnemy.hitPoints === enemy.hitPoints);
+      });
+    });
+
+    describe('range type', () => {
+      let ally;
+      let effect;
+
+      beforeEach(() => {
+        ally = Object.assign(_createPlacedAlly(1, 2), {
+          fixedMaxHitPoints: 5,
+          hitPoints: 5,
+        });
+
+        effect = _effect([FACTION_TYPES.ALLY], _loc(72, 120), {
+          relativeCoordinates: [ [0, 0] ],
+          damagePoints: 1,
+        });
+      });
+
+      it('can affect', () => {
+        const { units: [ newAlly ] } = effectOccurs(effect, [ally]);
+
+        assert(newAlly.hitPoints < ally.hitPoints);
+      });
+
+      it('can not affect if it is out of range', () => {
+        effect = _effect([FACTION_TYPES.ALLY], _loc(72, 120), {
+          relativeCoordinates: [ [2, 0] ],
+          damagePoints: 1,
+        });
+
+        const { units: [ newAlly ] } = effectOccurs(effect, [ally]);
+
+        assert(newAlly.hitPoints === ally.hitPoints);
       });
     });
   });

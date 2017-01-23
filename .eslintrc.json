@@ -5,6 +5,9 @@
       "jsx": true
     }
   },
+  "plugins": [
+    "dependencies"
+  ],
   "rules": {
     "comma-dangle": [
       "error",
@@ -13,6 +16,7 @@
         "objects": "only-multiline"
       }
     ],
+    "dependencies/no-cycles": 1,
     "no-param-reassign": [
       "error",
       {

@@ -151,6 +151,10 @@ const isAlive = (unit) => {
   return !isDead(unit);
 }
 
+const isActable = (unit) => {
+  return isAlive(unit);
+}
+
 const canSortieAsAlly = (ally) => {
   if (!isAlly(ally)) {
     throw new Error(`It is not a ally`);
@@ -230,15 +234,26 @@ const determineFriendship = (unitA, unitB) => {
 
 /**
  * @param {State~Unit} unit
+ * @param {Immutable~Act} act
  * @return {boolean}
  */
-const canDoAct = (unit) => {
+const areActionPointsEnough = (unit, act) => {
   // TODO:
   return unit.actionPoints >= unit.maxActionPoints;
 };
 
+/**
+ * @param {State~Unit} unit
+ * @param {Immutable~Act} act
+ * @return {boolean}
+ */
+const canDoAct = (unit, act) => {
+  return isActable(unit) && areActionPointsEnough(unit, act);
+};
+
 
 module.exports = {
+  areActionPointsEnough,
   calculateActionPointsConsumption,
   calculateActionPointsRecovery,
   calculateMovementResults,
@@ -253,6 +268,7 @@ module.exports = {
   createNewEnemyState,
   createNewUnitState,
   determineFriendship,
+  isActable,
   isAlive,
   isAlly,
   isDead,

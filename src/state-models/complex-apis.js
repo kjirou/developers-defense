@@ -301,20 +301,6 @@ const applyEffectToUnit = (effect, unit) => {
 };
 
 /**
- * @param {State~Effect} effect
- * @return {State~Rectangle[]}
- */
-const createEffectiveRectangles = (effect) => {
-  const impactedCoordinate = locationToCoordinate(effect.impactedLocation);
-
-  return (effect.relativeCoordinates || [])
-    .map(([ m, n ]) => coordinateMethods.tryToMoveCoordinate(impactedCoordinate, m, n))
-    .filter(coordinate => coordinate !== null)
-    .map(coordinate => coordinateToRectangle(coordinate))
-  ;
-};
-
-/**
  * Apply effect to units within the effective range
  * @param {State~Effect} effect
  * @param {State~Unit[]} units
@@ -323,32 +309,34 @@ const createEffectiveRectangles = (effect) => {
 const effectOccurs = (effect, units) => {
   const effectLogs = [];
 
-  const effectiveRectangles = createEffectiveRectangles(effect);
+  const effectiveRectangles = effectMethods.createEffectiveRectangles(effect);
 
   const newUnits = units.map(unit => {
     const unitLocation = getUnitPositionAsLocation(unit);
     const unitRectangle = locationToRectangle(unitLocation);
 
-    if (
-      (
-        effect.aimedUnitUid &&
-        unit.uid === effect.aimedUnitUid &&
-        areBoxesOverlapping(
-          // TODO: bullet size
-          locationToRectangle(effect.impactedLocation, { width: 4, height: 4, asCenterPoint: true }),
-          locationToRectangle(unitLocation)
+    if (effect.affectableFractionTypes.indexOf(unit.factionType) > -1) {
+      if (
+        (
+          effect.aimedUnitUid &&
+          unit.uid === effect.aimedUnitUid &&
+          areBoxesOverlapping(
+            // TODO: bullet size
+            locationToRectangle(effect.impactedLocation, { width: 4, height: 4, asCenterPoint: true }),
+            locationToRectangle(unitLocation)
+          )
         )
-      )
-      ||
-      (
-        effectiveRectangles.some(rect => areBoxesOverlapping(rect, unitRectangle))
-      )
-    ) {
-      const resultApplied = applyEffectToUnit(effect, unit);
+        ||
+        (
+          effectiveRectangles.some(rect => areBoxesOverlapping(rect, unitRectangle))
+        )
+      ) {
+        const resultApplied = applyEffectToUnit(effect, unit);
 
-      resultApplied.effectLogs.forEach(v => effectLogs.push(v));
+        resultApplied.effectLogs.forEach(v => effectLogs.push(v));
 
-      return resultApplied.newUnit;
+        return resultApplied.newUnit;
+      }
     }
 
     return unit;
@@ -375,16 +363,17 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }) => {
   let newAllies = allies.slice();
   let newEnemies = enemies.slice();
 
-  // TODO: 適宜、死亡者を盤上から除去する必要がある
-  //       ユニットの状態を変えうる全ての行動後に必要になりそう
-  //       - 弾の効果
-  //       - バフやステージギミックの効果
-  //       - プレイヤーの手動操作による効果（退却とか）
+  // Send dead enemies to the graveyard
+  // TODO: Move to another part of the state instead of delete
+  newEnemies = newEnemies.filter(unitMethods.isAlive);
+
+  // Send dead allies to the sortie board
+  // TODO
 
   // Bullets movement and effect
   newBullets = newBullets
     // Cleaning
-    //   Since at least bullets are drawn for 2 ticks, do not clean at the end.
+    //   Do not clean at the end, because at least bullets are drawn for 2 ticks.
     .filter(bullet => !bulletMethods.isArrivedToDestination(bullet))
     // Movement
     .map(bullet => {
@@ -434,7 +423,7 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }) => {
 
     let didAct = false;
 
-    if (unitMethods.canDoAct(newAlly)) {
+    if (unitMethods.canDoAct(newAlly, act)) {
       const aimedUnit = choiceAimedUnit(newAlly, act, newAllies.concat(newEnemies));
 
       if (aimedUnit) {
@@ -477,7 +466,6 @@ module.exports = {
   choiceAimedUnit,
   choiceClosestCoordinateUnderTargetedUnit,
   computeTick,
-  createEffectiveRectangles,
   effectOccurs,
   findOneSquareFromBoardsByPlacement,
   fireBullets,

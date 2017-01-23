@@ -37,9 +37,10 @@ const BOARD_TYPES = keymirror({
 
 const EFFECT_DIRECTIONS = keymirror({
   UP: null,
-  RIGHT: null,
-  DOWN: null,
   LEFT: null,
+  DOWN: null,
+  RIGHT: null,
+  NONE: null,
 });
 
 const FACTION_TYPES = keymirror({

@@ -363,11 +363,12 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }) => {
   let newAllies = allies.slice();
   let newEnemies = enemies.slice();
 
-  // TODO: 適宜、死亡者を盤上から除去する必要がある
-  //       ユニットの状態を変えうる全ての行動後に必要になりそう
-  //       - 弾の効果
-  //       - バフやステージギミックの効果
-  //       - プレイヤーの手動操作による効果（退却とか）
+  // Send dead enemies to the graveyard
+  // TODO: Move to another part of the state instead of delete
+  newEnemies = newEnemies.filter(unitMethods.isAlive);
+
+  // Send dead allies to the sortie board
+  // TODO
 
   // Bullets movement and effect
   newBullets = newBullets
@@ -422,7 +423,7 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }) => {
 
     let didAct = false;
 
-    if (unitMethods.canDoAct(newAlly)) {
+    if (unitMethods.canDoAct(newAlly, act)) {
       const aimedUnit = choiceAimedUnit(newAlly, act, newAllies.concat(newEnemies));
 
       if (aimedUnit) {

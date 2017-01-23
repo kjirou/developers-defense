@@ -74,30 +74,31 @@ const measureAngleWithTopAsZero = (from, to) => {
 };
 
 /**
- * @return {string} One of EFFECT_DIRECTIONS
+ * @return {?string} One of EFFECT_DIRECTIONS
  */
 const measureAngleAsEffectDirection = (from, to) => {
   const angle = measureAngleWithTopAsZero(from, to);
 
-  if (angle !== null) {
-    if (
-      315 <= angle && angle < 360 ||
-      0 <= angle && angle < 45
-    ) {
-      return EFFECT_DIRECTIONS.UP;
-    } else if (
-      45 <= angle && angle < 135
-    ) {
-      return EFFECT_DIRECTIONS.RIGHT;
-    } else if (
-      135 <= angle && angle < 225
-    ) {
-      return EFFECT_DIRECTIONS.DOWN;
-    } else if (
-      225 <= angle && angle < 315
-    ) {
-      return EFFECT_DIRECTIONS.LEFT;
-    }
+  // from == to
+  if (angle === null) {
+    return EFFECT_DIRECTIONS.NONE;
+  } else if (
+    315 <= angle && angle < 360 ||
+    0 <= angle && angle < 45
+  ) {
+    return EFFECT_DIRECTIONS.UP;
+  } else if (
+    45 <= angle && angle < 135
+  ) {
+    return EFFECT_DIRECTIONS.RIGHT;
+  } else if (
+    135 <= angle && angle < 225
+  ) {
+    return EFFECT_DIRECTIONS.DOWN;
+  } else if (
+    225 <= angle && angle < 315
+  ) {
+    return EFFECT_DIRECTIONS.LEFT;
   }
 
   throw new Error(`Invalid angle=${ angle }`);

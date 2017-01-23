@@ -72,7 +72,7 @@ const fixtures = [
 
 /**
  * @param {Object} effectRange - Props are determined for each `effectRange.type`
- * @param {?string} effectDirection - One of EFFECT_DIRECTIONS
+ * @param {string} effectDirection - One of EFFECT_DIRECTIONS
  * @return {Array<Array<number>>}
  */
 const _expandEffectRangeToRelativeCoordinates = (effectRange, direction) => {

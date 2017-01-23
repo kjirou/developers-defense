@@ -315,26 +315,28 @@ const effectOccurs = (effect, units) => {
     const unitLocation = getUnitPositionAsLocation(unit);
     const unitRectangle = locationToRectangle(unitLocation);
 
-    if (
-      (
-        effect.aimedUnitUid &&
-        unit.uid === effect.aimedUnitUid &&
-        areBoxesOverlapping(
-          // TODO: bullet size
-          locationToRectangle(effect.impactedLocation, { width: 4, height: 4, asCenterPoint: true }),
-          locationToRectangle(unitLocation)
+    if (effect.affectableFractionTypes.indexOf(unit.factionType) > -1) {
+      if (
+        (
+          effect.aimedUnitUid &&
+          unit.uid === effect.aimedUnitUid &&
+          areBoxesOverlapping(
+            // TODO: bullet size
+            locationToRectangle(effect.impactedLocation, { width: 4, height: 4, asCenterPoint: true }),
+            locationToRectangle(unitLocation)
+          )
         )
-      )
-      ||
-      (
-        effectiveRectangles.some(rect => areBoxesOverlapping(rect, unitRectangle))
-      )
-    ) {
-      const resultApplied = applyEffectToUnit(effect, unit);
+        ||
+        (
+          effectiveRectangles.some(rect => areBoxesOverlapping(rect, unitRectangle))
+        )
+      ) {
+        const resultApplied = applyEffectToUnit(effect, unit);
 
-      resultApplied.effectLogs.forEach(v => effectLogs.push(v));
+        resultApplied.effectLogs.forEach(v => effectLogs.push(v));
 
-      return resultApplied.newUnit;
+        return resultApplied.newUnit;
+      }
     }
 
     return unit;

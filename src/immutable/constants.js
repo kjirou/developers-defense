@@ -64,6 +64,7 @@ const LANDFORM_TYPES = keymirror({
   ROAD: null,
 });
 
+// Must sync to styles
 const ticksPerSecond = 20;
 const tickInterval = 1000 / ticksPerSecond;
 if (Math.ceil(tickInterval) !== tickInterval) {

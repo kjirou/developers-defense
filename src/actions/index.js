@@ -224,6 +224,7 @@ const initializeApp = () => {
         locationMethods.createNewLocationState(7 * 48, 5 * 48),
         locationMethods.createNewLocationState(7 * 48, 1 * 48),
       ],
+      fixedMaxHitPoints: 1,
     }),
     Object.assign(unitMethods.createNewEnemyState(), {
       jobId: JOB_IDS.MAGE,
@@ -232,6 +233,7 @@ const initializeApp = () => {
         locationMethods.createNewLocationState(7 * 48, 5 * 48),
         locationMethods.createNewLocationState(7 * 48, 1 * 48),
       ],
+      fixedMaxHitPoints: 1,
     }),
   ]).map(enemy => {
     return Object.assign({}, enemy, {

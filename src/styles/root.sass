@@ -1,6 +1,11 @@
 /**
  * Root
  */
+.reactTransitionDeadUnit-leave
+  opacity: 1
+.reactTransitionDeadUnit-leave-active
+  opacity: 0.01
+  transition: opacity 500ms ease-in
 
 .root
   margin: 0 auto
@@ -91,7 +96,9 @@
   &__unit
     position: absolute;
     z-index: $z-index-unit
-  &__unit--unit-on-square
+  &__unit--is-alive
+    transition: top $tick-interval + ms linear, left $tick-interval + ms linear
+  &__unit-on-square
     position: absolute;
     z-index: $z-index-unit-on-square
 

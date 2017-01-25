@@ -363,21 +363,19 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }) => {
   let newAllies = allies.slice();
   let newEnemies = enemies.slice();
 
+  // Send dead enemies to the graveyard
+  // TODO: Move to another part of the state instead of delete.
+  newEnemies = newEnemies.filter(unitMethods.isAlive);
+
+  // Send dead allies to the sortie board
+  // TODO
+
   // Bullets movement and effect
   newBullets = newBullets
-    // Cleaning
-    //   Do not clean at the end, because at least bullets are drawn for 2 ticks.
-    .filter(bullet => !bulletMethods.isArrivedToDestination(bullet))
-    // Movement
-    .map(bullet => {
-      return Object.assign({}, bullet, {
-        location: bulletMethods.calculateNextLocation(bullet),
-      });
-    })
-    // Effect
-    .map(bullet => {
+    // Apply effect & Clean effect occured bullets
+    .filter(bullet => {
       if (!bulletMethods.isArrivedToDestination(bullet)) {
-        return bullet;
+        return true;
       };
 
       // TODO: effectLogs
@@ -385,25 +383,23 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }) => {
       newAllies = effectResult.units.filter(unit => unit.factionType === FACTION_TYPES.ALLY);
       newEnemies = effectResult.units.filter(unit => unit.factionType === FACTION_TYPES.ENEMY);
 
-      return bullet;
+      return false;
+    })
+    // Bullets move
+    //   The reason for the movement after the effect calculation is to guarantee landing on the display.
+    .map(bullet => {
+      return Object.assign({}, bullet, {
+        location: bulletMethods.calculateNextLocation(bullet),
+      });
     })
   ;
 
-  // Send dead enemies to the graveyard
-  // TODO: Move to another part of the state instead of delete.
-  // TODO: 死亡アニメーションは墓場に送りにしたユニット情報を使って描画する
-  //       死亡のアニメではなくとも1描画はしないと、弾は表示上届いてない位置にあるのに敵が消えて変
-  newEnemies = newEnemies.filter(unitMethods.isAlive);
-
-  // Send dead allies to the sortie board
-  // TODO
+  // Separate dead units in this tick
+  let alivedEnemies = newEnemies.filter(unitMethods.isAlive);
+  let deadEnemies = newEnemies.filter(unitMethods.isDead);
 
   // Enemy's movement
-  //   この処理は「弾の移動・効果発生」の後で、かつ「弾の発射」の前であることが望ましい。
-  //   「弾の移動・効果発生」前に実行する場合、着弾場所と敵の位置が必ずずれることになるし、
-  //   「弾の発射」後に実行する場合、照準がずれることになる。
-  //   ということで、1 tick 分だが、プレイヤーにとって最も自然で有利になるから。
-  newEnemies = newEnemies.map(enemy => {
+  alivedEnemies = alivedEnemies.map(enemy => {
     const { location, destinationIndex } = unitMethods.calculateMovementResults(enemy);
 
     return Object.assign({}, enemy, {
@@ -426,7 +422,7 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }) => {
     let didAct = false;
 
     if (unitMethods.canDoAct(newAlly, act)) {
-      const aimedUnit = choiceAimedUnit(newAlly, act, newAllies.concat(newEnemies));
+      const aimedUnit = choiceAimedUnit(newAlly, act, newAllies.concat(alivedEnemies));
 
       if (aimedUnit) {
         if (config.isEnabledTickLog) {
@@ -456,7 +452,7 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }) => {
 
   return {
     allies: newAllies,
-    enemies: newEnemies,
+    enemies: alivedEnemies.concat(deadEnemies),
     bullets: newBullets,
   };
 };

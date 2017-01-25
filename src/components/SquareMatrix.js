@@ -1,7 +1,8 @@
 const React = require('react');
+const ReactCSSTransitionGroup = require('react-addons-css-transition-group');
 
 const { STYLES } = require('../immutable/constants');
-const { getIconId, isAlly } = require('../state-models/unit');
+const { getIconId, isAlive, isAlly } = require('../state-models/unit');
 const Bullet = require('./Bullet');
 const Square = require('./Square');
 const Unit = require('./Unit');
@@ -61,11 +62,19 @@ const SquareMatrix = ({ squareMatrix, cursorCoordinate, bullets, units, unitsOnS
       top: unit.location.y,
       left: unit.location.x,
       classNames: [
-        'square-matrix__unit',
         isAlly(unit) ? 'unit--ally' : 'unit--enemy',
+        'square-matrix__unit',
+        ...(isAlive(unit) ? ['square-matrix__unit--is-alive'] : []),
       ],
     });
   });
+
+  const unitComponentsTransition = React.createElement(ReactCSSTransitionGroup, {
+    key: 'react-css-transition-group-units',
+    transitionName: 'reactTransitionDeadUnit',
+    transitionEnter: false,
+    transitionLeaveTimeout: 500,
+  }, unitComponents);
 
   // Do not place in the squares.
   const unitComponentsOnSquares = unitsOnSquares.map(unit => {
@@ -75,8 +84,8 @@ const SquareMatrix = ({ squareMatrix, cursorCoordinate, bullets, units, unitsOnS
       top: STYLES.SQUARE_HEIGHT * unit.placement.coordinate[0],
       left: STYLES.SQUARE_WIDTH * unit.placement.coordinate[1],
       classNames: [
-        'square-matrix__unit--unit-on-square',
         isAlly(unit) ? 'unit--ally' : 'unit--enemy',
+        'square-matrix__unit-on-square',
       ],
     });
   });
@@ -95,7 +104,7 @@ const SquareMatrix = ({ squareMatrix, cursorCoordinate, bullets, units, unitsOnS
     touchpad,
     ...(cursor ? [cursor] : []),
     ...bulletComponents,
-    ...unitComponents,
+    unitComponentsTransition,
     ...unitComponentsOnSquares,
     serialSquareComponents,
   ];

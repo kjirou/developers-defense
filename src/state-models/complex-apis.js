@@ -31,7 +31,7 @@ const unitMethods = require('./unit');
 const getUnitPositionAsLocation = (unit) => {
   if (unit.location) {
     return unit.location;
-  } else if (unit.placement) {
+  } else if (unit.placement.boardType === BOARD_TYPES.BATTLE_BOARD && unit.placement.coordinate) {
     return coordinateToLocation(unit.placement.coordinate);
   }
   throw new Error(`The unit does not have either \`location\` or \`placement\``);
@@ -112,7 +112,7 @@ const findOneSquareFromBoardsByPlacement = (placement, ...boards) => {
  * @return {boolean}
  */
 const isUnitInBattle = (unit) => {
-  return unit.placement.boardType === BOARD_TYPES.BATTLE_BOARD && unit.hitPoints > 0;
+  return (unit.location || unit.placement.boardType === BOARD_TYPES.BATTLE_BOARD) && unit.hitPoints > 0;
 };
 
 /**
@@ -312,6 +312,8 @@ const effectOccurs = (effect, units) => {
   const effectiveRectangles = effectMethods.createEffectiveRectangles(effect);
 
   const newUnits = units.map(unit => {
+    if (!isUnitInBattle(unit)) return unit;
+
     const unitLocation = getUnitPositionAsLocation(unit);
     const unitRectangle = locationToRectangle(unitLocation);
 

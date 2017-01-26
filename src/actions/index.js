@@ -1,4 +1,6 @@
 /** @module */
+const randomWeightedChoice = require('random-weighted-choice');
+
 const { ACTION_TYPES, BOARD_TYPES, PARAMETERS, STYLES } = require('../immutable/constants');
 const { JOB_IDS } = require('../immutable/jobs');
 const complexApisMethods = require('../state-models/complex-apis');
@@ -7,6 +9,39 @@ const placementMethods = require('../state-models/placement');
 const squareMatrixMethods = require('../state-models/square-matrix');
 const unitMethods = require('../state-models/unit');
 const unitCollectionMethods = require('../state-models/unit-collection');
+
+
+const _createRandomDummyEnemy = () => {
+  const jobId = randomWeightedChoice([
+    { weight: 5, id: JOB_IDS.FIGHTER },
+    { weight: 5, id: JOB_IDS.BANDIT },
+    { weight: 5, id: JOB_IDS.SNAKE },
+    { weight: 3, id: JOB_IDS.MAGE },
+    { weight: 1, id: JOB_IDS.DRAGON },
+  ]);
+
+  const route1 = [
+    locationMethods.createNewLocationState(-1 * 48, 5 * 48),
+    locationMethods.createNewLocationState(7 * 48, 5 * 48),
+    locationMethods.createNewLocationState(7 * 48, 1 * 48),
+  ];
+  const route2 = [
+    locationMethods.createNewLocationState(1 * 48, 7 * 48),
+    locationMethods.createNewLocationState(1 * 48, 1 * 48),
+    locationMethods.createNewLocationState(7 * 48, 1 * 48),
+  ];
+  const destinations = Math.random() < 0.5 ? route1 : route2;
+
+  const enemy = Object.assign(unitMethods.createNewEnemyState(), {
+    jobId,
+    destinations,
+    fixedMaxHitPoints: 5,
+  });
+
+  return Object.assign(enemy, {
+    hitPoints: unitMethods.getMaxHitPoints(enemy),
+  });
+};
 
 
 const clearCursor = () => {
@@ -163,11 +198,16 @@ const startGame = () => {
 
         const newState = complexApisMethods.computeTick(state);
 
+        const newEnemies = newState.enemies.slice();
+        if (gameStatus.tickId % 60 === 0) {
+          newEnemies.push(_createRandomDummyEnemy());
+        }
+
         dispatch(
           tick(
             gameStatus.tickId + 1,
             newState.allies,
-            newState.enemies,
+            newEnemies,
             newState.bullets
           )
         );
@@ -216,35 +256,9 @@ const initializeApp = () => {
     });
   });
 
-  const enemies = unitCollectionMethods.createNewUnitCollectionState().concat([
-    Object.assign(unitMethods.createNewEnemyState(), {
-      jobId: JOB_IDS.FIGHTER,
-      destinations: [
-        locationMethods.createNewLocationState(0 * 48, 5 * 48),
-        locationMethods.createNewLocationState(7 * 48, 5 * 48),
-        locationMethods.createNewLocationState(7 * 48, 1 * 48),
-      ],
-      fixedMaxHitPoints: 1,
-    }),
-    Object.assign(unitMethods.createNewEnemyState(), {
-      jobId: JOB_IDS.MAGE,
-      destinations: [
-        locationMethods.createNewLocationState(-2 * 48, 5 * 48),
-        locationMethods.createNewLocationState(7 * 48, 5 * 48),
-        locationMethods.createNewLocationState(7 * 48, 1 * 48),
-      ],
-      fixedMaxHitPoints: 1,
-    }),
-  ]).map(enemy => {
-    return Object.assign({}, enemy, {
-      hitPoints: unitMethods.getMaxHitPoints(enemy),
-    });
-  });
-
   return (dispatch, getState) => {
     dispatch({ type: ACTION_TYPES.EXTEND_BATTLE_BOARD_SQUARE_MATRIX, extension: squareMatrixExtension });
     dispatch(updateAllies(allies));
-    dispatch(updateEnemies(enemies));
   };
 };
 

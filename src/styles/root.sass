@@ -41,20 +41,20 @@
   i
     position: absolute
     display: block
+    top: 8px
     left: 8px
     width: 32px
     height: 32px
-    // TODO: This animation is not smooth
     animation-name: unit-breathing
     animation-duration: 1s
     animation-iteration-count: infinite
     animation-direction: alternate
     @keyframes unit-breathing
       0%
-        top: 7px
+        transform: translateY(-1px)
         text-shadow: 5px 5px #aaa
       100%
-        top: 9px
+        transform: translateY(1px)
         text-shadow: 3px 3px #aaa
 
 .square

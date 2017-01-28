@@ -6,7 +6,8 @@
     }
   },
   "plugins": [
-    "dependencies"
+    "dependencies",
+    "react"
   ],
   "rules": {
     "comma-dangle": [
@@ -22,6 +23,7 @@
       {
         "props": true
       }
-    ]
+    ],
+    "react/jsx-key": ["error"]
   }
 }

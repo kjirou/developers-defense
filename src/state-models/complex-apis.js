@@ -26,15 +26,39 @@ const unitMethods = require('./unit');
 
 /**
  * @param {State~Unit} unit
- * @return {State~Location}
+ * @return {?State~Location}
  */
-const getUnitPositionAsLocation = (unit) => {
+const getUnitPositionAsLocationOrNull = (unit) => {
   if (unit.location) {
     return unit.location;
   } else if (unit.placement.boardType === BOARD_TYPES.BATTLE_BOARD && unit.placement.coordinate) {
     return coordinateToLocation(unit.placement.coordinate);
   }
-  throw new Error(`The unit does not have either \`location\` or \`placement\``);
+  return null;
+};
+
+/**
+ * @param {State~Unit} unit
+ * @return {State~Location}
+ * @throws {Error} The unit does not have either `location` or `placement`
+ */
+const getUnitPositionAsLocation = (unit) => {
+  const location = getUnitPositionAsLocationOrNull(unit);
+
+  if (!location) {
+    console.error('unit =', unit);
+    throw new Error(`The unit does not have either \`location\` or \`placement\``);
+  }
+
+  return location;
+};
+
+/**
+ * @param {State~Unit} unit
+ * @return {boolean}
+ */
+const isUnitInBattle = (unit) => {
+  return Boolean(getUnitPositionAsLocationOrNull(unit) && unitMethods.isAlive(unit));
 };
 
 /**
@@ -108,14 +132,6 @@ const findOneSquareFromBoardsByPlacement = (placement, ...boards) => {
 };
 
 /**
- * @param {State~Unit} unit
- * @return {boolean}
- */
-const isUnitInBattle = (unit) => {
-  return (unit.location || unit.placement.boardType === BOARD_TYPES.BATTLE_BOARD) && unit.hitPoints > 0;
-};
-
-/**
  * @param {string} actFriendshipType - One of FRIENDSHIP_TYPES
  * @param {string} actorFactionType - One of FACTION_TYPES
  * @return {string[]} Some of FACTION_TYPES
@@ -141,7 +157,8 @@ const judgeAffectableFractionTypes = (actFriendshipType, actorFactionType) => {
  * @return {boolean}
  */
 const willActorAimActAtUnit = (actor, act, unit) => {
-  return act.friendshipType === unitMethods.determineFriendship(actor, unit);
+  return isUnitInBattle(unit) &&
+    act.friendshipType === unitMethods.determineFriendship(actor, unit);
 };
 
 /**

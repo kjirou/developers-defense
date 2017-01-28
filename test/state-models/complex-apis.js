@@ -260,10 +260,10 @@ describe('state-models/complex-apis', () => {
     let enemy2;
 
     beforeEach(() => {
-      ally1 = unitMethods.createNewAllyState();
-      ally2 = unitMethods.createNewAllyState();
-      enemy1 = unitMethods.createNewEnemyState();
-      enemy2 = unitMethods.createNewEnemyState();
+      ally1 = _createPlacedAlly(0, 0);
+      ally2 = _createPlacedAlly(0, 0);
+      enemy1 = _createLocatedEnemy(0, 0);
+      enemy2 = _createLocatedEnemy(0, 0);
     });
 
     it('should return true in the case of `ally -(friendly act)-> ally`', () => {

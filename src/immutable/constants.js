@@ -30,6 +30,22 @@ const ACTION_TYPES = keymirror({
   UPDATE_ENEMIES: null,
 });
 
+const BOARD_ANIMATION_EXPRESSION_TYPES = keymirror({
+  // CANVAS: null,
+  CSS: null,
+  // MO: null,
+  NONE: null,
+  // PIXI: null,
+  STYLES: null,
+});
+
+const BOARD_ANIMATION_POSITION_TYPES = keymirror({
+  BOARD: null,
+  NONE: null,
+  SQUARE: null,
+  UNIT: null,
+});
+
 const BOARD_TYPES = keymirror({
   SORTIE_BOARD: null,
   BATTLE_BOARD: null,
@@ -95,6 +111,8 @@ module.exports = {
   ACT_AIM_RANGE_TYPES,
   ACT_EFFECT_RANGE_TYPES,
   ACTION_TYPES,
+  BOARD_ANIMATION_EXPRESSION_TYPES,
+  BOARD_ANIMATION_POSITION_TYPES,
   BOARD_TYPES,
   EFFECT_DIRECTIONS,
   FACTION_TYPES,

@@ -54,6 +54,11 @@
     "vinyl-source-stream": "1.1.0",
     "watchify": "3.7.0"
   },
+  "engines": {
+    "node": ">=6.8",
+    "npm": ">=3.10",
+    "yarn": "0.19.1"
+  },
   "homepage": "https://github.com/kjirou/developers-defense#readme",
   "main": "index.js",
   "private": true,

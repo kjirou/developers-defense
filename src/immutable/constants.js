@@ -91,6 +91,7 @@ const PARAMETERS = {
 };
 
 const STYLES = {
+  MAX_ANIMATION_DURATION: 10000,
   // TODO: They are not just styles. Move to the `PARAMETERS`
   SQUARE_HEIGHT: 48,
   SQUARE_WIDTH: 48,

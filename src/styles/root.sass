@@ -1,6 +1,16 @@
 /**
  * Root
  */
+
+// Generate classes such as ".animation-duration-100ms"
+&
+  $duration: 0ms
+  @while $duration <= $animation-duration-max
+    .animation-duration-#{$duration}
+      animation-duration: $duration
+    $duration: $duration + 50ms
+
+
 .square_based_animation
   position: absolute;
   width: $square-width
@@ -10,12 +20,9 @@
   &.square_based_animation--shock-blue
     background-color: blue
     animation-name: square_based_animation--shock
-    // TODO: データ定義から動的に設定するように
-    animation-duration: 500ms
   &.square_based_animation--shock-red
     background-color: red
     animation-name: square_based_animation--shock
-    animation-duration: 500ms
 
   @keyframes square_based_animation--shock
     0%

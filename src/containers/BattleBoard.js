@@ -54,7 +54,10 @@ BattleBoard = connect(state => {
         uid: bullet.effect.uid,
         coordinates: createEffectiveCoordinates(bullet.effect),
         duration: boardAnimation.duration,
-        classNames: boardAnimation.expression.classNames,
+        classNames: [
+          ...boardAnimation.expression.classNames,
+          boardAnimation.getAnimationDurationClassName(),
+        ],
       };
     })
   ;

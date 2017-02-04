@@ -1,6 +1,36 @@
 /**
  * Root
  */
+.square_based_animation
+  position: absolute;
+  width: $square-width
+  height: $square-height
+  opacity: 0.0
+
+  &.square_based_animation--shock-blue
+    background-color: blue
+    animation-name: square_based_animation--shock
+    // TODO: データ定義から動的に設定するように
+    animation-duration: 500ms
+  &.square_based_animation--shock-red
+    background-color: red
+    animation-name: square_based_animation--shock
+    animation-duration: 500ms
+
+  @keyframes square_based_animation--shock
+    0%
+      opacity: 0.0
+    30%
+      opacity: 0.5
+    100%
+      opacity: 0.0
+
+
+.reactTransitionDeadUnit-leave
+  opacity: 1
+.reactTransitionDeadUnit-leave-active
+  opacity: 0.01
+  transition: opacity 500ms ease-in
 
 .root
   margin: 0 auto
@@ -40,7 +70,17 @@
     left: 8px
     width: 32px
     height: 32px
-    text-shadow: 4px 4px #aaa
+    animation-name: unit-breathing
+    animation-duration: 1s
+    animation-iteration-count: infinite
+    animation-direction: alternate
+    @keyframes unit-breathing
+      0%
+        transform: translateY(-1px)
+        text-shadow: 5px 5px #aaa
+      100%
+        transform: translateY(1px)
+        text-shadow: 3px 3px #aaa
 
 .square
   position: absolute
@@ -67,13 +107,15 @@
 
 .square-matrix
   $z-index-touchpad: 9999
-  $z-index-cursor: 4
-  $z-index-bullet: 3
+  $z-index-cursor: 5
+  $z-index-bullet: 4
+  $z-index-square-based-animation-container: 3
   $z-index-unit: 2
   $z-index-unit-on-square: 1
   position: relative;
   width: 100%
   height: 100%
+  overflow: hidden
   &__touchpad
     position: absolute;
     width: 100%
@@ -88,10 +130,17 @@
   &__bullet
     position: absolute
     z-index: $z-index-bullet
+  &__square-based-animation-container
+    position: absolute;
+    width: 100%
+    height: 100%
+    z-index: $z-index-square-based-animation-container
   &__unit
     position: absolute;
     z-index: $z-index-unit
-  &__unit--unit-on-square
+  &__unit--is-alive
+    transition: top $tick-interval + ms linear, left $tick-interval + ms linear
+  &__unit-on-square
     position: absolute;
     z-index: $z-index-unit-on-square
 

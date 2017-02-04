@@ -30,6 +30,12 @@ const ACTION_TYPES = keymirror({
   UPDATE_ENEMIES: null,
 });
 
+const BOARD_ANIMATION_EXPRESSION_TYPES = keymirror({
+  NONE: null,
+  SQUARE_BASED: null,
+  UNIT_BASED: null,
+});
+
 const BOARD_TYPES = keymirror({
   SORTIE_BOARD: null,
   BATTLE_BOARD: null,
@@ -64,6 +70,7 @@ const LANDFORM_TYPES = keymirror({
   ROAD: null,
 });
 
+// Must sync to styles
 const ticksPerSecond = 20;
 const tickInterval = 1000 / ticksPerSecond;
 if (Math.ceil(tickInterval) !== tickInterval) {
@@ -94,6 +101,7 @@ module.exports = {
   ACT_AIM_RANGE_TYPES,
   ACT_EFFECT_RANGE_TYPES,
   ACTION_TYPES,
+  BOARD_ANIMATION_EXPRESSION_TYPES,
   BOARD_TYPES,
   EFFECT_DIRECTIONS,
   FACTION_TYPES,

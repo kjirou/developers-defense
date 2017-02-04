@@ -2,8 +2,15 @@
 const { areBoxesOverlapping } = require('box-overlap');
 
 const config = require('../config');
-const { ACT_AIM_RANGE_TYPES, ACT_EFFECT_RANGE_TYPES, BOARD_TYPES, FACTION_TYPES, FRIENDSHIP_TYPES, STYLES
-  } = require('../immutable/constants');
+const { BOARD_ANIMATION_IDS } = require('../immutable/board-animations');
+const {
+  ACT_AIM_RANGE_TYPES,
+  ACT_EFFECT_RANGE_TYPES,
+  BOARD_TYPES,
+  FACTION_TYPES,
+  FRIENDSHIP_TYPES,
+  STYLES,
+} = require('../immutable/constants');
 const { expandReachToRelativeCoordinates } = require('../lib/core');
 const bulletMethods = require('./bullet');
 const coordinateMethods = require('./coordinate');
@@ -26,15 +33,39 @@ const unitMethods = require('./unit');
 
 /**
  * @param {State~Unit} unit
- * @return {State~Location}
+ * @return {?State~Location}
  */
-const getUnitPositionAsLocation = (unit) => {
+const getUnitPositionAsLocationOrNull = (unit) => {
   if (unit.location) {
     return unit.location;
-  } else if (unit.placement) {
+  } else if (unit.placement.boardType === BOARD_TYPES.BATTLE_BOARD && unit.placement.coordinate) {
     return coordinateToLocation(unit.placement.coordinate);
   }
-  throw new Error(`The unit does not have either \`location\` or \`placement\``);
+  return null;
+};
+
+/**
+ * @param {State~Unit} unit
+ * @return {State~Location}
+ * @throws {Error} The unit does not have either `location` or `placement`
+ */
+const getUnitPositionAsLocation = (unit) => {
+  const location = getUnitPositionAsLocationOrNull(unit);
+
+  if (!location) {
+    console.error('unit =', unit);
+    throw new Error(`The unit does not have either \`location\` or \`placement\``);
+  }
+
+  return location;
+};
+
+/**
+ * @param {State~Unit} unit
+ * @return {boolean}
+ */
+const isUnitInBattle = (unit) => {
+  return Boolean(getUnitPositionAsLocationOrNull(unit) && unitMethods.isAlive(unit));
 };
 
 /**
@@ -108,14 +139,6 @@ const findOneSquareFromBoardsByPlacement = (placement, ...boards) => {
 };
 
 /**
- * @param {State~Unit} unit
- * @return {boolean}
- */
-const isUnitInBattle = (unit) => {
-  return unit.placement.boardType === BOARD_TYPES.BATTLE_BOARD && unit.hitPoints > 0;
-};
-
-/**
  * @param {string} actFriendshipType - One of FRIENDSHIP_TYPES
  * @param {string} actorFactionType - One of FACTION_TYPES
  * @return {string[]} Some of FACTION_TYPES
@@ -141,7 +164,8 @@ const judgeAffectableFractionTypes = (actFriendshipType, actorFactionType) => {
  * @return {boolean}
  */
 const willActorAimActAtUnit = (actor, act, unit) => {
-  return act.friendshipType === unitMethods.determineFriendship(actor, unit);
+  return isUnitInBattle(unit) &&
+    act.friendshipType === unitMethods.determineFriendship(actor, unit);
 };
 
 /**
@@ -251,6 +275,7 @@ const fireBullets = (actor, act, aimedUnit, squareMatrixEndPointCoordinate, opti
       effectOptions.aimedUnitUid = aimedUnit.uid;
     } else {
       effectOptions.relativeCoordinates = act.expandEffectRangeToRelativeCoordinates(direction);
+      effectOptions.boardAnimationId = BOARD_ANIMATION_IDS.SHOCK_RED;
     }
 
     effect = effectMethods.createNewEffectState(
@@ -312,6 +337,8 @@ const effectOccurs = (effect, units) => {
   const effectiveRectangles = effectMethods.createEffectiveRectangles(effect);
 
   const newUnits = units.map(unit => {
+    if (!isUnitInBattle(unit)) return unit;
+
     const unitLocation = getUnitPositionAsLocation(unit);
     const unitRectangle = locationToRectangle(unitLocation);
 
@@ -364,7 +391,7 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }) => {
   let newEnemies = enemies.slice();
 
   // Send dead enemies to the graveyard
-  // TODO: Move to another part of the state instead of delete
+  // TODO: Move to another part of the state instead of delete.
   newEnemies = newEnemies.filter(unitMethods.isAlive);
 
   // Send dead allies to the sortie board
@@ -372,19 +399,10 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }) => {
 
   // Bullets movement and effect
   newBullets = newBullets
-    // Cleaning
-    //   Do not clean at the end, because at least bullets are drawn for 2 ticks.
-    .filter(bullet => !bulletMethods.isArrivedToDestination(bullet))
-    // Movement
-    .map(bullet => {
-      return Object.assign({}, bullet, {
-        location: bulletMethods.calculateNextLocation(bullet),
-      });
-    })
-    // Effect
-    .map(bullet => {
+    // Apply effect & Clean effect occured bullets
+    .filter(bullet => {
       if (!bulletMethods.isArrivedToDestination(bullet)) {
-        return bullet;
+        return true;
       };
 
       // TODO: effectLogs
@@ -392,16 +410,23 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }) => {
       newAllies = effectResult.units.filter(unit => unit.factionType === FACTION_TYPES.ALLY);
       newEnemies = effectResult.units.filter(unit => unit.factionType === FACTION_TYPES.ENEMY);
 
-      return bullet;
+      return false;
+    })
+    // Bullets move
+    //   The reason for the movement after the effect calculation is to guarantee landing on the display.
+    .map(bullet => {
+      return Object.assign({}, bullet, {
+        location: bulletMethods.calculateNextLocation(bullet),
+      });
     })
   ;
 
+  // Separate dead units in this tick
+  let alivedEnemies = newEnemies.filter(unitMethods.isAlive);
+  let deadEnemies = newEnemies.filter(unitMethods.isDead);
+
   // Enemy's movement
-  //   この処理は「弾の移動・効果発生」の後で、かつ「弾の発射」の前であることが望ましい。
-  //   「弾の移動・効果発生」前に実行する場合、着弾場所と敵の位置が必ずずれることになるし、
-  //   「弾の発射」後に実行する場合、照準がずれることになる。
-  //   ということで、1 tick 分だが、プレイヤーにとって最も自然で有利になるから。
-  newEnemies = newEnemies.map(enemy => {
+  alivedEnemies = alivedEnemies.map(enemy => {
     const { location, destinationIndex } = unitMethods.calculateMovementResults(enemy);
 
     return Object.assign({}, enemy, {
@@ -424,7 +449,7 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }) => {
     let didAct = false;
 
     if (unitMethods.canDoAct(newAlly, act)) {
-      const aimedUnit = choiceAimedUnit(newAlly, act, newAllies.concat(newEnemies));
+      const aimedUnit = choiceAimedUnit(newAlly, act, newAllies.concat(alivedEnemies));
 
       if (aimedUnit) {
         if (config.isEnabledTickLog) {
@@ -454,7 +479,7 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }) => {
 
   return {
     allies: newAllies,
-    enemies: newEnemies,
+    enemies: alivedEnemies.concat(deadEnemies),
     bullets: newBullets,
   };
 };

@@ -10,6 +10,20 @@ const keymirror = require('keymirror');
 
 const fixtures = [
   {
+    id: 'BANDIT',
+    iconId: 'ra-muscle-up',
+    maxHitPoints: 8,
+    attackPower: 2,
+    defensePower: 0,
+  },
+  {
+    id: 'DRAGON',
+    iconId: 'ra-dragon',
+    maxHitPoints: 50,
+    attackPower: 8,
+    defensePower: 5,
+  },
+  {
     id: 'FIGHTER',
     iconId: 'ra-sword',
     maxHitPoints: 10,
@@ -32,6 +46,13 @@ const fixtures = [
   {
     id: 'NONE',
     iconId: 'ra-player',
+  },
+  {
+    id: 'SNAKE',
+    iconId: 'ra-venomous-snake',
+    maxHitPoints: 2,
+    attackPower: 2,
+    defensePower: 0,
   },
 ];
 

@@ -14,10 +14,7 @@ const SquareMatrix = require('../components/SquareMatrix');
 class BattleBoard extends React.Component {
   render() {
     const handleTouchStartPad = (event, { coordinate }) => {
-      const placement = Object.assign(createNewPlacementState(), {
-        boardType: BOARD_TYPES.BATTLE_BOARD,
-        coordinate: coordinate.slice(),
-      });
+      const placement = createNewPlacementState(BOARD_TYPES.BATTLE_BOARD, coordinate);
       this.props.dispatch(touchSquare(placement));
     };
 

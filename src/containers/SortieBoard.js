@@ -11,10 +11,7 @@ const SquareMatrix = require('../components/SquareMatrix');
 class SortieBoard extends React.Component {
   render() {
     const handleTouchStartPad = (event, { coordinate }) => {
-      const placement = Object.assign(createNewPlacementState(), {
-        boardType: BOARD_TYPES.SORTIE_BOARD,
-        coordinate: coordinate.slice(),
-      });
+      const placement = createNewPlacementState(BOARD_TYPES.SORTIE_BOARD, coordinate);
       this.props.dispatch(touchSquare(placement));
     };
 

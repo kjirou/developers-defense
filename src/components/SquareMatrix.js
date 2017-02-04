@@ -3,12 +3,31 @@ const ReactCSSTransitionGroup = require('react-addons-css-transition-group');
 
 const { STYLES } = require('../immutable/constants');
 const { getIconId, isAlive, isAlly } = require('../state-models/unit');
+const { locationToCoordinate } = require('../state-models/geometric-apis');
+const { createNewLocationState } = require('../state-models/location');
 const Bullet = require('./Bullet');
 const Square = require('./Square');
 const Unit = require('./Unit');
 
 
 class SquareMatrix extends React.Component {
+  /**
+   * @param {SyntheticTouchEvent} event
+   * @return {{location:<State~Location>, coordinate:<State~Coordinate>}}
+   */
+  static _normalizeTouchPositions(event) {
+    const touch = event.changedTouches.item(0);
+    const rect = event.target.getBoundingClientRect();
+    const touchX = touch.clientX - rect.left;
+    const touchY = touch.clientY - rect.top;
+    const location = createNewLocationState(touchY, touchX);
+
+    return {
+      location,
+      coordinate: locationToCoordinate(location),
+    };
+  }
+
   constructor(...args) {
     super(...args);
 
@@ -59,19 +78,7 @@ class SquareMatrix extends React.Component {
       key: 'square-matrix-touchpad',
       className: 'square-matrix__touchpad',
       onTouchStart: (event) => {
-        const touch = event.changedTouches.item(0);
-        const rect = event.target.getBoundingClientRect();
-        const touchX = touch.clientX - rect.left;
-        const touchY = touch.clientY - rect.top;
-        const coordinate = [
-          Math.floor(touchY / STYLES.SQUARE_HEIGHT),
-          Math.floor(touchX / STYLES.SQUARE_WIDTH),
-        ];
-        handleTouchStartPad(event, {
-          coordinate,
-          touchX,
-          touchY,
-        });
+        handleTouchStartPad(event, SquareMatrix._normalizeTouchPositions(event));
       },
     });
 

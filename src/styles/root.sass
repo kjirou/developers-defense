@@ -1,6 +1,11 @@
 /**
  * Root
  */
+.ba
+  &.ba-simple-blue-blast
+  &.ba-simple-red-blast
+
+
 .reactTransitionDeadUnit-leave
   opacity: 1
 .reactTransitionDeadUnit-leave-active
@@ -82,8 +87,9 @@
 
 .square-matrix
   $z-index-touchpad: 9999
-  $z-index-cursor: 4
-  $z-index-bullet: 3
+  $z-index-cursor: 5
+  $z-index-bullet: 4
+  $z-index-square-based-animation-container: 3
   $z-index-unit: 2
   $z-index-unit-on-square: 1
   position: relative;
@@ -104,6 +110,11 @@
   &__bullet
     position: absolute
     z-index: $z-index-bullet
+  &__square-based-animation-container
+    position: absolute;
+    width: 100%
+    height: 100%
+    z-index: $z-index-square-based-animation-container
   &__unit
     position: absolute;
     z-index: $z-index-unit

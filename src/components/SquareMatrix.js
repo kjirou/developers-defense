@@ -8,7 +8,7 @@ const Square = require('./Square');
 const Unit = require('./Unit');
 
 
-const SquareMatrix = ({ squareMatrix, cursorCoordinate, bullets, units, unitsOnSquares, handleTouchStartPad }) => {
+const SquareMatrix = ({ squareMatrix, cursorCoordinate, bullets, squareBasedAnimations, units, unitsOnSquares, handleTouchStartPad }) => {
   const props = {
     className: 'square-matrix',
   };
@@ -53,6 +53,10 @@ const SquareMatrix = ({ squareMatrix, cursorCoordinate, bullets, units, unitsOnS
         'square-matrix__bullet',
       ],
     });
+  });
+
+  const squareBasedAnimationContainer = React.createElement('div', {
+    className: 'square-matrix__square-based-animation-container',
   });
 
   const unitComponents = units.map(unit => {
@@ -104,6 +108,7 @@ const SquareMatrix = ({ squareMatrix, cursorCoordinate, bullets, units, unitsOnS
     touchpad,
     ...(cursor ? [cursor] : []),
     ...bulletComponents,
+    squareBasedAnimationContainer,
     unitComponentsTransition,
     ...unitComponentsOnSquares,
     serialSquareComponents,
@@ -112,12 +117,14 @@ const SquareMatrix = ({ squareMatrix, cursorCoordinate, bullets, units, unitsOnS
   return React.createElement('div', props, ...components);
 };
 
+const coordinatePropType = React.PropTypes.arrayOf(React.PropTypes.number.isRequired);
+
 Object.assign(SquareMatrix, {
   propTypes: {
     bullets: React.PropTypes.arrayOf(
       React.PropTypes.object.isRequired
     ),
-    cursorCoordinate: React.PropTypes.arrayOf(React.PropTypes.number.isRequired),
+    cursorCoordinate: coordinatePropType,
     handleTouchStartPad: React.PropTypes.func,
     squareMatrix: React.PropTypes.arrayOf(
       React.PropTypes.arrayOf(
@@ -130,6 +137,15 @@ Object.assign(SquareMatrix, {
     unitsOnSquares: React.PropTypes.arrayOf(
       React.PropTypes.object.isRequired
     ),
+    squareBasedAnimations: React.PropTypes.arrayOf(
+      React.PropTypes.shape({
+        classNames: React.PropTypes.arrayOf(React.PropTypes.string.isRequired).isRequired,
+        coordinates: React.PropTypes.arrayOf(coordinatePropType.isRequired).isRequired,
+        duration: React.PropTypes.number.isRequired,
+        uid: React.PropTypes.string.isRequired,
+        //style: React.PropTypes.string.isRequired,
+      }).isRequired
+    ),
   },
   defaultProps: {
     bullets: [],
@@ -137,6 +153,7 @@ Object.assign(SquareMatrix, {
     handleTouchStartPad: () => {},
     units: [],
     unitsOnSquares: [],
+    squareBasedAnimations: [],
   },
 });
 

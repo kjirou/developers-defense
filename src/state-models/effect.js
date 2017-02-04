@@ -53,20 +53,28 @@ const createNewEffectState = (affectableFractionTypes, impactedLocation, options
 
 /**
  * @param {State~Effect} effect
- * @return {State~Rectangle[]}
+ * @return {State~Coordinate[]}
  */
-const createEffectiveRectangles = (effect) => {
+const createEffectiveCoordinates = (effect) => {
   const impactedCoordinate = locationToCoordinate(effect.impactedLocation);
 
   return (effect.relativeCoordinates || [])
     .map(([ m, n ]) => tryToMoveCoordinate(impactedCoordinate, m, n))
     .filter(coordinate => coordinate !== null)
-    .map(coordinate => coordinateToRectangle(coordinate))
   ;
+};
+
+/**
+ * @param {State~Effect} effect
+ * @return {State~Rectangle[]}
+ */
+const createEffectiveRectangles = (effect) => {
+  return createEffectiveCoordinates(effect).map(coordinateToRectangle);
 };
 
 
 module.exports = {
+  createEffectiveCoordinates,
   createEffectiveRectangles,
   createNewEffectState,
 };

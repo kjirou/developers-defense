@@ -35,17 +35,19 @@ class SquareMatrix extends React.Component {
   }
 
   componentDidUpdate() {
+    // Execute square-based animations
+    // TODO: Add UI tests
     this.props.squareBasedAnimations.forEach(({ uid, coordinates, duration, classNames }) => {
-      const uidAttr = 'data-uid';
+      const uidAttrName = 'data-uid';
 
       // If the DOM element remains, the animation is deemed to have been executed.
-      if (this._squareBasedAnimationDomNode.querySelector(`[${ uidAttr }="${ uid }"]`)) {
+      if (this._squareBasedAnimationDomNode.querySelector(`[${ uidAttrName }="${ uid }"]`)) {
         return;
       }
 
       coordinates.forEach(coordinate => {
         const animation = document.createElement('div');
-        animation.setAttribute(uidAttr, uid);
+        animation.setAttribute(uidAttrName, uid);
         animation.style.top = `${ STYLES.SQUARE_HEIGHT * coordinate[0] }px`;
         animation.style.left = `${ STYLES.SQUARE_HEIGHT * coordinate[1] }px`;
         animation.classList.add(...classNames);

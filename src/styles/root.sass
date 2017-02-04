@@ -1,9 +1,29 @@
 /**
  * Root
  */
-.ba
-  &.ba-simple-blue-blast
-  &.ba-simple-red-blast
+.square_based_animation
+  position: absolute;
+  width: $square-width
+  height: $square-height
+  opacity: 0.0
+
+  &.square_based_animation--shock-blue
+    background-color: blue
+    animation-name: square_based_animation--shock
+    // TODO: データ定義から動的に設定するように
+    animation-duration: 500ms
+  &.square_based_animation--shock-red
+    background-color: red
+    animation-name: square_based_animation--shock
+    animation-duration: 500ms
+
+  @keyframes square_based_animation--shock
+    0%
+      opacity: 0.0
+    30%
+      opacity: 0.5
+    100%
+      opacity: 0.0
 
 
 .reactTransitionDeadUnit-leave

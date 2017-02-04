@@ -45,7 +45,9 @@ BattleBoard = connect(state => {
 
   const squareBasedAnimations = state.bullets
     .filter(bullet => {
-      return bullet.effect.boardAnimationId === BOARD_ANIMATION_EXPRESSION_TYPES.SQUARE_BASED &&
+      const boardAnimation = boardAnimations[bullet.effect.boardAnimationId];
+
+      return boardAnimation.expression.type === BOARD_ANIMATION_EXPRESSION_TYPES.SQUARE_BASED &&
         isArrivedToDestination(bullet);
     })
     .map(bullet => {
@@ -55,7 +57,7 @@ BattleBoard = connect(state => {
         uid: bullet.effect.uid,
         coordinates: createEffectiveCoordinates(bullet.effect),
         duration: boardAnimation.duration,
-        classNames: boardAnimation.classNames,
+        classNames: boardAnimation.expression.classNames,
       };
     })
   ;

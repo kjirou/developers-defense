@@ -27,7 +27,7 @@ const fixtures = [
     id: 'SHOCK_BLUE',
     expression: {
       type: 'SQUARE_BASED',
-      classNames: ['ba', 'ba--shock-blue'],
+      classNames: ['square_based_animation', 'square_based_animation--shock-blue'],
     },
     duration: 500,
   },
@@ -35,7 +35,7 @@ const fixtures = [
     id: 'SHOCK_RED',
     expression: {
       type: 'SQUARE_BASED',
-      classNames: ['ba', 'ba--shock-red'],
+      classNames: ['square_based_animation', 'square_based_animation--shock-red'],
     },
     duration: 500,
   },

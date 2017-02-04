@@ -9,12 +9,43 @@ const Unit = require('./Unit');
 
 
 class SquareMatrix extends React.Component {
+  constructor(...args) {
+    super(...args);
+
+    this._squareBasedAnimationDomNode = null;
+  }
+
+  componentDidUpdate() {
+    this.props.squareBasedAnimations.forEach(({ uid, coordinates, duration, classNames }) => {
+      const uidAttr = 'data-uid';
+
+      // If the DOM element remains, the animation is deemed to have been executed.
+      if (this._squareBasedAnimationDomNode.querySelector(`[${ uidAttr }="${ uid }"]`)) {
+        return;
+      }
+
+      coordinates.forEach(coordinate => {
+        const animation = document.createElement('div');
+        animation.setAttribute(uidAttr, uid);
+        animation.style.top = `${ STYLES.SQUARE_HEIGHT * coordinate[0] }px`;
+        animation.style.left = `${ STYLES.SQUARE_HEIGHT * coordinate[1] }px`;
+        animation.classList.add(...classNames);
+
+        this._squareBasedAnimationDomNode.appendChild(animation);
+        setTimeout(() => {
+          if (this._squareBasedAnimationDomNode) {
+            this._squareBasedAnimationDomNode.removeChild(animation);
+          }
+        }, duration);
+      });
+    });
+  }
+
   render() {
     const {
       bullets,
       cursorCoordinate,
       handleTouchStartPad,
-      squareBasedAnimations,
       squareMatrix,
       units,
       unitsOnSquares,
@@ -67,7 +98,9 @@ class SquareMatrix extends React.Component {
     });
 
     const squareBasedAnimationContainer = React.createElement('div', {
+      key: 'square-matrix-square-based-animaion-container',
       className: 'square-matrix__square-based-animation-container',
+      ref: (node) => { this._squareBasedAnimationDomNode = node },
     });
 
     const unitComponents = units.map(unit => {

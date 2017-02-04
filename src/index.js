@@ -5,6 +5,10 @@ const { Provider } = require('react-redux');
 const { initializeApp } =  require('./actions');
 const Root =  require('./components/Root');
 const config =  require('./config');
+const acts =  require('./immutable/acts');
+const constants =  require('./immutable/constants');
+const boardAnimations =  require('./immutable/board-animations');
+const jobs =  require('./immutable/jobs');
 const { configureStore } =  require('./store');
 
 
@@ -22,6 +26,12 @@ window.document.addEventListener('DOMContentLoaded', () => {
 
   // For development on your browser
   window._config = config;
+  window._immutable = {
+    acts,
+    boardAnimations,
+    constants,
+    jobs,
+  };
   window._store = store;
 
   const app = React.createElement(

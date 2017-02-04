@@ -8,114 +8,127 @@ const Square = require('./Square');
 const Unit = require('./Unit');
 
 
-const SquareMatrix = ({ squareMatrix, cursorCoordinate, bullets, squareBasedAnimations, units, unitsOnSquares, handleTouchStartPad }) => {
-  const props = {
-    className: 'square-matrix',
-  };
+class SquareMatrix extends React.Component {
+  render() {
+    const {
+      bullets,
+      cursorCoordinate,
+      handleTouchStartPad,
+      squareBasedAnimations,
+      squareMatrix,
+      units,
+      unitsOnSquares,
+    } = this.props;
 
-  const touchpad = React.createElement('div', {
-    className: 'square-matrix__touchpad',
-    onTouchStart: (event) => {
-      const touch = event.changedTouches.item(0);
-      const rect = event.target.getBoundingClientRect();
-      const touchX = touch.clientX - rect.left;
-      const touchY = touch.clientY - rect.top;
-      const coordinate = [
-        Math.floor(touchY / STYLES.SQUARE_HEIGHT),
-        Math.floor(touchX / STYLES.SQUARE_WIDTH),
-      ];
-      handleTouchStartPad(event, {
-        coordinate,
-        touchX,
-        touchY,
-      });
-    },
-  });
+    const props = {
+      className: 'square-matrix',
+    };
 
-  let cursor = null;
-  if (cursorCoordinate) {
-    cursor = React.createElement('div', {
-      key: 'square-matrix-cursor',
-      className: 'square-matrix__cursor',
-      style: {
-        top: STYLES.SQUARE_HEIGHT * cursorCoordinate[0],
-        left: STYLES.SQUARE_WIDTH * cursorCoordinate[1],
+    const touchpad = React.createElement('div', {
+      className: 'square-matrix__touchpad',
+      onTouchStart: (event) => {
+        const touch = event.changedTouches.item(0);
+        const rect = event.target.getBoundingClientRect();
+        const touchX = touch.clientX - rect.left;
+        const touchY = touch.clientY - rect.top;
+        const coordinate = [
+          Math.floor(touchY / STYLES.SQUARE_HEIGHT),
+          Math.floor(touchX / STYLES.SQUARE_WIDTH),
+        ];
+        handleTouchStartPad(event, {
+          coordinate,
+          touchX,
+          touchY,
+        });
       },
     });
-  }
 
-  const bulletComponents = bullets.map(bullet => {
-    return React.createElement(Bullet, {
-      key: 'square-matrix-bullet-' + bullet.uid,
-      top: bullet.location.y,
-      left: bullet.location.x,
-      classNames: [
-        'square-matrix__bullet',
-      ],
-    });
-  });
+    let cursor = null;
+    if (cursorCoordinate) {
+      cursor = React.createElement('div', {
+        key: 'square-matrix-cursor',
+        className: 'square-matrix__cursor',
+        style: {
+          top: STYLES.SQUARE_HEIGHT * cursorCoordinate[0],
+          left: STYLES.SQUARE_WIDTH * cursorCoordinate[1],
+        },
+      });
+    }
 
-  const squareBasedAnimationContainer = React.createElement('div', {
-    className: 'square-matrix__square-based-animation-container',
-  });
-
-  const unitComponents = units.map(unit => {
-    return React.createElement(Unit, {
-      key: 'square-matrix-unit-' + unit.uid,
-      iconId: getIconId(unit),
-      top: unit.location.y,
-      left: unit.location.x,
-      classNames: [
-        isAlly(unit) ? 'unit--ally' : 'unit--enemy',
-        'square-matrix__unit',
-        ...(isAlive(unit) ? ['square-matrix__unit--is-alive'] : []),
-      ],
-    });
-  });
-
-  const unitComponentsTransition = React.createElement(ReactCSSTransitionGroup, {
-    key: 'react-css-transition-group-units',
-    transitionName: 'reactTransitionDeadUnit',
-    transitionEnter: false,
-    transitionLeaveTimeout: 500,
-  }, unitComponents);
-
-  // Do not place in the squares.
-  const unitComponentsOnSquares = unitsOnSquares.map(unit => {
-    return React.createElement(Unit, {
-      key: 'square-matrix-unit-on-square-' + unit.uid,
-      iconId: getIconId(unit),
-      top: STYLES.SQUARE_HEIGHT * unit.placement.coordinate[0],
-      left: STYLES.SQUARE_WIDTH * unit.placement.coordinate[1],
-      classNames: [
-        isAlly(unit) ? 'unit--ally' : 'unit--enemy',
-        'square-matrix__unit-on-square',
-      ],
-    });
-  });
-
-  const serialSquareComponents = squareMatrix.map(rowSquares => {
-    return rowSquares.map(square => {
-      return React.createElement(Square, {
-        rowIndex: square.coordinate[0],
-        columnIndex: square.coordinate[1],
-        landformType: square.landformType,
+    const bulletComponents = bullets.map(bullet => {
+      return React.createElement(Bullet, {
+        key: 'square-matrix-bullet-' + bullet.uid,
+        top: bullet.location.y,
+        left: bullet.location.x,
+        classNames: [
+          'square-matrix__bullet',
+        ],
       });
     });
-  });
 
-  const components = [
-    touchpad,
-    ...(cursor ? [cursor] : []),
-    ...bulletComponents,
-    squareBasedAnimationContainer,
-    unitComponentsTransition,
-    ...unitComponentsOnSquares,
-    serialSquareComponents,
-  ];
+    const squareBasedAnimationContainer = React.createElement('div', {
+      className: 'square-matrix__square-based-animation-container',
+    });
 
-  return React.createElement('div', props, ...components);
-};
+    const unitComponents = units.map(unit => {
+      return React.createElement(Unit, {
+        key: 'square-matrix-unit-' + unit.uid,
+        iconId: getIconId(unit),
+        top: unit.location.y,
+        left: unit.location.x,
+        classNames: [
+          isAlly(unit) ? 'unit--ally' : 'unit--enemy',
+          'square-matrix__unit',
+          ...(isAlive(unit) ? ['square-matrix__unit--is-alive'] : []),
+        ],
+      });
+    });
+
+    const unitComponentsTransition = React.createElement(ReactCSSTransitionGroup, {
+      key: 'react-css-transition-group-units',
+      transitionName: 'reactTransitionDeadUnit',
+      transitionEnter: false,
+      transitionLeaveTimeout: 500,
+    }, unitComponents);
+
+    // Do not place in the squares.
+    const unitComponentsOnSquares = unitsOnSquares.map(unit => {
+      return React.createElement(Unit, {
+        key: 'square-matrix-unit-on-square-' + unit.uid,
+        iconId: getIconId(unit),
+        top: STYLES.SQUARE_HEIGHT * unit.placement.coordinate[0],
+        left: STYLES.SQUARE_WIDTH * unit.placement.coordinate[1],
+        classNames: [
+          isAlly(unit) ? 'unit--ally' : 'unit--enemy',
+          'square-matrix__unit-on-square',
+        ],
+      });
+    });
+
+    const serialSquareComponents = squareMatrix.map(rowSquares => {
+      return rowSquares.map(square => {
+        return React.createElement(Square, {
+          rowIndex: square.coordinate[0],
+          columnIndex: square.coordinate[1],
+          landformType: square.landformType,
+        });
+      });
+    });
+
+    const components = [
+      touchpad,
+      ...(cursor ? [cursor] : []),
+      ...bulletComponents,
+      squareBasedAnimationContainer,
+      unitComponentsTransition,
+      ...unitComponentsOnSquares,
+      serialSquareComponents,
+    ];
+
+    return React.createElement('div', props, ...components);
+  }
+}
+
 
 const coordinatePropType = React.PropTypes.arrayOf(React.PropTypes.number.isRequired);
 

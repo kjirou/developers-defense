@@ -56,6 +56,7 @@ class SquareMatrix extends React.Component {
     };
 
     const touchpad = React.createElement('div', {
+      key: 'square-matrix-touchpad',
       className: 'square-matrix__touchpad',
       onTouchStart: (event) => {
         const touch = event.changedTouches.item(0);

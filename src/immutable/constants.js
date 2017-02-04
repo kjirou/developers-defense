@@ -31,19 +31,9 @@ const ACTION_TYPES = keymirror({
 });
 
 const BOARD_ANIMATION_EXPRESSION_TYPES = keymirror({
-  // CANVAS: null,
-  CSS: null,
-  // MO: null,
   NONE: null,
-  // PIXI: null,
-  STYLES: null,
-});
-
-const BOARD_ANIMATION_POSITION_TYPES = keymirror({
-  BOARD: null,
-  NONE: null,
-  SQUARE: null,
-  UNIT: null,
+  SQUARE_BASED: null,
+  UNIT_BASED: null,
 });
 
 const BOARD_TYPES = keymirror({
@@ -112,7 +102,6 @@ module.exports = {
   ACT_EFFECT_RANGE_TYPES,
   ACTION_TYPES,
   BOARD_ANIMATION_EXPRESSION_TYPES,
-  BOARD_ANIMATION_POSITION_TYPES,
   BOARD_TYPES,
   EFFECT_DIRECTIONS,
   FACTION_TYPES,

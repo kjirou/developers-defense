@@ -4,7 +4,6 @@ const {
   BOARD_ANIMATION_IDS,
   boardAnimationList,
   boardAnimations,
-  baseBoardAnimation,
 } = require('../../src/immutable/board-animations');
 const {} = require('../../src/immutable/constants');
 

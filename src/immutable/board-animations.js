@@ -7,31 +7,12 @@
 const dictify = require('dictify');
 const keymirror = require('keymirror');
 
-const { BOARD_ANIMATION_EXPRESSION_TYPES, BOARD_ANIMATION_POSITION_TYPES } = require('./constants');
+const { BOARD_ANIMATION_EXPRESSION_TYPES } = require('./constants');
 
 
+// TODO: 敵味方/攻撃回復補助でベースカラーを設定したい
 // TODO: 方向を持つアニメーションをどうするか
 const fixtures = [
-  {
-    id: 'BLAST_BLUE',
-    position: {
-      type: 'SQUARE',
-    },
-    expression: {
-      type: 'CSS',
-      classNames: ['ba', 'ba--blast-blue'],
-    },
-  },
-  {
-    id: 'BLAST_RED',
-    position: {
-      type: 'SQUARE',
-    },
-    expression: {
-      type: 'CSS',
-      classNames: ['ba', 'ba--blast-red'],
-    },
-  },
   {
     id: 'NONE',
     position: {
@@ -40,40 +21,45 @@ const fixtures = [
     expression: {
       type: 'NONE',
     },
+    duration: 0,
   },
   {
     id: 'SHOCK_BLUE',
-    position: {
-      type: 'SQUARE',
-    },
     expression: {
-      type: 'CSS',
+      type: 'SQUARE_BASED',
       classNames: ['ba', 'ba--shock-blue'],
     },
+    duration: 500,
   },
   {
     id: 'SHOCK_RED',
-    position: {
-      type: 'SQUARE',
-    },
     expression: {
-      type: 'CSS',
+      type: 'SQUARE_BASED',
       classNames: ['ba', 'ba--shock-red'],
     },
+    duration: 500,
   },
 ];
 
 
-const baseBoardAnimation = {
-  id: null,
+const expressionDefaults = {
+  classNames: [],
+  style: '',
+};
+const boardAnimationDefaults = {
 };
 
 const boardAnimationList = fixtures.map(fixture => {
-  const boardAnimation =  Object.assign({}, baseBoardAnimation, fixture);
-
-  if (!boardAnimation.id || !boardAnimation.position || !boardAnimation.expression) {
-    throw new Error(`boardAnimation.id="${ boardAnimation.id }" is invalid`);
+  if (
+    !fixture.id ||
+    !fixture.expression ||
+    fixture.duration === undefined
+  ) {
+    throw new Error(`boardAnimation's fixture.id="${ fixture.id }" is invalid`);
   }
+
+  const expression = Object.assign({}, expressionDefaults, fixture.expression);
+  const boardAnimation =  Object.assign({}, boardAnimationDefaults, fixture, { expression });
 
   return boardAnimation;
 });
@@ -85,5 +71,4 @@ module.exports = {
   BOARD_ANIMATION_IDS,
   boardAnimationList,
   boardAnimations,
-  baseBoardAnimation,
 };

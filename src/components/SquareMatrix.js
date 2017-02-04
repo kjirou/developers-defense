@@ -149,6 +149,7 @@ class SquareMatrix extends React.Component {
     const serialSquareComponents = squareMatrix.map(rowSquares => {
       return rowSquares.map(square => {
         return React.createElement(Square, {
+          key: 'square-matrix-square-' + square.uid,
           rowIndex: square.coordinate[0],
           columnIndex: square.coordinate[1],
           landformType: square.landformType,

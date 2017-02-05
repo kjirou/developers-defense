@@ -39,30 +39,6 @@
   opacity: 0.01
   transition: opacity 500ms ease-in
 
-.root
-  margin: 0 auto
-  position: relative
-  width: $app-width
-  height: $app-height
-  z-index: $z-index-base
-  background-color: $app-background-color
-  color: $app-color
-  &__status-bar
-    height: 24px
-    ul
-      display: flex
-      justify-content: center
-      li
-        margin-right: 10px
-  &__battle-board
-    // width/height are set from JS
-    position: relative
-    margin: 4px auto 0 auto
-  &__recruitment-board
-    position: relative
-    margin: 8px auto 0 auto
-    background-color: gray
-
 .unit
   width: $square-width
   height: $square-height
@@ -155,3 +131,27 @@
   width: 8px
   height: 8px
   background-color: red
+
+.root
+  margin: 0 auto
+  position: relative
+  width: $app-width
+  height: $app-height
+  z-index: $z-index-base
+  background-color: $app-background-color
+  color: $app-color
+  &__status-bar
+    height: 24px
+    ul
+      display: flex
+      justify-content: center
+      li
+        margin-right: 10px
+  &__battle-board
+    // width/height are set from JS
+    position: relative
+    margin: 4px auto 0 auto
+  &__recruitment-board
+    position: relative
+    margin: 8px auto 0 auto
+    background-color: gray

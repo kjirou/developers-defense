@@ -4,7 +4,7 @@ machine:
   timezone: Asia/Tokyo
 dependencies:
   override:
-    - yarn
+    - yarn install
 test:
   override:
     - yarn test

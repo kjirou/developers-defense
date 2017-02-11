@@ -11,12 +11,9 @@ const keymirror = require('keymirror');
 const { STYLES } = require('./constants');
 
 
-// TODO: マス目とユニットの大きさが同じなので、兼用できるようにしたい
-//       ー＞色々はしょるけど、結局は「どういうアニメーションを表示したいのか」をどこに定義するかなのでは
-//       今は、expression.type にそれも含めようとしているのが良くない
-//       やっぱり act か？　遠いようにみえるけど
 // TODO: 敵味方/攻撃回復補助でベースカラーを設定したい
 // TODO: 方向を持つアニメーションをどうするか
+// TODO: Make to validate by using `availableAnimationDestinationTypes`
 const fixtures = [
   {
     id: 'NONE',
@@ -24,14 +21,14 @@ const fixtures = [
       type: 'NONE',
     },
     expression: {
-      type: 'NONE',
+      availableAnimationDestinationTypes: ['SQUARE', 'UNIT'],
     },
     duration: 0,
   },
   {
     id: 'SHOCK_BLUE',
     expression: {
-      type: 'SQUARE_BASED',
+      availableAnimationDestinationTypes: ['SQUARE', 'UNIT'],
       classNames: ['square_based_animation', 'square_based_animation--shock-blue'],
     },
     duration: 750,
@@ -39,7 +36,7 @@ const fixtures = [
   {
     id: 'SHOCK_RED',
     expression: {
-      type: 'SQUARE_BASED',
+      availableAnimationDestinationTypes: ['SQUARE', 'UNIT'],
       classNames: ['square_based_animation', 'square_based_animation--shock-red'],
     },
     duration: 750,
@@ -48,6 +45,7 @@ const fixtures = [
 
 
 const expressionDefaults = {
+  availableAnimationDestinationTypes: [],
   classNames: [],
   style: '',
 };

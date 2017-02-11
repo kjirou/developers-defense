@@ -36,12 +36,6 @@ const ANIMATION_DESTINATION_TYPES = keymirror({
   UNIT: null,
 });
 
-const ANIMATION_EXPRESSION_TYPES = keymirror({
-  NONE: null,
-  SQUARE_BASED: null,
-  UNIT_BASED: null,
-});
-
 const BOARD_TYPES = keymirror({
   SORTIE_BOARD: null,
   BATTLE_BOARD: null,
@@ -109,7 +103,6 @@ module.exports = {
   ACT_EFFECT_RANGE_TYPES,
   ACTION_TYPES,
   ANIMATION_DESTINATION_TYPES,
-  ANIMATION_EXPRESSION_TYPES,
   BOARD_TYPES,
   EFFECT_DIRECTIONS,
   FACTION_TYPES,

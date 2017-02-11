@@ -40,19 +40,27 @@
   transition: opacity 500ms ease-in
 
 .unit
+  $z-index-animation-container: 1
+  $z-index-icon: 0
   width: $square-width
   height: $square-height
   &.unit--ally
     color: blue
   &.unit--enemy
     color: red
-  i
+  &__animation-container
+    position: absolute
+    width: 100%
+    height: 100%
+    z-index: $z-index-animation-container
+  &__icon
     position: absolute
     display: block
     top: 8px
     left: 8px
     width: 32px
     height: 32px
+    z-index: $z-index-icon
     animation-name: unit-breathing
     animation-duration: 1s
     animation-iteration-count: infinite

@@ -1,5 +1,5 @@
 /**
- * Animation given to block-level elements
+ * Animation definitions what are attached to block-level elements
  * @typedef {Object} Immutable~Animation
  */
 
@@ -51,8 +51,21 @@ const expressionDefaults = {
 };
 
 const baseAnimation = {
-  getAnimationDurationClassName() {
+  /**
+   * @return {string}
+   */
+  _getAnimationDurationClassName() {
     return `animation-duration-${ this.duration }ms`;
+  },
+
+  /**
+   * @return {string[]}
+   */
+  getExpressionClassNames() {
+    return [
+      ...this.expression.classNames,
+      this._getAnimationDurationClassName(),
+    ];
   },
 };
 

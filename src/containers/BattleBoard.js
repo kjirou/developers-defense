@@ -27,9 +27,10 @@ class BattleBoard extends React.Component {
         squareMatrix={ this.props.battleBoard.squareMatrix }
         cursorCoordinate={ this.props.cursorCoordinate }
         bullets={ this.props.bullets }
-        squareBasedAnimations={ this.props.squareBasedAnimations }
         units={ this.props.enemiesInBattle }
         unitsOnSquares={ this.props.unitsOnSquares }
+        unitBasedAnimations={ this.props.unitBasedAnimations }
+        squareBasedAnimations={ this.props.squareBasedAnimations }
         handleTouchStartPad={ handleTouchStartPad }
       />
     </Board>;
@@ -39,6 +40,28 @@ class BattleBoard extends React.Component {
 BattleBoard = connect(state => {
   const cursorCoordinate =
     state.cursor.placement.boardType === BOARD_TYPES.BATTLE_BOARD ? state.cursor.placement.coordinate : null;
+
+  const enemiesInBattle = state.enemies.filter(enemy => enemy.location);
+
+  const unitsOnSquares =
+    state.allies.filter(ally => ally.placement.boardType === state.battleBoard.boardType);
+
+  const unitBasedAnimations = state.bullets
+    .filter(bullet => {
+      return bullet.effect.animationDestinationType === ANIMATION_DESTINATION_TYPES.UNIT &&
+        isArrivedToDestination(bullet);
+    })
+    .map(bullet => {
+      const animation = animations[bullet.effect.animationId];
+
+      return {
+        uid: bullet.effect.uid,
+        unitUid: bullet.effect.aimedUnitUid,
+        duration: animation.duration,
+        classNames: animation.getExpressionClassNames(),
+      };
+    })
+  ;
 
   const squareBasedAnimations = state.bullets
     .filter(bullet => {
@@ -52,23 +75,16 @@ BattleBoard = connect(state => {
         uid: bullet.effect.uid,
         coordinates: createEffectiveCoordinates(bullet.effect),
         duration: animation.duration,
-        classNames: [
-          ...animation.expression.classNames,
-          animation.getAnimationDurationClassName(),
-        ],
+        classNames: animation.getExpressionClassNames(),
       };
     })
   ;
-
-  const enemiesInBattle = state.enemies.filter(enemy => enemy.location);
-
-  const unitsOnSquares =
-    state.allies.filter(ally => ally.placement.boardType === state.battleBoard.boardType);
 
   return Object.assign({}, state, {
     cursorCoordinate,
     enemiesInBattle,
     unitsOnSquares,
+    unitBasedAnimations,
     squareBasedAnimations,
   });
 })(BattleBoard);

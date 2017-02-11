@@ -28,6 +28,15 @@ class SquareMatrix extends React.Component {
     };
   }
 
+  /**
+   * @param {Object[]} unitBasedAnimations
+   * @param {string} unitUid
+   * @return {Object[]}
+   */
+  static _findUnitBasedAnimationsByUnitUid(unitBasedAnimations, unitUid) {
+    return unitBasedAnimations.filter(unitBasedAnimation => unitBasedAnimation.unitUid == unitUid);
+  }
+
   constructor(...args) {
     super(...args);
 
@@ -68,6 +77,7 @@ class SquareMatrix extends React.Component {
       cursorCoordinate,
       handleTouchStartPad,
       squareMatrix,
+      unitBasedAnimations,
       units,
       unitsOnSquares,
     } = this.props;
@@ -124,6 +134,7 @@ class SquareMatrix extends React.Component {
           'square-matrix__unit',
           ...(isAlive(unit) ? ['square-matrix__unit--is-alive'] : []),
         ],
+        animations: SquareMatrix._findUnitBasedAnimationsByUnitUid(unitBasedAnimations, unit.uid),
       });
     });
 
@@ -188,6 +199,14 @@ Object.assign(SquareMatrix, {
         React.PropTypes.object.isRequired
       ).isRequired
     ).isRequired,
+    unitBasedAnimations: React.PropTypes.arrayOf(
+      React.PropTypes.shape({
+        classNames: React.PropTypes.arrayOf(React.PropTypes.string.isRequired).isRequired,
+        duration: React.PropTypes.number.isRequired,
+        uid: React.PropTypes.string.isRequired,
+        unitUid: React.PropTypes.string.isRequired,
+      }).isRequired
+    ),
     units: React.PropTypes.arrayOf(
       React.PropTypes.object.isRequired
     ),
@@ -200,7 +219,6 @@ Object.assign(SquareMatrix, {
         coordinates: React.PropTypes.arrayOf(coordinatePropType.isRequired).isRequired,
         duration: React.PropTypes.number.isRequired,
         uid: React.PropTypes.string.isRequired,
-        //style: React.PropTypes.string.isRequired,
       }).isRequired
     ),
   },
@@ -208,6 +226,7 @@ Object.assign(SquareMatrix, {
     bullets: [],
     cursorCoordinate: null,
     handleTouchStartPad: () => {},
+    unitBasedAnimations: [],
     units: [],
     unitsOnSquares: [],
     squareBasedAnimations: [],

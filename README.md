@@ -2,7 +2,9 @@
 
 [![CircleCI](https://circleci.com/gh/kjirou/developers-defense.svg?style=svg)](https://circleci.com/gh/kjirou/developers-defense)
 
-(Later)
+Under development..
+
+![](/docs/demo.gif)
 
 
 ## Development

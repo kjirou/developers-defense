@@ -2,7 +2,7 @@ const React = require('react');
 const { connect } = require('react-redux');
 
 const { touchSquare } = require('../actions');
-const { ANIMATION_EXPRESSION_TYPES, BOARD_TYPES, PARAMETERS } = require('../immutable/constants');
+const { ANIMATION_DESTINATION_TYPES, BOARD_TYPES, PARAMETERS } = require('../immutable/constants');
 const { animations } = require('../immutable/animations');
 const { isArrivedToDestination } = require('../state-models/bullet');
 const { createEffectiveCoordinates } = require('../state-models/effect');
@@ -42,21 +42,19 @@ BattleBoard = connect(state => {
 
   const squareBasedAnimations = state.bullets
     .filter(bullet => {
-      const boardAnimation = animations[bullet.effect.animationId];
-
-      return boardAnimation.expression.type === ANIMATION_EXPRESSION_TYPES.SQUARE_BASED &&
+      return bullet.effect.animationDestinationType === ANIMATION_DESTINATION_TYPES.SQUARE &&
         isArrivedToDestination(bullet);
     })
     .map(bullet => {
-      const boardAnimation = animations[bullet.effect.animationId];
+      const animation = animations[bullet.effect.animationId];
 
       return {
         uid: bullet.effect.uid,
         coordinates: createEffectiveCoordinates(bullet.effect),
-        duration: boardAnimation.duration,
+        duration: animation.duration,
         classNames: [
-          ...boardAnimation.expression.classNames,
-          boardAnimation.getAnimationDurationClassName(),
+          ...animation.expression.classNames,
+          animation.getAnimationDurationClassName(),
         ],
       };
     })

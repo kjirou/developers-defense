@@ -79,7 +79,6 @@
     "jsdoc:generate": "$(npm bin)/jsdoc -c ./jsdoc/conf.json -r -d ./jsdoc/out",
     "jsdoc:open": "open ./jsdoc/out/index.html",
     "lint": "$(npm bin)/eslint '{src,test}/**/*.js'",
-    "s": "npm run serve",
     "serve": "$(npm bin)/gulp serve",
     "test": "npm run test:fastest",
     "test:fastest": "$(npm bin)/mocha --recursive",

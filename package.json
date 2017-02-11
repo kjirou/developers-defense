@@ -79,7 +79,7 @@
     "jsdoc:generate": "$(npm bin)/jsdoc -c ./jsdoc/conf.json -r -d ./jsdoc/out",
     "jsdoc:open": "open ./jsdoc/out/index.html",
     "lint": "$(npm bin)/eslint '{src,test}/**/*.js'",
-    "preinstall": "node -e \"if(process.env.npm_execpath.indexOf('/yarn/') === -1) throw new Error('You must use Yarn to install, not NPM');\"",
+    "preinstall": "node -e \"if(process.env.npm_execpath.indexOf('yarn') === -1) throw new Error('You must use Yarn to install, not NPM');\"",
     "serve": "$(npm bin)/gulp serve",
     "test": "npm run test:fastest",
     "test:fastest": "$(npm bin)/mocha --recursive",

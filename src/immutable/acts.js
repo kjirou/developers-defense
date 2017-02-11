@@ -30,6 +30,9 @@ const fixtures = [
       damagePoints: 1,
       healingPoints: 0,
     },
+    // TODO
+    //effectAnimation: {
+    //},
   },
   {
     id: 'MELEE_ATTACK',

@@ -2,7 +2,6 @@
 const { areBoxesOverlapping } = require('box-overlap');
 
 const config = require('../config');
-const { BOARD_ANIMATION_IDS } = require('../immutable/board-animations');
 const {
   ACT_AIM_RANGE_TYPES,
   ACT_EFFECT_RANGE_TYPES,
@@ -270,12 +269,13 @@ const fireBullets = (actor, act, aimedUnit, squareMatrixEndPointCoordinate, opti
     const effectOptions = {
       damagePoints: act.effectParameters.damagePoints,
       healingPoints: act.effectParameters.healingPoints,
+      animationId: act.effectAnimation.id,
+      animationDestinationType: act.effectAnimation.destinationType,
     };
     if (act.effectRange.type === ACT_EFFECT_RANGE_TYPES.UNIT) {
       effectOptions.aimedUnitUid = aimedUnit.uid;
     } else {
       effectOptions.relativeCoordinates = act.expandEffectRangeToRelativeCoordinates(direction);
-      effectOptions.boardAnimationId = BOARD_ANIMATION_IDS.SHOCK_RED;
     }
 
     effect = effectMethods.createNewEffectState(

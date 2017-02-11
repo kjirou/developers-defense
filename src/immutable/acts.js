@@ -30,6 +30,10 @@ const fixtures = [
       damagePoints: 1,
       healingPoints: 0,
     },
+    effectAnimation: {
+      id: 'SHOCK_RED',
+      destinationType: 'SQUARE',
+    },
   },
   {
     id: 'MELEE_ATTACK',
@@ -48,6 +52,10 @@ const fixtures = [
       damagePoints: 1,
       healingPoints: 0,
     },
+    effectAnimation: {
+      id: 'SHOCK_RED',
+      destinationType: 'UNIT',
+    },
   },
   {
     id: 'TREATMENT',
@@ -65,6 +73,10 @@ const fixtures = [
     effectParameters: {
       damagePoints: 0,
       healingPoints: 1,
+    },
+    effectAnimation: {
+      id: 'SHOCK_BLUE',
+      destinationType: 'UNIT',
     },
   },
 ];
@@ -106,7 +118,14 @@ const baseAct = {
 const actList = fixtures.map(fixture => {
   const act =  Object.assign({}, baseAct, fixture);
 
-  if (!act.id || !act.friendshipType || !act.aimRange || !act.effectRange || !act.effectParameters) {
+  if (
+    !act.id ||
+    !act.friendshipType ||
+    !act.aimRange ||
+    !act.effectRange ||
+    !act.effectParameters ||
+    !act.effectAnimation
+  ) {
     throw new Error(`act.id="${ act.id }" is invalid`);
   }
 

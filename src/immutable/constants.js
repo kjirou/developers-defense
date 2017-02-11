@@ -30,10 +30,10 @@ const ACTION_TYPES = keymirror({
   UPDATE_ENEMIES: null,
 });
 
-const BOARD_ANIMATION_EXPRESSION_TYPES = keymirror({
+const ANIMATION_DESTINATION_TYPES = keymirror({
   NONE: null,
-  SQUARE_BASED: null,
-  UNIT_BASED: null,
+  SQUARE: null,
+  UNIT: null,
 });
 
 const BOARD_TYPES = keymirror({
@@ -91,6 +91,7 @@ const PARAMETERS = {
 };
 
 const STYLES = {
+  MAX_ANIMATION_DURATION: 10000,
   // TODO: They are not just styles. Move to the `PARAMETERS`
   SQUARE_HEIGHT: 48,
   SQUARE_WIDTH: 48,
@@ -101,7 +102,7 @@ module.exports = {
   ACT_AIM_RANGE_TYPES,
   ACT_EFFECT_RANGE_TYPES,
   ACTION_TYPES,
-  BOARD_ANIMATION_EXPRESSION_TYPES,
+  ANIMATION_DESTINATION_TYPES,
   BOARD_TYPES,
   EFFECT_DIRECTIONS,
   FACTION_TYPES,

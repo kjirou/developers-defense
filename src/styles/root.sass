@@ -1,6 +1,16 @@
 /**
  * Root
  */
+
+// Generate classes such as ".animation-duration-100ms"
+&
+  $duration: 0ms
+  @while $duration <= $animation-duration-max
+    .animation-duration-#{$duration}
+      animation-duration: $duration
+    $duration: $duration + 50ms
+
+
 .square_based_animation
   position: absolute;
   width: $square-width
@@ -10,12 +20,9 @@
   &.square_based_animation--shock-blue
     background-color: blue
     animation-name: square_based_animation--shock
-    // TODO: データ定義から動的に設定するように
-    animation-duration: 500ms
   &.square_based_animation--shock-red
     background-color: red
     animation-name: square_based_animation--shock
-    animation-duration: 500ms
 
   @keyframes square_based_animation--shock
     0%
@@ -32,44 +39,28 @@
   opacity: 0.01
   transition: opacity 500ms ease-in
 
-.root
-  margin: 0 auto
-  position: relative
-  width: $app-width
-  height: $app-height
-  z-index: $z-index-base
-  background-color: $app-background-color
-  color: $app-color
-  &__status-bar
-    height: 24px
-    ul
-      display: flex
-      justify-content: center
-      li
-        margin-right: 10px
-  &__battle-board
-    // width/height are set from JS
-    position: relative
-    margin: 4px auto 0 auto
-  &__recruitment-board
-    position: relative
-    margin: 8px auto 0 auto
-    background-color: gray
-
 .unit
+  $z-index-animation-container: 1
+  $z-index-icon: 0
   width: $square-width
   height: $square-height
   &.unit--ally
     color: blue
   &.unit--enemy
     color: red
-  i
+  &__animation-container
+    position: absolute
+    width: 100%
+    height: 100%
+    z-index: $z-index-animation-container
+  &__icon
     position: absolute
     display: block
     top: 8px
     left: 8px
     width: 32px
     height: 32px
+    z-index: $z-index-icon
     animation-name: unit-breathing
     animation-duration: 1s
     animation-iteration-count: infinite
@@ -148,3 +139,27 @@
   width: 8px
   height: 8px
   background-color: red
+
+.root
+  margin: 0 auto
+  position: relative
+  width: $app-width
+  height: $app-height
+  z-index: $z-index-base
+  background-color: $app-background-color
+  color: $app-color
+  &__status-bar
+    height: 24px
+    ul
+      display: flex
+      justify-content: center
+      li
+        margin-right: 10px
+  &__battle-board
+    // width/height are set from JS
+    position: relative
+    margin: 4px auto 0 auto
+  &__recruitment-board
+    position: relative
+    margin: 8px auto 0 auto
+    background-color: gray

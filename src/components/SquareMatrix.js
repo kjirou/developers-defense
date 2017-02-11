@@ -3,12 +3,40 @@ const ReactCSSTransitionGroup = require('react-addons-css-transition-group');
 
 const { STYLES } = require('../immutable/constants');
 const { getIconId, isAlive, isAlly } = require('../state-models/unit');
+const { locationToCoordinate } = require('../state-models/geometric-apis');
+const { createNewLocationState } = require('../state-models/location');
 const Bullet = require('./Bullet');
 const Square = require('./Square');
 const Unit = require('./Unit');
 
 
 class SquareMatrix extends React.Component {
+  /**
+   * @param {SyntheticTouchEvent} event
+   * @return {{location:<State~Location>, coordinate:<State~Coordinate>}}
+   */
+  static _normalizeTouchPositions(event) {
+    const touch = event.changedTouches.item(0);
+    const rect = event.target.getBoundingClientRect();
+    const touchX = touch.clientX - rect.left;
+    const touchY = touch.clientY - rect.top;
+    const location = createNewLocationState(touchY, touchX);
+
+    return {
+      location,
+      coordinate: locationToCoordinate(location),
+    };
+  }
+
+  /**
+   * @param {Object[]} unitBasedAnimations
+   * @param {string} unitUid
+   * @return {Object[]}
+   */
+  static _findUnitBasedAnimationsByUnitUid(unitBasedAnimations, unitUid) {
+    return unitBasedAnimations.filter(unitBasedAnimation => unitBasedAnimation.unitUid == unitUid);
+  }
+
   constructor(...args) {
     super(...args);
 
@@ -16,17 +44,19 @@ class SquareMatrix extends React.Component {
   }
 
   componentDidUpdate() {
+    // Execute square-based animations
+    // TODO: Add UI tests
     this.props.squareBasedAnimations.forEach(({ uid, coordinates, duration, classNames }) => {
-      const uidAttr = 'data-uid';
+      const uidAttrName = 'data-uid';
 
       // If the DOM element remains, the animation is deemed to have been executed.
-      if (this._squareBasedAnimationDomNode.querySelector(`[${ uidAttr }="${ uid }"]`)) {
+      if (this._squareBasedAnimationDomNode.querySelector(`[${ uidAttrName }="${ uid }"]`)) {
         return;
       }
 
       coordinates.forEach(coordinate => {
         const animation = document.createElement('div');
-        animation.setAttribute(uidAttr, uid);
+        animation.setAttribute(uidAttrName, uid);
         animation.style.top = `${ STYLES.SQUARE_HEIGHT * coordinate[0] }px`;
         animation.style.left = `${ STYLES.SQUARE_HEIGHT * coordinate[1] }px`;
         animation.classList.add(...classNames);
@@ -47,6 +77,7 @@ class SquareMatrix extends React.Component {
       cursorCoordinate,
       handleTouchStartPad,
       squareMatrix,
+      unitBasedAnimations,
       units,
       unitsOnSquares,
     } = this.props;
@@ -56,21 +87,10 @@ class SquareMatrix extends React.Component {
     };
 
     const touchpad = React.createElement('div', {
+      key: 'square-matrix-touchpad',
       className: 'square-matrix__touchpad',
       onTouchStart: (event) => {
-        const touch = event.changedTouches.item(0);
-        const rect = event.target.getBoundingClientRect();
-        const touchX = touch.clientX - rect.left;
-        const touchY = touch.clientY - rect.top;
-        const coordinate = [
-          Math.floor(touchY / STYLES.SQUARE_HEIGHT),
-          Math.floor(touchX / STYLES.SQUARE_WIDTH),
-        ];
-        handleTouchStartPad(event, {
-          coordinate,
-          touchX,
-          touchY,
-        });
+        handleTouchStartPad(event, SquareMatrix._normalizeTouchPositions(event));
       },
     });
 
@@ -114,6 +134,7 @@ class SquareMatrix extends React.Component {
           'square-matrix__unit',
           ...(isAlive(unit) ? ['square-matrix__unit--is-alive'] : []),
         ],
+        animations: SquareMatrix._findUnitBasedAnimationsByUnitUid(unitBasedAnimations, unit.uid),
       });
     });
 
@@ -141,6 +162,7 @@ class SquareMatrix extends React.Component {
     const serialSquareComponents = squareMatrix.map(rowSquares => {
       return rowSquares.map(square => {
         return React.createElement(Square, {
+          key: 'square-matrix-square-' + square.uid,
           rowIndex: square.coordinate[0],
           columnIndex: square.coordinate[1],
           landformType: square.landformType,
@@ -177,6 +199,14 @@ Object.assign(SquareMatrix, {
         React.PropTypes.object.isRequired
       ).isRequired
     ).isRequired,
+    unitBasedAnimations: React.PropTypes.arrayOf(
+      React.PropTypes.shape({
+        classNames: React.PropTypes.arrayOf(React.PropTypes.string.isRequired).isRequired,
+        duration: React.PropTypes.number.isRequired,
+        uid: React.PropTypes.string.isRequired,
+        unitUid: React.PropTypes.string.isRequired,
+      }).isRequired
+    ),
     units: React.PropTypes.arrayOf(
       React.PropTypes.object.isRequired
     ),
@@ -189,7 +219,6 @@ Object.assign(SquareMatrix, {
         coordinates: React.PropTypes.arrayOf(coordinatePropType.isRequired).isRequired,
         duration: React.PropTypes.number.isRequired,
         uid: React.PropTypes.string.isRequired,
-        //style: React.PropTypes.string.isRequired,
       }).isRequired
     ),
   },
@@ -197,6 +226,7 @@ Object.assign(SquareMatrix, {
     bullets: [],
     cursorCoordinate: null,
     handleTouchStartPad: () => {},
+    unitBasedAnimations: [],
     units: [],
     unitsOnSquares: [],
     squareBasedAnimations: [],

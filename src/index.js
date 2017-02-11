@@ -6,8 +6,8 @@ const { initializeApp } =  require('./actions');
 const Root =  require('./components/Root');
 const config =  require('./config');
 const acts =  require('./immutable/acts');
+const animations =  require('./immutable/animations');
 const constants =  require('./immutable/constants');
-const boardAnimations =  require('./immutable/board-animations');
 const jobs =  require('./immutable/jobs');
 const { configureStore } =  require('./store');
 
@@ -28,7 +28,7 @@ window.document.addEventListener('DOMContentLoaded', () => {
   window._config = config;
   window._immutable = {
     acts,
-    boardAnimations,
+    animations,
     constants,
     jobs,
   };

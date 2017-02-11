@@ -1,6 +1,6 @@
 /**
- * TODO: dom の block 要素もしくはその内部に展開するアニメーションなので、block-animation が適切かも
- * @typedef {Object} Immutable~BoardAnimation
+ * Animation given to block-level elements
+ * @typedef {Object} Immutable~Animation
  */
 
 
@@ -8,7 +8,7 @@
 const dictify = require('dictify');
 const keymirror = require('keymirror');
 
-const { BOARD_ANIMATION_EXPRESSION_TYPES, STYLES } = require('./constants');
+const { STYLES } = require('./constants');
 
 
 // TODO: マス目とユニットの大きさが同じなので、兼用できるようにしたい
@@ -52,13 +52,13 @@ const expressionDefaults = {
   style: '',
 };
 
-const baseBoardAnimation = {
+const baseAnimation = {
   getAnimationDurationClassName() {
     return `animation-duration-${ this.duration }ms`;
   },
 };
 
-const boardAnimationList = fixtures.map(fixture => {
+const animationList = fixtures.map(fixture => {
   // `duration` has some constraints for CSS
   if (
     !fixture.id ||
@@ -68,20 +68,20 @@ const boardAnimationList = fixtures.map(fixture => {
     fixture.duration < 0 ||
     fixture.duration > STYLES.MAX_ANIMATION_DURATION
   ) {
-    throw new Error(`boardAnimation's fixture.id="${ fixture.id }" is invalid`);
+    throw new Error(`animation's fixture.id="${ fixture.id }" is invalid`);
   }
 
   const expression = Object.assign({}, expressionDefaults, fixture.expression);
-  const boardAnimation =  Object.assign({}, baseBoardAnimation, fixture, { expression });
+  const animation =  Object.assign({}, baseAnimation, fixture, { expression });
 
-  return boardAnimation;
+  return animation;
 });
-const boardAnimations = dictify(boardAnimationList, 'id');
-const BOARD_ANIMATION_IDS = keymirror(boardAnimations);
+const animations = dictify(animationList, 'id');
+const ANIMATION_IDS = keymirror(animations);
 
 
 module.exports = {
-  BOARD_ANIMATION_IDS,
-  boardAnimationList,
-  boardAnimations,
+  ANIMATION_IDS,
+  animationList,
+  animations,
 };

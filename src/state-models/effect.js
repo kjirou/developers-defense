@@ -15,7 +15,7 @@
 const uuidV4 = require('uuid/v4');
 
 const { ANIMATION_IDS } = require('../immutable/animations');
-const { ACT_EFFECT_RANGE_TYPES, FACTION_TYPES, FRIENDSHIP_TYPES, PARAMETERS } = require('../immutable/constants');
+const { ACT_EFFECT_RANGE_TYPES, ANIMATION_DESTINATION_TYPES, PARAMETERS } = require('../immutable/constants');
 const { tryToMoveCoordinate } = require('./coordinate');
 const { coordinateToRectangle, locationToCoordinate } = require('./geometric-apis');
 
@@ -25,12 +25,14 @@ const createNewEffectState = (affectableFractionTypes, impactedLocation, options
     aimedUnitUid,
     relativeCoordinates,
     animationId,
+    animationDestinationType,
     damagePoints,
     healingPoints,
   } = Object.assign({
     aimedUnitUid: null,
     relativeCoordinates: null,
     animationId: ANIMATION_IDS.NONE,
+    animationDestinationType: ANIMATION_DESTINATION_TYPES.NONE,
     damagePoints: 0,
     healingPoints: 0,
   }, options);
@@ -46,6 +48,7 @@ const createNewEffectState = (affectableFractionTypes, impactedLocation, options
     aimedUnitUid,
     relativeCoordinates,
     animationId,
+    animationDestinationType,
     damagePoints,
     healingPoints,
   };

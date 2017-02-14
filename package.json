@@ -6,7 +6,9 @@
   "bugs": {
     "url": "https://github.com/kjirou/developers-defense/issues"
   },
-  "dependencies": {},
+  "dependencies": {
+    "flow-bin": "^0.39.0"
+  },
   "devDependencies": {
     "angles": "0.2.0",
     "autoprefixer": "6.5.3",
@@ -75,6 +77,7 @@
     "build": "$(npm bin)/gulp build",
     "d": "npm run develop",
     "develop": "$(npm bin)/gulp develop",
+    "flow": "flow; test $? -eq 0 -o $? -eq 2",
     "jsdoc": "npm run jsdoc:generate && npm run jsdoc:open",
     "jsdoc:generate": "$(npm bin)/jsdoc -c ./jsdoc/conf.json -r -d ./jsdoc/out",
     "jsdoc:open": "open ./jsdoc/out/index.html",

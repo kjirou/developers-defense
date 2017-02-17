@@ -1,10 +1,7 @@
-/**
- * @typedef {Object} State~Location
- * @description A position on the battle-board
- * @property {number} y - A distance from top to bottom. In other words in CSS terms is "top".
- * @property {number} x - A distance from left to right. In other words in CSS terms is "left".
+/* @flow */
+/*::
+import type { LocationState } from '../types/states';
  */
-
 
 /** @module */
 const angles = require('angles');
@@ -12,25 +9,19 @@ const angles = require('angles');
 const { EFFECT_DIRECTIONS, STYLES } = require('../immutable/constants');
 
 
-const createNewLocationState = (y, x) => {
+const createNewLocationState = (y/*:number*/, x/*:number*/)/*:LocationState*/ => {
   return { y, x };
 };
 
-/**
- * @param {...State~Location} locations
- * @return {boolean}
- */
-const areSameLocations = (...locations) => {
+const areSameLocations = (...locations/*:Array<LocationState>*/)/*:boolean*/ => {
   const [first, ...rest] = locations;
   return rest.every(v => first.y === v.y && first.x === v.x);
 };
 
 /**
  * Add any locations as vectors
- * @param {...State~Location} locations
- * @return {State~Location}
  */
-const addLocations = (...locations) => {
+const addLocations = (...locations/*:Array<LocationState>*/)/*:LocationState*/ => {
   const [first, ...rest] = locations;
   let { y, x } = first;
   rest.forEach(v => {
@@ -40,47 +31,37 @@ const addLocations = (...locations) => {
   return createNewLocationState(y, x);
 };
 
-/**
- * @param {...State~Location} squareLocation
- * @return {State~Location}
- */
-const calculateCenterOfSquare = (squareLocation) => {
+const calculateCenterOfSquare = (squareLocation/*:LocationState*/)/*:LocationState*/ => {
   return addLocations(squareLocation, createNewLocationState(STYLES.SQUARE_HEIGHT / 2, STYLES.SQUARE_WIDTH / 2));
 };
 
-/**
- * @param {State~Location} a
- * @param {State~Location} b
- * @return {number}
- */
-const measureDistance = (a, b) => {
+const measureDistance = (a/*:LocationState*/, b/*:LocationState*/)/*:number*/ => {
   return Math.sqrt(Math.pow(a.y - b.y, 2) + Math.pow(a.x - b.x, 2));
 };
 
 /**
  * Measure the angle of the line with the top as 0
- * @param {State~Location} from
- * @param {State~Location} to
- * @return {?number} ex) from(0, 0) / to(-1, 0) -> 0
- *                       from(0, 0) / to(-1, 1) -> 45
- *                       from(0, 0) / to(0, 1)  -> 90
- *                       from(0, 0) / to(1, 0)  -> 180
- *                       from(0, 0) / to(0, -1) -> 270
- *                       from(0, 0) / to(0, 0)  -> null
+ * @example from(0, 0) / to(-1, 0) -> 0
+ *          from(0, 0) / to(-1, 1) -> 45
+ *          from(0, 0) / to(0, 1)  -> 90
+ *          from(0, 0) / to(1, 0)  -> 180
+ *          from(0, 0) / to(0, -1) -> 270
+ *          from(0, 0) / to(0, 0)  -> null
  */
-const measureAngleWithTopAsZero = (from, to) => {
+const measureAngleWithTopAsZero = (from/*:LocationState*/, to/*:LocationState*/)/*:?number*/ => {
   if (areSameLocations(from, to)) return null;
   return angles.normalize(angles.fromSlope([from.x, from.y], [to.x, to.y]) - 270);
 };
 
 /**
- * @return {?string} One of EFFECT_DIRECTIONS
+ * TODO: enum
+ * Returns One of EFFECT_DIRECTIONS or null
  */
-const measureAngleAsEffectDirection = (from, to) => {
+const measureAngleAsEffectDirection = (from/*:LocationState*/, to/*:LocationState*/)/*:?string*/ => {
   const angle = measureAngleWithTopAsZero(from, to);
 
   // from == to
-  if (angle === null) {
+  if (angle === null || angle === undefined) {
     return EFFECT_DIRECTIONS.NONE;
   } else if (
     315 <= angle && angle < 360 ||
@@ -107,13 +88,10 @@ const measureAngleAsEffectDirection = (from, to) => {
 /**
  * ベクトルの和を行うが、方向は上下左右に限定する。
  * 大量に呼び出されるので処理の速さに配慮する。
- * @param {State~Location} initial
- * @param {State~Location} terminal
- * @param {number} scalar
  * @todo Memoize?
- * @return {State~Location} { y: movedY, x: movedX }
  */
-const performPseudoVectorAddition = (initial, terminal, scalar) => {
+const performPseudoVectorAddition = (
+  initial/*:LocationState*/, terminal/*:LocationState*/, scalar/*:number*/)/*:LocationState*/ => {
   // 移動が4方向限定なのは、進行方向以外に座標の端数を出さないことの担保をするためでもある。
   // 例えば横軸が 0.1px ずれたまま縦移動をした場合、ユニットサイズはマス目サイズと同じなため、
   // マス目ベースの当たり判定が横軸 2 マスになってしまう。

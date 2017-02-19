@@ -12,3 +12,10 @@ export type LocationState = {
 // The position of a square-matrix.
 // For example, it means [rowIndex, columnIndex] or [m, n].
 export type CoordinateState = number[];
+
+export type RectangleState = {
+  top: number,
+  bottom: number,
+  left: number,
+  right: number,
+};

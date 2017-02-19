@@ -1,48 +1,47 @@
-/**
- * @typedef {Object} State~Rectangle
- * @property {number} top
- * @property {number} right
- * @property {number} bottom
- * @property {number} left
+// @flow
+
+/*::
+import type { RectangleState } from '../types/states';
  */
 
 
-/** @module */
-/**
- * @param {Object} params
- * @param {number} [params.top]
- * @param {number} [params.right]
- * @param {number} [params.bottom]
- * @param {number} [params.left]
- * @param {number} [params.x]
- * @param {number} [params.y]
- * @param {number} [params.width]
- * @param {number} [params.height]
- */
-const createNewRectangleState = (params) => {
+const createNewRectangleState = (
+  params/*:{
+    top?: number,
+    bottom?: number,
+    left?: number,
+    right?: number,
+    x?: number,
+    y?: number,
+    width?: number,
+    height?: number,
+  }*/
+)/*:RectangleState*/ => {
   let top;
-  let right;
   let bottom;
   let left;
+  let right;
 
   if (
-    ['top', 'right', 'bottom', 'left'].every(k => params[k] !== undefined) &&
+    ['top', 'bottom', 'left', 'right'].every(k => params[k] !== undefined) &&
     ['x', 'y', 'width', 'height'].every(k => params[k] === undefined)
   ) {
     top = params.top;
-    right = params.right;
     bottom = params.bottom;
     left = params.left;
+    right = params.right;
   } else if (
-    ['top', 'right', 'bottom', 'left'].every(k => params[k] === undefined) &&
+    ['top', 'bottom', 'left', 'right'].every(k => params[k] === undefined) &&
     ['x', 'y', 'width', 'height'].every(k => params[k] !== undefined)
   ) {
     top = params.y;
-    right = params.x + params.width;
     bottom = params.y + params.height;
     left = params.x;
-  } else {
-    throw new Error('`{top, right, bottom, left}` and `{x, y, width, height}` are mixed');
+    right = params.x + params.width;
+  }
+
+  if (top === undefined || bottom === undefined || left === undefined || right === undefined) {
+    throw new Error('`{top, bottom, right, left}` and `{x, y, width, height}` are mixed');
   }
 
   if (bottom < top) {
@@ -53,17 +52,21 @@ const createNewRectangleState = (params) => {
 
   return {
     top,
-    right,
     bottom,
     left,
+    right,
   };
 };
 
-/**
- * @param {State~Rectangle} rectangle
- * @return {{x, y, width, height}}
+/*::
+type XYWidthHeight = {
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+};
  */
-const toXYWidthHeight = (rectangle) => {
+const toXYWidthHeight = (rectangle/*:RectangleState*/)/*:XYWidthHeight*/ => {
   return {
     x: rectangle.left,
     y: rectangle.top,

@@ -1,9 +1,9 @@
-/* @flow */
+// @flow
+
 /*::
 import type { LocationState } from '../types/states';
  */
 
-/** @module */
 const angles = require('angles');
 
 const { EFFECT_DIRECTIONS, STYLES } = require('../immutable/constants');

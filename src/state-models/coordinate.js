@@ -1,11 +1,11 @@
-/**
- * @typedef {number[]} State~Coordinate
- * @description The position of a square-matrix. For example, it means [rowIndex, columnIndex] or [m, n].
+// @flow
+
+/*::
+import type { CoordinateState } from '../types/states';
  */
 
 
-/** @module */
-const createNewCoordinateState = (rowIndex, columnIndex) => {
+const createNewCoordinateState = (rowIndex/*:number*/, columnIndex/*:number*/)/*:CoordinateState*/ => {
   if (!Number.isInteger(rowIndex) || !Number.isInteger(columnIndex)) {
     throw new Error('`rowIndex` and `columnIndex` are integers only');
   }
@@ -17,22 +17,14 @@ const createNewCoordinateState = (rowIndex, columnIndex) => {
   return [rowIndex, columnIndex];
 };
 
-/**
- * @param {...State~Coordinate} coordinates
- * @return {boolean}
- */
-const areSameCoordinates = (...coordinates) => {
+const areSameCoordinates = (...coordinates/*:CoordinateState[]*/)/*:boolean*/ => {
   const [first, ...rest] = coordinates;
   return rest.every(v => first[0] === v[0] && first[1] === v[1]);
 };
 
-/**
- * @param {State~Coordinate} coordinate
- * @param {number} rowIndexDelta
- * @param {number} columnIndexDelta
- * @return {?State~Coordinate}
- */
-const tryToMoveCoordinate = (coordinate, rowIndexDelta, columnIndexDelta) => {
+const tryToMoveCoordinate = (
+  coordinate/*:CoordinateState*/, rowIndexDelta/*:number*/, columnIndexDelta/*:number*/
+)/*:CoordinateState|null*/ => {
   try {
     return createNewCoordinateState(coordinate[0] + rowIndexDelta, coordinate[1] + columnIndexDelta);
   } catch (error) {

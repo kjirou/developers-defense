@@ -17,8 +17,8 @@
     "babel-register": "6.18.0",
     "babelify": "7.3.0",
     "box-overlap": "1.1.0",
-    "browser-sync": "2.18.2",
-    "browserify": "13.1.1",
+    "browser-sync": "2.18.8",
+    "browserify": "14.1.0",
     "dictify": "1.1.0",
     "enzyme": "^2.7.1",
     "eslint": "^3.15.0",
@@ -57,7 +57,7 @@
     "uuid": "3.0.1",
     "victor": "1.1.0",
     "vinyl-source-stream": "1.1.0",
-    "watchify": "3.7.0"
+    "watchify": "3.9.0"
   },
   "engines": {
     "node": ">=6.8 <7",

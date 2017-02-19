@@ -28,3 +28,6 @@ export type SquareState = {
   // TODO: Change to string only
   landformType: string|null,
 };
+
+// Each side is at least 1 or more in length.
+export type SquareMatrixState = Array<Array<SquareState>>;

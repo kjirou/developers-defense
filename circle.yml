@@ -7,6 +7,7 @@ dependencies:
     - yarn install
 test:
   override:
-    - npm run test
+    - npm run test:rich
+    - npm run test:including-babel
     - npm run flow
     - npm run lint

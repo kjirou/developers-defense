@@ -85,6 +85,7 @@
     "serve": "$(npm bin)/gulp serve",
     "test": "npm run test:fastest",
     "test:fastest": "$(npm bin)/mocha --recursive",
-    "test:power-assert": "$(npm bin)/mocha --require ./enable-power-assert.js --recursive"
+    "test:including-babel": "$(npm bin)/mocha --compilers js:babel-register --require ./enable-power-assert.js --recursive",
+    "test:rich": "$(npm bin)/mocha --require ./enable-power-assert.js --recursive"
   }
 }

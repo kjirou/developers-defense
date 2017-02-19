@@ -1,18 +1,16 @@
-/**
- * @typedef {Object} State~Square
- * @property {?string} uid
- * @property {State~Coordinate} coordinate
- * @property {?string} landformType - One of the LANDFORM_TYPES
+// @flow
+
+/*::
+import type { CoordinateState, SquareState } from '../types/states';
  */
 
 
-/** @module */
 const uuidV4 = require('uuid/v4');
 
 const { createNewCoordinateState } = require('./coordinate');
 
 
-const createNewSquareState = (rowIndex, columnIndex) => {
+const createNewSquareState = (rowIndex/*:number*/, columnIndex/*:number*/)/*:SquareState*/ => {
   return {
     uid: uuidV4(),
     coordinate: createNewCoordinateState(rowIndex, columnIndex),
@@ -20,12 +18,7 @@ const createNewSquareState = (rowIndex, columnIndex) => {
   };
 };
 
-/**
- * @param {State~Square} square
- * @param {Object} properties
- * @return {Object} A shallow-copied square state
- */
-const extendSquare = (square, properties) => {
+const extendSquare = (square/*:SquareState*/, properties/*:{}*/)/*:SquareState*/ => {
   Object.keys(properties).forEach(key => {
     if (!square.hasOwnProperty(key)) {
       throw new Error(`key="${ key }" is not defined`);

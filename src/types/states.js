@@ -11,6 +11,7 @@ export type LocationState = {
 
 // The position of a square-matrix.
 // For example, it means [rowIndex, columnIndex] or [m, n].
+// TODO: Change to { rowIndex, columnIndex }
 export type CoordinateState = number[];
 
 export type RectangleState = {
@@ -18,4 +19,12 @@ export type RectangleState = {
   bottom: number,
   left: number,
   right: number,
+};
+
+export type SquareState = {
+  uid: string,
+  coordinate: CoordinateState,
+  // One of the LANDFORM_TYPES
+  // TODO: Change to string only
+  landformType: string|null,
 };

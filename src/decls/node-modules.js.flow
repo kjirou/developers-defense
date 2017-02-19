@@ -5,3 +5,7 @@ declare module 'angles' {
 declare module 'box-overlap' {
   declare var exports: any;
 }
+
+declare module 'uuid/v4' {
+  declare function exports(): string;
+}

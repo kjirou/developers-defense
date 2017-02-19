@@ -1,3 +1,7 @@
 declare module 'angles' {
   declare var exports: any;
 }
+
+declare module 'box-overlap' {
+  declare var exports: any;
+}

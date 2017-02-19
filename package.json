@@ -33,7 +33,7 @@
     "gulp-rename": "1.2.2",
     "gulp-sass": "2.3.2",
     "jsdoc": "3.4.3",
-    "jsdom": "^9.9.1",
+    "jsdom": "9.11.0",
     "keymirror": "0.1.1",
     "lodash.clamp": "4.0.3",
     "lodash.memoize": "4.1.2",

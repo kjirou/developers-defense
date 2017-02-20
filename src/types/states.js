@@ -31,3 +31,10 @@ export type SquareState = {
 
 // Each side is at least 1 or more in length.
 export type SquareMatrixState = Array<Array<SquareState>>;
+
+// Log of the effect occured for the unit
+export type EffectLogState = {
+  unitUid: string,
+  damagePoints: number|null,
+  healingPoints: number|null,
+};

@@ -1,34 +1,38 @@
-/**
- * @typedef {Object} State~Placement
- * @property {?string} boardType - One of the BOARD_TYPES
- * @property {?State~Coordinate} coordinate
+// @flow
+
+/*::
+import type { CoordinateState, PlacementState } from '../types/states';
  */
 
 
-/** @module */
 const uuidV4 = require('uuid/v4');
 
 const { BOARD_TYPES } = require('../immutable/constants');
 const { createNewCoordinateState } = require('./coordinate');
 
 
-const createNewPlacementState = (boardType = null, coordinate = null) => {
+const createNewPlacementState = (
+  boardType/*:string|null*/ = null, coordinate/*:CoordinateState|null*/ = null
+)/*:PlacementState*/ => {
   return {
     boardType,
     coordinate: coordinate === null ? coordinate : createNewCoordinateState(...coordinate),
   };
 };
 
+const isPlacedOnSortieBoard = (placement/*:PlacementState*/)/*:boolean*/ => {
+  return placement.boardType !== BOARD_TYPES.SORTIE_BOARD;
+};
 
-const isPlacedOnSortieBoard = (placement) => placement.boardType !== BOARD_TYPES.SORTIE_BOARD;
-const isPlacedOnBattleBoard = (placement) => placement.boardType !== BOARD_TYPES.BATTLE_BOARD;
-const isPlacedOnBoard = (placement) => isPlacedOnSortieBoard(placement) || isPlacedOnBattleBoard(placement);
+const isPlacedOnBattleBoard = (placement/*:PlacementState*/)/*:boolean*/ => {
+  return placement.boardType !== BOARD_TYPES.BATTLE_BOARD;
+};
 
-/**
- * @param {...State~Placement} placements
- * @return {boolean}
- */
-const areSamePlacements = (...placements) => {
+const isPlacedOnBoard = (placement/*:PlacementState*/)/*:boolean*/ => {
+  return isPlacedOnSortieBoard(placement) || isPlacedOnBattleBoard(placement);
+};
+
+const areSamePlacements = (...placements/*:PlacementState[]*/)/*:boolean*/ => {
   const [first, ...rest] = placements;
   return rest.every(v => {
     return first.boardType === v.boardType &&

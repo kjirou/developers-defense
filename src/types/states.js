@@ -32,6 +32,19 @@ export type SquareState = {
 // Each side is at least 1 or more in length.
 export type SquareMatrixState = Array<Array<SquareState>>;
 
+export type EffectState = {
+  uid: string,
+  // Some of FACTION_TYPES
+  affectableFractionTypes: string[],
+  impactedLocation: LocationState,
+  aimedUnitUid: string|null,
+  // Relative coordinates indicating range of the effect
+  relativeCoordinates: number[][]|null,
+  animationId: string,
+  damagePoints: number,
+  healingPoints: number,
+};
+
 // Log of the effect occured for the unit
 export type EffectLogState = {
   unitUid: string,

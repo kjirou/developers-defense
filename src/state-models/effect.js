@@ -1,17 +1,10 @@
-/**
- * @typedef {Object} State~Effect
- * @property {string} uid
- * @property {string[]} affectableFractionTypes - Some of FACTION_TYPES
- * @property {State~Location} impactedLocation
- * @property {?string} aimedUnitUid
- * @property {?Array<Array<number>>} relativeCoordinates - Relative coordinates indicating range of the effect
- * @property {string} animationId - One of ANIMATION_IDS
- * @property {number} damagePoints
- * @property {number} healingPoints
+// @flow
+
+/*::
+import type { CoordinateState, EffectState, LocationState, RectangleState } from '../types/states';
  */
 
 
-/** @module */
 const uuidV4 = require('uuid/v4');
 
 const { ANIMATION_IDS } = require('../immutable/animations');
@@ -20,7 +13,18 @@ const { tryToMoveCoordinate } = require('./coordinate');
 const { coordinateToRectangle, locationToCoordinate } = require('./geometric-apis');
 
 
-const createNewEffectState = (affectableFractionTypes, impactedLocation, options = {}) => {
+const createNewEffectState = (
+  affectableFractionTypes/*:string[]*/,
+  impactedLocation/*:LocationState*/,
+  options/*:{
+    aimedUnitUid?: string|null,
+    relativeCoordinates?: number[][],
+    animationId?: string,
+    animationDestinationType?: string,
+    damagePoints?: number,
+    healingPoints?: number,
+  }*/ = {}
+)/*:EffectState*/ => {
   const {
     aimedUnitUid,
     relativeCoordinates,
@@ -28,7 +32,7 @@ const createNewEffectState = (affectableFractionTypes, impactedLocation, options
     animationDestinationType,
     damagePoints,
     healingPoints,
-  } = Object.assign({
+  } = Object.assign({}, {
     aimedUnitUid: null,
     relativeCoordinates: null,
     animationId: ANIMATION_IDS.NONE,
@@ -54,11 +58,7 @@ const createNewEffectState = (affectableFractionTypes, impactedLocation, options
   };
 };
 
-/**
- * @param {State~Effect} effect
- * @return {State~Coordinate[]}
- */
-const createEffectiveCoordinates = (effect) => {
+const createEffectiveCoordinates = (effect/*:EffectState*/)/*:any[]*/ => {
   const impactedCoordinate = locationToCoordinate(effect.impactedLocation);
 
   return (effect.relativeCoordinates || [])
@@ -67,11 +67,7 @@ const createEffectiveCoordinates = (effect) => {
   ;
 };
 
-/**
- * @param {State~Effect} effect
- * @return {State~Rectangle[]}
- */
-const createEffectiveRectangles = (effect) => {
+const createEffectiveRectangles = (effect/*:EffectState*/)/*:RectangleState[]*/ => {
   return createEffectiveCoordinates(effect).map(coordinateToRectangle);
 };
 

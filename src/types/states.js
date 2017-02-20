@@ -32,6 +32,12 @@ export type SquareState = {
 // Each side is at least 1 or more in length.
 export type SquareMatrixState = Array<Array<SquareState>>;
 
+export type BoardState = {
+  // One of BOARD_TYPES
+  boardType: string,
+  squareMatrix: SquareMatrixState,
+};
+
 export type PlacementState = {
   // One of BOARD_TYPES
   boardType: string|null,

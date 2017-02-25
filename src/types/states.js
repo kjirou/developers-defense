@@ -44,6 +44,51 @@ export type PlacementState = {
   coordinate: CoordinateState|null,
 };
 
+type BaseUnitState = {
+  placement: PlacementState,
+  location: LocationState | null,
+  destinations: LocationState[],
+  // The index of the currently active element in destinations.
+  // 0 ~ (destinations.length - 1)
+  destinationIndex: number,
+  // One of JOB_IDS
+  jobId: string,
+  // A integer >= 0
+  hitPoints: number,
+  // A integer >= 0
+  fixedMaxHitPoints: number | null,
+  // 1.0=2px/1tick
+  movingSpeed: number,
+  // A integer >= 0
+  actionPoints: number,
+  // A integer >= 0
+  actionPointsRecovery: number,
+  // A integer >= 0
+  maxActionPoints: number,
+  // A integer >= 0
+  actionPointsRecovery: number,
+  // A integer >= 0
+  attackPower: number,
+  // A integer >= 0
+  defensePower: number,
+  // A integer >= 0
+  mattackPower: number,
+  // A integer >= 0
+  mdefensePower: number,
+};
+export type UnitState = BaseUnitState & {
+  // One of FACTION_TYPES
+  factionType: string,
+};
+export type AllyState = BaseUnitState & {
+  factionType: string,
+  //factionType: 'ALLY',  // TODO: Type definition fails
+};
+export type EnemyState = BaseUnitState & {
+  factionType: string,
+  //factionType: 'ENEMY',  // TODO: Type definition fails
+};
+
 export type EffectState = {
   uid: string,
   // Some of FACTION_TYPES

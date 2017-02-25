@@ -1,33 +1,9 @@
-/**
- * @typedef {Object} State~Unit
- * @property {?string} factionType - One of the FACTION_TYPES
- * @property {State~Placement} placement
- * @property {?State~Location} location
- * @property {State~Location[]} destinations - x and y should be defined by integer
- * @property {number} destinationIndex
- *   The index of the currently active element in destinations. 0 ~ (destinations.length - 1)
- * @property {number} hitPoints - A integer >= 0
- * @property {?number} fixedMaxHitPoints - A integer >= 0
- * @property {number} movingSpeed - 1.0=2px/1tick
- * @property {number} actionPoints - A integer >= 0
- * @property {number} maxActionPoints - A integer >= 0
- * @property {number} actionPointsRecovery - A integer >= 0
+// @flow
+
+/*::
+import type { AllyState, EnemyState, UnitState } from '../types/states';
  */
 
-/**
- * @typedef {Object} State~Ally
- * @property {string} factionType - = FACTION_TYPES.ALLY
- * @description Based on {@link State~Unit}
- */
-
-/**
- * @typedef {Object} State~Enemy
- * @property {string} factionType - = FACTION_TYPES.ENEMY
- * @description Based on {@link State~Unit}
- */
-
-
-/** @module */
 const clamp = require('lodash.clamp');
 const uuidV4 = require('uuid/v4');
 
@@ -39,15 +15,15 @@ const { createNewPlacementState } = require('./placement');
 const { areSameLocations, performPseudoVectorAddition } = require('./location');
 
 
-const createNewUnitState = () => {
+const createNewUnitState = ()/*:UnitState*/ => {
   return {
     uid: uuidV4(),
-    factionType: null,
+    factionType: FACTION_TYPES.NONE,
     placement: createNewPlacementState(),
-    jobId: JOB_IDS.NONE,
     location: null,
     destinations: [],
     destinationIndex: 0,
+    jobId: JOB_IDS.NONE,
     hitPoints: parameters.maxHitPoints.min,
     fixedMaxHitPoints: null,
     movingSpeed: 0,
@@ -61,14 +37,14 @@ const createNewUnitState = () => {
   };
 };
 
-const createNewAllyState = () => {
-  return Object.assign(createNewUnitState(), {
+const createNewAllyState = ()/*:AllyState*/ => {
+  return Object.assign({}, createNewUnitState(), {
     factionType: FACTION_TYPES.ALLY,
   });
 };
 
-const createNewEnemyState = () => {
-  return Object.assign(createNewUnitState(), {
+const createNewEnemyState = ()/*:EnemyState*/ => {
+  return Object.assign({}, createNewUnitState(), {
     factionType: FACTION_TYPES.ENEMY,
   });
 };
@@ -83,13 +59,15 @@ const createNewEnemyState = () => {
 //
 
 // DEPRECATED:
-const isAlly = (unit) => unit.factionType === FACTION_TYPES.ALLY;
+const isAlly = (unit/*:UnitState*/)/*:boolean*/ => {
+  return unit.factionType === FACTION_TYPES.ALLY;
+};
 
-const getJob = (unit) => {
+const getJob = (unit/*:UnitState*/) => {
   return jobs[unit.jobId];
 };
 
-const getAct = (unit) => {
+const getAct = (unit/*:UnitState*/) => {
   // TODO
   if (unit.jobId === JOB_IDS.HEALER) {
     return acts.TREATMENT;
@@ -100,20 +78,20 @@ const getAct = (unit) => {
   }
 };
 
-const getIconId = (unit) => {
+const getIconId = (unit/*:UnitState*/)/*:string*/ => {
   return getJob(unit).iconId;
 };
 
-const getMaxHitPoints = (unit) => {
+const getMaxHitPoints = (unit/*:UnitState*/)/*:number*/ => {
   // TODO
   return unit.fixedMaxHitPoints || 10;
 };
 
-const calculateUpdateHitPoints = (unit, nextHp) => {
+const calculateUpdateHitPoints = (unit/*:UnitState*/, nextHp/*:number*/)/*:number*/ => {
   return clamp(nextHp, 0, getMaxHitPoints(unit));
 };
 
-const calculateHealing = (unit, points) => {
+const calculateHealing = (unit/*:UnitState*/, points/*:number*/)/*:{}*/ => {
   const actualPoints = Math.max(0, points);
 
   return {
@@ -122,11 +100,11 @@ const calculateHealing = (unit, points) => {
   };
 };
 
-const calculateHealingByRate = (unit, rate) => {
+const calculateHealingByRate = (unit/*:UnitState*/, rate/*:number*/)/*:{}*/ => {
   return calculateHealing(unit, Math.ceil(getMaxHitPoints(unit) * rate));
 };
 
-const calculateDamage = (unit, points) => {
+const calculateDamage = (unit/*:UnitState*/, points/*:number*/)/*:{}*/ => {
   const actualPoints = Math.max(0, points);
 
   return {
@@ -135,46 +113,30 @@ const calculateDamage = (unit, points) => {
   };
 };
 
-const calculateDamageByRate = (unit, rate) => {
+const calculateDamageByRate = (unit/*:UnitState*/, rate/*:number*/)/*:{}*/ => {
   return calculateDamage(unit, Math.ceil(getMaxHitPoints(unit) * rate));
 };
 
-const isFullHitPoints = (unit) => {
+const isFullHitPoints = (unit/*:UnitState*/)/*:boolean*/ => {
   return unit.hitPoints === getMaxHitPoints(unit);
 }
 
-const isDead = (unit) => {
+const isDead = (unit/*:UnitState*/)/*:boolean*/ => {
   return unit.hitPoints === 0;
 }
 
-const isAlive = (unit) => {
+const isAlive = (unit/*:UnitState*/)/*:boolean*/ => {
   return !isDead(unit);
 }
 
-const isActable = (unit) => {
+const isActable = (unit/*:UnitState*/)/*:boolean*/ => {
   return isAlive(unit);
 }
 
-const canSortieAsAlly = (ally) => {
-  if (!isAlly(ally)) {
-    throw new Error(`It is not a ally`);
-  }
-  return true;
-};
-
-const canRetreatAsAlly = (ally) => {
-  if (!isAlly(ally)) {
-    throw new Error(`It is not a ally`);
-  }
-  return true;
-};
-
 /**
  * Calculate the movement results for next one tick
- * @param {State~Unit} unit
- * @return {{ location, destinationIndex }}
  */
-const calculateMovementResults = (unit) => {
+const calculateMovementResults = (unit/*:UnitState*/)/*:{}*/ => {
   if (unit.destinations.length === 0) {
     throw new Error(`This unit should not move`);
   }
@@ -207,47 +169,28 @@ const calculateMovementResults = (unit) => {
   };
 };
 
-/**
- * @param {State~Unit} unit
- * @param {Function} Act - One of sub classes of {@link Immutable~Act}
- * @return {number}
- */
-const calculateActionPointsConsumption = (unit, Act) => {
+const calculateActionPointsConsumption = (unit/*:UnitState*/, act/*:any*/)/*:number*/ => {
   // TODO: Calculate from the setting of the Act
   return 0;
 };
 
-/**
- * @param {State~Unit} unit
- * @return {number}
- */
-const calculateActionPointsRecovery = (unit) => {
+const calculateActionPointsRecovery = (unit/*:UnitState*/)/*:number*/ => {
   return clamp(unit.actionPoints + unit.actionPointsRecovery, 0, unit.maxActionPoints);
 };
 
 /**
- * @return {string} One of FRIENDSHIP_TYPES
+ * @return - One of FRIENDSHIP_TYPES
  */
-const determineFriendship = (unitA, unitB) => {
+const determineFriendship = (unitA/*:UnitState*/, unitB/*:UnitState*/)/*:string*/ => {
   return unitA.factionType === unitB.factionType ? FRIENDSHIP_TYPES.FRIENDLY : FRIENDSHIP_TYPES.UNFRIENDLY;
 };
 
-/**
- * @param {State~Unit} unit
- * @param {Immutable~Act} act
- * @return {boolean}
- */
-const areActionPointsEnough = (unit, act) => {
+const areActionPointsEnough = (unit/*:UnitState*/, act/*:any*/)/*:boolean*/ => {
   // TODO:
   return unit.actionPoints >= unit.maxActionPoints;
 };
 
-/**
- * @param {State~Unit} unit
- * @param {Immutable~Act} act
- * @return {boolean}
- */
-const canDoAct = (unit, act) => {
+const canDoAct = (unit/*:UnitState*/, act/*:any*/)/*:boolean*/ => {
   return isActable(unit) && areActionPointsEnough(unit, act);
 };
 
@@ -262,8 +205,6 @@ module.exports = {
   calculateHealing,
   calculateHealingByRate,
   canDoAct,
-  canRetreatAsAlly,
-  canSortieAsAlly,
   createNewAllyState,
   createNewEnemyState,
   createNewUnitState,

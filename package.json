@@ -62,7 +62,7 @@
   "engines": {
     "node": ">=6.8 <7",
     "npm": ">=3.10 <4",
-    "yarn": "0.18.1 0.19.1"
+    "yarn": "0.18.1 0.19.1 0.20.3"
   },
   "homepage": "https://github.com/kjirou/developers-defense#readme",
   "main": "index.js",

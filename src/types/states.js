@@ -30,7 +30,7 @@ export type SquareState = {
 };
 
 // Each side is at least 1 or more in length.
-export type SquareMatrixState = Array<Array<SquareState>>;
+export type SquareMatrixState = SquareState[][];
 
 export type BoardState = {
   // One of BOARD_TYPES

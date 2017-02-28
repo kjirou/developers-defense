@@ -59,7 +59,7 @@ const findSquareByCoordinate = (
 };
 
 const extendSquareMatrix = (
-  squareMatrix/*:SquareMatrixState*/, propertiesMatrix/*:{}[]*/
+  squareMatrix/*:SquareMatrixState*/, propertiesMatrix/*:{}[][]*/
 )/*:SquareMatrixState*/ => {
   if (!areSameSizeMatrices(squareMatrix, propertiesMatrix)) {
     throw new Error('Both arrarys are not the same size');

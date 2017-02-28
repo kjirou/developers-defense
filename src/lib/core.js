@@ -1,26 +1,21 @@
-/** @module */
+// @flow
 const memoize = require('lodash.memoize');
 const S = require('string');
 
 
-const cloneViaJson = (value) => {
+const cloneViaJson = (value/*:any*/)/*:any*/ => {
   return JSON.parse(JSON.stringify(value));
 };
 
 /**
- * ("abc_def"|"ABC_DEF") -> "AbcDef"
- * @param {string} str
- * @return {string}
+ * "abc_def" -> "AbcDef"
+ * "abc_def" -> "AbcDef"
  */
-const underscoredToClassName = (str) => {
+const underscoredToClassName = (str/*:string*/)/*:string*/ => {
   return S(str.toLowerCase()).titleCase().camelize().s;
 };
 
-/**
- * @param {...Array<Array<number>>} matrices
- * @return {boolean}
- */
-const areSameSizeMatrices = (...matrices) => {
+const areSameSizeMatrices = (...matrices/*:any[][][]*/)/*:boolean*/ => {
   const [first, ...rest] = matrices;
 
   for (let restIndex = 0; restIndex < rest.length; restIndex += 1) {
@@ -37,11 +32,10 @@ const areSameSizeMatrices = (...matrices) => {
 };
 
 /**
- * @param {...Array<Array<number>>} matrices
- * @return {Array<Array<number>>}
+ * @throws {Error}
  */
-const matrixAdd = (...matrices) => {
-  if (!areSameSizeMatrices(matrices)) {
+const matrixAdd = (...matrices/*:number[][][]*/)/*:number[][]*/ => {
+  if (!areSameSizeMatrices(...matrices)) {
     throw new Error('Matrices are not same size');
   }
 
@@ -61,11 +55,10 @@ const matrixAdd = (...matrices) => {
 
 /**
  * 4 -> [[4, 0], [3, 1], [2, 2], [1, 3], [0, 4]]
- * @param {number} n - A integer >= 0
- * @return {Array<Array<number>>}
+ * @param n - A integer >= 0
  * @description It is not "integer partition" of mathematics.
  */
-const partitionIntegerToTwoParts = (n) => {
+const partitionIntegerToTwoParts = (n/*:number*/)/*:number[][]*/ => {
   const parts = [];
   for (let current = 0; current <= n; current += 1) {
     parts.push([n - current, current]);
@@ -74,10 +67,10 @@ const partitionIntegerToTwoParts = (n) => {
 };
 
 /**
- * @param {number} distance - 0 <= integer < 10000
+ * @param distance - 0 <= integer < 10000
  * @description It does not work in the case of `distance > 10000`, because the internal logic is not good.
  */
-const expandDistanceToRelativeCoordinatesWithoutMemoization = (distance) => {
+const expandDistanceToRelativeCoordinatesWithoutMemoization = (distance/*:number*/)/*:number[][]*/ => {
   const directions = [
     // top-right
     [-1, 1],
@@ -156,11 +149,10 @@ const expandDistanceToRelativeCoordinatesWithoutMemoization = (distance) => {
 const expandDistanceToRelativeCoordinates = memoize(expandDistanceToRelativeCoordinatesWithoutMemoization);
 
 /**
- * @param {number} minReach - An integer of 0 or more
- * @param {number} maxReach
- * @return {Array<Array<number>>}
+ * @param minReach - An integer of 0 or more
+ * @param maxReach
  */
-const expandReachToRelativeCoordinates = (minReach, maxReach) => {
+const expandReachToRelativeCoordinates = (minReach/*:number*/, maxReach/*:number*/)/*:number[][]*/ => {
   let coordinates = [];
 
   for (let current = minReach; current <= maxReach; current += 1) {

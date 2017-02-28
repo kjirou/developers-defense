@@ -10,6 +10,10 @@ declare module 'lodash.clamp' {
   declare function exports(number_: number, lower?: number, upper: number): number;
 }
 
+declare module 'lodash.keyby' {
+  declare function exports(Object[], Function | string): Object;
+}
+
 declare module 'lodash.memoize' {
   declare function exports(Function, ?Function): Function;
 }

@@ -1,6 +1,7 @@
 // @flow
 
 /*::
+import type { ActImmutableObject } from '../immutable/acts';
 import type { AllyState, EnemyState, UnitState } from '../types/states';
  */
 
@@ -67,7 +68,7 @@ const getJob = (unit/*:UnitState*/) => {
   return jobs[unit.jobId];
 };
 
-const getAct = (unit/*:UnitState*/) => {
+const getAct = (unit/*:UnitState*/)/*:ActImmutableObject*/ => {
   // TODO
   if (unit.jobId === JOB_IDS.HEALER) {
     return acts.TREATMENT;

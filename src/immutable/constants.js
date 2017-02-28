@@ -2,20 +2,20 @@
 const keymirror = require('keymirror');
 
 
-const ACT_AIM_RANGE_TYPES = keymirror({
-  CONE: null,
-  LINE: null,
-  REACHABLE: null,
-  SLANTING_LINE: null,
-});
+const ACT_AIM_RANGE_TYPES = {
+  CONE: 'CONE',
+  LINE: 'LINE',
+  REACHABLE: 'REACHABLE',
+  SLANTING_LINE: 'SLANTING_LINE',
+};
 
-const ACT_EFFECT_RANGE_TYPES = keymirror({
-  BALL: null,
-  CONE: null,
-  LINE: null,
-  SLANTING_LINE: null,
-  UNIT: null,
-});
+const ACT_EFFECT_RANGE_TYPES = {
+  BALL: 'BALL',
+  CONE: 'CONE',
+  LINE: 'LINE',
+  SLANTING_LINE: 'SLANTING_LINE',
+  UNIT: 'UNIT',
+};
 
 const ACTION_TYPES = keymirror({
   ALTER_PROGRESS: null,
@@ -42,13 +42,13 @@ const BOARD_TYPES = keymirror({
   BATTLE_BOARD: null,
 });
 
-const EFFECT_DIRECTIONS = keymirror({
-  UP: null,
-  LEFT: null,
-  DOWN: null,
-  RIGHT: null,
-  NONE: null,
-});
+const EFFECT_DIRECTIONS = {
+  UP: 'UP',
+  LEFT: 'LEFT',
+  DOWN: 'DOWN',
+  RIGHT: 'RIGHT',
+  NONE: 'NONE',
+};
 
 const FACTION_TYPES = keymirror({
   ALLY: null,

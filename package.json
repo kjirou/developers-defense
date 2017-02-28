@@ -6,7 +6,9 @@
   "bugs": {
     "url": "https://github.com/kjirou/developers-defense/issues"
   },
-  "dependencies": {},
+  "dependencies": {
+    "lodash.keyby": "^4.6.0"
+  },
   "devDependencies": {
     "angles": "0.2.0",
     "autoprefixer": "^6.7.3",
@@ -19,7 +21,6 @@
     "box-overlap": "1.1.0",
     "browser-sync": "2.18.8",
     "browserify": "14.1.0",
-    "dictify": "1.1.0",
     "enzyme": "^2.7.1",
     "eslint": "^3.15.0",
     "eslint-plugin-dependencies": "2.2.0",

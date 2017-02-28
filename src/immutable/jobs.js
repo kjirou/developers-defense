@@ -4,7 +4,7 @@
 
 
 /** @module */
-const dictify = require('dictify');
+const keyBy = require('lodash.keyby');
 const keymirror = require('keymirror');
 
 
@@ -76,7 +76,7 @@ const jobList = fixtures.map(fixture => {
 
   return job;
 });
-const jobs = dictify(jobList, 'id');
+const jobs = keyBy(jobList, 'id');
 const JOB_IDS = keymirror(jobs);
 
 

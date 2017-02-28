@@ -5,7 +5,7 @@
 
 
 /** @module */
-const dictify = require('dictify');
+const keyBy = require('lodash.keyby');
 const keymirror = require('keymirror');
 
 const { STYLES } = require('./constants');
@@ -87,7 +87,7 @@ const animationList = fixtures.map(fixture => {
 
   return animation;
 });
-const animations = dictify(animationList, 'id');
+const animations = keyBy(animationList, 'id');
 const ANIMATION_IDS = keymirror(animations);
 
 

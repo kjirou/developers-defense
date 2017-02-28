@@ -4,7 +4,7 @@
 
 
 /** @module */
-const dictify = require('dictify');
+const keyBy = require('lodash.keyby');
 const keymirror = require('keymirror');
 
 const { ACT_EFFECT_RANGE_TYPES, EFFECT_DIRECTIONS } = require('./constants');
@@ -131,7 +131,7 @@ const actList = fixtures.map(fixture => {
 
   return act;
 });
-const acts = dictify(actList, 'id');
+const acts = keyBy(actList, 'id');
 const ACT_IDS = keymirror(acts);
 
 

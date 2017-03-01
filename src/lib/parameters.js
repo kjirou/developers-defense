@@ -1,3 +1,5 @@
+// @flow
+
 const rpgparameter = require('rpgparameter');
 
 const { PARAMETERS } = require('../immutable/constants');

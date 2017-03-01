@@ -22,6 +22,10 @@ declare module 'keymirror' {
   declare function exports({[id: string]: any}): {[id: string]: string};
 }
 
+declare module 'rpgparameter' {
+  declare var exports: any;
+}
+
 declare module 'string' {
   declare var exports: any;
 }

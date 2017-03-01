@@ -31,11 +31,11 @@ const ACTION_TYPES = keymirror({
   UPDATE_ENEMIES: null,
 });
 
-const ANIMATION_DESTINATION_TYPES = keymirror({
-  NONE: null,
-  SQUARE: null,
-  UNIT: null,
-});
+const ANIMATION_DESTINATION_TYPES = {
+  NONE: 'NONE',
+  SQUARE: 'SQUARE',
+  UNIT: 'UNIT',
+};
 
 const BOARD_TYPES = keymirror({
   SORTIE_BOARD: null,

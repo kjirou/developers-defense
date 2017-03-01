@@ -1,7 +1,7 @@
 // @flow
 
 /*::
-import type { AnyUnitState, PlacementState, UnitCollectionState, UnitState } from '../types/states';
+import type { PlacementState, UnitCollectionState, UnitState } from '../types/states';
  */
 
 const { areSamePlacements } = require('./placement');
@@ -20,7 +20,7 @@ const findUnitsByPlacement = (
 
 const findUnitByUid = (
   unitCollection/*:UnitCollectionState*/, uid/*:string*/
-)/*:AnyUnitState|null*/ => {
+)/*:UnitState|null*/ => {
   for (let index = 0; index < unitCollection.length; index += 1) {
     const unit = unitCollection[index];
     if (unit.uid === uid) return unit;

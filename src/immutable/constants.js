@@ -50,11 +50,11 @@ const EFFECT_DIRECTIONS = {
   NONE: 'NONE',
 };
 
-const FACTION_TYPES = keymirror({
-  ALLY: null,
-  ENEMY: null,
-  NONE: null,
-});
+const FACTION_TYPES = {
+  ALLY: 'ALLY',
+  ENEMY: 'ENEMY',
+  NONE: 'NONE',
+};
 
 const FRIENDSHIP_TYPES = keymirror({
   FRIENDLY: null,

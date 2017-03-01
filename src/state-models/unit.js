@@ -2,7 +2,7 @@
 
 /*::
 import type { ActImmutableObject } from '../immutable/acts';
-import type { AllyState, EnemyState, UnitState } from '../types/states';
+import type { AllyUnitState, EnemyUnitState, UnitState } from '../types/states';
  */
 
 const clamp = require('lodash.clamp');
@@ -38,13 +38,13 @@ const createNewUnitState = ()/*:UnitState*/ => {
   };
 };
 
-const createNewAllyState = ()/*:AllyState*/ => {
+const createNewAllyState = ()/*:AllyUnitState*/ => {
   return Object.assign({}, createNewUnitState(), {
     factionType: FACTION_TYPES.ALLY,
   });
 };
 
-const createNewEnemyState = ()/*:EnemyState*/ => {
+const createNewEnemyState = ()/*:EnemyUnitState*/ => {
   return Object.assign({}, createNewUnitState(), {
     factionType: FACTION_TYPES.ENEMY,
   });

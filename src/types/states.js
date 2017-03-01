@@ -46,6 +46,8 @@ export type PlacementState = {
 
 type BaseUnitState = {
   uid: string,
+  // One of FACTION_TYPES
+  factionType: any,
   placement: PlacementState,
   location: LocationState | null,
   destinations: LocationState[],
@@ -77,21 +79,18 @@ type BaseUnitState = {
   // A integer >= 0
   mdefensePower: number,
 };
-export type UnitState = BaseUnitState & {
-  // One of FACTION_TYPES
-  factionType: string,
+export type AllyUnitState = BaseUnitState & {
+  factionType: 'ALLY',
 };
-export type AllyState = BaseUnitState & {
-  factionType: string,
-  //factionType: 'ALLY',  // TODO: Type definition fails
+export type EnemyUnitState = BaseUnitState & {
+  factionType: 'ENEMY',
 };
-export type EnemyState = BaseUnitState & {
-  factionType: string,
-  //factionType: 'ENEMY',  // TODO: Type definition fails
+export type NeutralUnitState = BaseUnitState & {
+  factionType: 'NONE',
 };
-export type AnyUnitState = UnitState | AllyState | EnemyState;
+export type UnitState = AllyUnitState | EnemyUnitState | NeutralUnitState;
 
-export type UnitCollectionState = AnyUnitState[];
+export type UnitCollectionState = UnitState[];
 
 export type EffectState = {
   uid: string,

@@ -1,22 +1,19 @@
-/**
- * @typedef {Object} State~Bullet
- * @property {string} uid
- * @property {State~Location} location
- * @property {State~Location} fromLocation
- * @property {State~Location} toLocation
- * @property {number} speed
- * @property {State~Effect} effect
+// @flow
+
+/*::
+import type { ActImmutableObject } from '../immutable/acts';
+import type { BulletState, EffectState, LocationState } from '../types/states';
  */
 
-
-/** @module */
 const Victor = require('victor');
 const uuidV4 = require('uuid/v4');
 
 const { areSameLocations, createNewLocationState } = require('./location');
 
 
-const createNewBulletState = (fromLocation, toLocation, speed, effect) => {
+const createNewBulletState = (
+  fromLocation/*:LocationState*/, toLocation/*:LocationState*/, speed/*:number*/, effect/*:EffectState*/
+)/*:BulletState*/ => {
   return {
     uid: uuidV4(),
     location: fromLocation,
@@ -29,10 +26,8 @@ const createNewBulletState = (fromLocation, toLocation, speed, effect) => {
 
 /**
  * Calculate new location for the next tick
- * @param {State~Bullet} bullet
- * @return {State~Location}
  */
-const calculateNextLocation = (bullet) => {
+const calculateNextLocation = (bullet/*:BulletState*/)/*:LocationState*/ => {
   const vectorStart = Victor.fromObject(bullet.location);
   const vectorEnd = Victor.fromObject(bullet.toLocation);
   const distanceToEnd = vectorStart.distance(vectorEnd);
@@ -51,7 +46,7 @@ const calculateNextLocation = (bullet) => {
   }
 };
 
-const isArrivedToDestination = (bullet) => {
+const isArrivedToDestination = (bullet/*:BulletState*/)/*:boolean*/ => {
   return areSameLocations(bullet.location, bullet.toLocation);
 };
 

@@ -112,3 +112,12 @@ export type EffectLogState = {
   damagePoints: number|null,
   healingPoints: number|null,
 };
+
+export type BulletState = {
+  uid: string,
+  location: LocationState,
+  fromLocation: LocationState,
+  toLocation: LocationState,
+  speed: number,
+  effect: EffectState,
+};

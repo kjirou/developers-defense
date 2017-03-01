@@ -29,3 +29,7 @@ declare module 'string' {
 declare module 'uuid/v4' {
   declare function exports(): string;
 }
+
+declare module 'victor' {
+  declare var exports: any;
+}

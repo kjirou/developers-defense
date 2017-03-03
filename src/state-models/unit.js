@@ -2,7 +2,7 @@
 
 /*::
 import type { ActImmutableObject } from '../immutable/acts';
-import type { AllyUnitState, EnemyUnitState, UnitState } from '../types/states';
+import type { UnitState } from '../types/states';
  */
 
 const clamp = require('lodash.clamp');
@@ -38,13 +38,13 @@ const createNewUnitState = ()/*:UnitState*/ => {
   };
 };
 
-const createNewAllyState = ()/*:AllyUnitState*/ => {
+const createNewAllyState = ()/*:UnitState*/ => {
   return Object.assign({}, createNewUnitState(), {
     factionType: FACTION_TYPES.ALLY,
   });
 };
 
-const createNewEnemyState = ()/*:EnemyUnitState*/ => {
+const createNewEnemyState = ()/*:UnitState*/ => {
   return Object.assign({}, createNewUnitState(), {
     factionType: FACTION_TYPES.ENEMY,
   });
@@ -92,7 +92,7 @@ const calculateUpdateHitPoints = (unit/*:UnitState*/, nextHp/*:number*/)/*:numbe
   return clamp(nextHp, 0, getMaxHitPoints(unit));
 };
 
-const calculateHealing = (unit/*:UnitState*/, points/*:number*/)/*:{}*/ => {
+const calculateHealing = (unit/*:UnitState*/, points/*:number*/) => {
   const actualPoints = Math.max(0, points);
 
   return {
@@ -101,11 +101,11 @@ const calculateHealing = (unit/*:UnitState*/, points/*:number*/)/*:{}*/ => {
   };
 };
 
-const calculateHealingByRate = (unit/*:UnitState*/, rate/*:number*/)/*:{}*/ => {
+const calculateHealingByRate = (unit/*:UnitState*/, rate/*:number*/) => {
   return calculateHealing(unit, Math.ceil(getMaxHitPoints(unit) * rate));
 };
 
-const calculateDamage = (unit/*:UnitState*/, points/*:number*/)/*:{}*/ => {
+const calculateDamage = (unit/*:UnitState*/, points/*:number*/) => {
   const actualPoints = Math.max(0, points);
 
   return {
@@ -114,7 +114,7 @@ const calculateDamage = (unit/*:UnitState*/, points/*:number*/)/*:{}*/ => {
   };
 };
 
-const calculateDamageByRate = (unit/*:UnitState*/, rate/*:number*/)/*:{}*/ => {
+const calculateDamageByRate = (unit/*:UnitState*/, rate/*:number*/) => {
   return calculateDamage(unit, Math.ceil(getMaxHitPoints(unit) * rate));
 };
 
@@ -137,7 +137,7 @@ const isActable = (unit/*:UnitState*/)/*:boolean*/ => {
 /**
  * Calculate the movement results for next one tick
  */
-const calculateMovementResults = (unit/*:UnitState*/)/*:{}*/ => {
+const calculateMovementResults = (unit/*:UnitState*/) => {
   if (unit.destinations.length === 0) {
     throw new Error(`This unit should not move`);
   }

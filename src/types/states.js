@@ -1,5 +1,14 @@
 // @flow
 
+/*::
+import type {
+  BoardType,
+  FactionType,
+  FriendshipType,
+  LandformType,
+} from '../immutable/constants';
+ */
+
 
 // A position on the battle-board
 export type LocationState = {
@@ -24,30 +33,26 @@ export type RectangleState = {
 export type SquareState = {
   uid: string,
   coordinate: CoordinateState,
-  // One of the LANDFORM_TYPES
   // TODO: Change to string only
-  landformType: string|null,
+  landformType: LandformType | null,
 };
 
 // Each side is at least 1 or more in length.
 export type SquareMatrixState = SquareState[][];
 
 export type BoardState = {
-  // One of BOARD_TYPES
-  boardType: string,
+  boardType: BoardType,
   squareMatrix: SquareMatrixState,
 };
 
 export type PlacementState = {
-  // One of BOARD_TYPES
-  boardType: string|null,
-  coordinate: CoordinateState|null,
+  boardType: BoardType | null,
+  coordinate: CoordinateState | null,
 };
 
-type BaseUnitState = {
+export type UnitState = {
   uid: string,
-  // One of FACTION_TYPES
-  factionType: any,
+  factionType: FactionType,
   placement: PlacementState,
   location: LocationState | null,
   destinations: LocationState[],
@@ -79,27 +84,27 @@ type BaseUnitState = {
   // A integer >= 0
   mdefensePower: number,
 };
-export type AllyUnitState = BaseUnitState & {
-  factionType: 'ALLY',
-};
-export type EnemyUnitState = BaseUnitState & {
-  factionType: 'ENEMY',
-};
-export type NeutralUnitState = BaseUnitState & {
-  factionType: 'NONE',
-};
-export type UnitState = AllyUnitState | EnemyUnitState | NeutralUnitState;
+// TODO: Give up the approach like the inheritance
+//export type AllyUnitState = {
+//  factionType: 'ALLY',
+//} & BaseUnitState;
+//export type EnemyUnitState = {
+//  factionType: 'ENEMY',
+//} & BaseUnitState;
+//export type NeutralUnitState = {
+//  factionType: 'NONE',
+//} & BaseUnitState;
+//export type UnitState = AllyUnitState | EnemyUnitState | NeutralUnitState;
 
 export type UnitCollectionState = UnitState[];
 
 export type EffectState = {
   uid: string,
-  // Some of FACTION_TYPES
-  affectableFractionTypes: string[],
+  affectableFractionTypes: FactionType[],
   impactedLocation: LocationState,
-  aimedUnitUid: string|null,
+  aimedUnitUid: string | null,
   // Relative coordinates indicating range of the effect
-  relativeCoordinates: number[][]|null,
+  relativeCoordinates: number[][] | null,
   animationId: string,
   damagePoints: number,
   healingPoints: number,
@@ -108,8 +113,8 @@ export type EffectState = {
 // Log of the effect occured for the unit
 export type EffectLogState = {
   unitUid: string,
-  damagePoints: number|null,
-  healingPoints: number|null,
+  damagePoints: number | null,
+  healingPoints: number | null,
 };
 
 export type BulletState = {

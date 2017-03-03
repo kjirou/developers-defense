@@ -1,5 +1,9 @@
 // @flow
 
+/*::
+import type { AnimationDestinationType } from './constants';
+ */
+
 const keyBy = require('lodash.keyby');
 const keymirror = require('keymirror');
 
@@ -17,8 +21,7 @@ const { STYLES } = require('./constants');
 export type AnimationImmutableObject = {
   id: string,
   expression: {
-    // Some of ANIMATION_DESTINATION_TYPES
-    availableAnimationDestinationTypes: string[],
+    availableAnimationDestinationTypes: AnimationDestinationType[],
     classNames: string[],
     style: string,
   },

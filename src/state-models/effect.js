@@ -1,6 +1,7 @@
 // @flow
 
 /*::
+import type { AnimationDestinationType, FactionType } from '../immutable/constants';
 import type { CoordinateState, EffectState, LocationState, RectangleState } from '../types/states';
  */
 
@@ -14,13 +15,13 @@ const { coordinateToRectangle, locationToCoordinate } = require('./geometric-api
 
 
 const createNewEffectState = (
-  affectableFractionTypes/*:string[]*/,
+  affectableFractionTypes/*:FactionType[]*/,
   impactedLocation/*:LocationState*/,
   options/*:{
     aimedUnitUid?: string|null,
-    relativeCoordinates?: number[][],
+    relativeCoordinates?: number[][]|null,
     animationId?: string,
-    animationDestinationType?: string,
+    animationDestinationType?: AnimationDestinationType,
     damagePoints?: number,
     healingPoints?: number,
   }*/ = {}

@@ -1,4 +1,24 @@
-/** @module */
+// @flow
+
+/*::
+import type {
+  FactionType,
+  FriendshipType,
+} from '../immutable/constants';
+import type { ActImmutableObject } from '../immutable/acts';
+import type {
+  BoardState,
+  BulletState,
+  CoordinateState,
+  EffectState,
+  EffectLogState,
+  LocationState,
+  PlacementState,
+  SquareState,
+  UnitState,
+} from '../types/states';
+ */
+
 const { areBoxesOverlapping } = require('box-overlap');
 
 const config = require('../config');
@@ -30,11 +50,7 @@ const squareMatrixMethods = require('./square-matrix');
 const unitMethods = require('./unit');
 
 
-/**
- * @param {State~Unit} unit
- * @return {?State~Location}
- */
-const getUnitPositionAsLocationOrNull = (unit) => {
+const getUnitPositionAsLocationOrNull = (unit/*:UnitState*/)/*:LocationState|null*/ => {
   if (unit.location) {
     return unit.location;
   } else if (unit.placement.boardType === BOARD_TYPES.BATTLE_BOARD && unit.placement.coordinate) {
@@ -44,11 +60,9 @@ const getUnitPositionAsLocationOrNull = (unit) => {
 };
 
 /**
- * @param {State~Unit} unit
- * @return {State~Location}
  * @throws {Error} The unit does not have either `location` or `placement`
  */
-const getUnitPositionAsLocation = (unit) => {
+const getUnitPositionAsLocation = (unit/*:UnitState*/)/*:LocationState*/ => {
   const location = getUnitPositionAsLocationOrNull(unit);
 
   if (!location) {
@@ -59,21 +73,16 @@ const getUnitPositionAsLocation = (unit) => {
   return location;
 };
 
-/**
- * @param {State~Unit} unit
- * @return {boolean}
- */
-const isUnitInBattle = (unit) => {
+const isUnitInBattle = (unit/*:UnitState*/)/*:boolean*/ => {
   return Boolean(getUnitPositionAsLocationOrNull(unit) && unitMethods.isAlive(unit));
 };
 
 /**
- * @param {State~Unit} actor
- * @param {State~Unit} targetedUnit
- * @param {State~Coordinate} endPointCoordinate
- * @return {?State~Coordinate}
+ * @throws {Error}
  */
-const choiceClosestCoordinateUnderTargetedUnit = (actor, targetedUnit, endPointCoordinate) => {
+const choiceClosestCoordinateUnderTargetedUnit = (
+  actor/*:UnitState*/, targetedUnit/*:UnitState*/, endPointCoordinate/*:CoordinateState*/
+)/*:CoordinateState*/ => {
   const actorLocation = getUnitPositionAsLocation(actor);
   const targetedUnitLocation = getUnitPositionAsLocation(targetedUnit);
   const targetedUnitRectangle = locationToRectangle(targetedUnitLocation);
@@ -101,20 +110,21 @@ const choiceClosestCoordinateUnderTargetedUnit = (actor, targetedUnit, endPointC
       return 1;
     }
     return 0;
-  })[0] || null
+  })[0];
 };
 
-/**
- * @return {State~Square[]}
- */
-const findSquaresFromBoardsByPlacement = (placement, ...boards) => {
+const findSquaresFromBoardsByPlacement = (
+  placement/*:PlacementState*/, ...boards/*:BoardState[]*/
+)/*:SquareState[]*/ => {
   const squares = [];
 
   boards
     .filter(board => placement.boardType === board.boardType)
     .forEach(board => {
-      const square = squareMatrixMethods.findSquareByCoordinate(board.squareMatrix, placement.coordinate);
-      if (square) squares.push(square);
+      if (placement.coordinate) {
+        const square = squareMatrixMethods.findSquareByCoordinate(board.squareMatrix, placement.coordinate);
+        if (square) squares.push(square);
+      }
     })
   ;
 
@@ -122,12 +132,11 @@ const findSquaresFromBoardsByPlacement = (placement, ...boards) => {
 };
 
 /**
- * @param {State~Placement} placement
- * @param {...State~Board} boards
  * @throws {Error} Found multiple squares
- * @return {?State~Square}
  */
-const findOneSquareFromBoardsByPlacement = (placement, ...boards) => {
+const findOneSquareFromBoardsByPlacement = (
+  placement/*:PlacementState*/, ...boards/*:BoardState[]*/
+)/*:SquareState|null*/ => {
   const squares = findSquaresFromBoardsByPlacement(placement, ...boards);
 
   if (squares.length > 1) {
@@ -138,11 +147,11 @@ const findOneSquareFromBoardsByPlacement = (placement, ...boards) => {
 };
 
 /**
- * @param {string} actFriendshipType - One of FRIENDSHIP_TYPES
- * @param {string} actorFactionType - One of FACTION_TYPES
- * @return {string[]} Some of FACTION_TYPES
+ * @throws {Error}
  */
-const judgeAffectableFractionTypes = (actFriendshipType, actorFactionType) => {
+const judgeAffectableFractionTypes = (
+  actFriendshipType/*:FriendshipType*/, actorFactionType/*:FactionType*/
+)/*:FactionType[]*/ => {
   if (actFriendshipType === FRIENDSHIP_TYPES.FRIENDLY) {
     return [actorFactionType];
   } else if (actFriendshipType === FRIENDSHIP_TYPES.UNFRIENDLY) {
@@ -156,24 +165,19 @@ const judgeAffectableFractionTypes = (actFriendshipType, actorFactionType) => {
   throw new Error(`Invalid actFriendshipType=${ actFriendshipType } or actorFactionType=${ actorFactionType }`);
 };
 
-/**
- * @param {State~Unit} actor - Only those in battle
- * @param {Act} act
- * @param {State~Unit} unit - Only those in battle
- * @return {boolean}
- */
-const willActorAimActAtUnit = (actor, act, unit) => {
+const willActorAimActAtUnit = (actor/*:UnitState*/, act/*:ActImmutableObject*/, unit/*:UnitState*/)/*:boolean*/ => {
   return isUnitInBattle(unit) &&
     act.friendshipType === unitMethods.determineFriendship(actor, unit);
 };
 
 /**
- * @param {State~Unit} actor - Only those in battle
- * @param {Act} act
- * @param {State~Unit} target - Only those in battle
- * @return {boolean}
+ * @param actor - Only those in battle
+ * @param target - Only those in battle
+ * @throws {Error}
  */
-const canActorAimActAtTargetedUnit = (actor, act, target) => {
+const canActorAimActAtTargetedUnit = (
+  actor/*:UnitState*/, act/*:ActImmutableObject*/, target/*:UnitState*/
+)/*:boolean*/ => {
   if (act.aimRange.type === ACT_AIM_RANGE_TYPES.REACHABLE) {
     // TODO: 暗黙的にユニットのサイズをマス目と同じとしているが、これで問題ないのか不明。
     const actorLocation = getUnitPositionAsLocation(actor);
@@ -186,13 +190,9 @@ const canActorAimActAtTargetedUnit = (actor, act, target) => {
   throw new Error(`Invalid aim-range-type`);
 };
 
-/**
- * @param {State~Unit} actor
- * @param {Function} act
- * @param {State~Unit[]} units
- * @return {?State~Unit}
- */
-const choiceAimedUnit = (actor, act, units) => {
+const choiceAimedUnit = (
+  actor/*:UnitState*/, act/*:ActImmutableObject*/, units/*:UnitState[]*/
+)/*:UnitState|null*/ => {
   const aimableUnits = units
     .filter(unit => willActorAimActAtUnit(actor, act, unit))
     .filter(unit => canActorAimActAtTargetedUnit(actor, act, unit));
@@ -215,10 +215,12 @@ const choiceAimedUnit = (actor, act, units) => {
     // 2nd; Sort by clock-wise
     const angleA = locationMethods.measureAngleWithTopAsZero(actorLocation, aLocation);
     const angleB = locationMethods.measureAngleWithTopAsZero(actorLocation, bLocation);
-    if (angleA === null || angleA < angleB) {
-      return -1;
-    } else if (angleB === null || angleA > angleB) {
-      return 1;
+    if (angleA !== null && angleB !== null) {
+      if (angleA < angleB) {
+        return -1;
+      } else if (angleA > angleB) {
+        return 1;
+      }
     }
 
     return 0;
@@ -229,16 +231,16 @@ const choiceAimedUnit = (actor, act, units) => {
 
 /**
  * Create bullets carrying effects on each
- * @param {State~Unit} actor
- * @param {Function} act
- * @param {State~Unit} aimedUnit
- * @param {State~Coordinate} squareMatrixEndPointCoordinate
- * @param {(Object|undefined)} options
- * @param {?State~Effect} [options.effect] - Pass the effect from the outside. It is mainly for testing.
- * @return {State~Bullet[]}
+ * @param options.effect - Pass the effect from the outside. It is mainly for testing.
  */
-const fireBullets = (actor, act, aimedUnit, squareMatrixEndPointCoordinate, options = {}) => {
-  const defaultedOptions = Object.assign({
+const fireBullets = (
+  actor/*:UnitState*/,
+  act/*:ActImmutableObject*/,
+  aimedUnit/*:UnitState*/,
+  squareMatrixEndPointCoordinate/*:CoordinateState*/,
+  options/*:{ effect?: EffectState | null }*/ = {}
+)/*:BulletState[]*/ => {
+  const defaultedOptions = Object.assign({}, {
     effect: null,
   }, options);
 
@@ -266,7 +268,7 @@ const fireBullets = (actor, act, aimedUnit, squareMatrixEndPointCoordinate, opti
   if (options.effect) {
     effect = options.effect;
   } else {
-    const effectOptions = {
+    const effectOptions/*:Object*/ = {
       damagePoints: act.effectParameters.damagePoints,
       healingPoints: act.effectParameters.healingPoints,
       animationId: act.effectAnimation.id,
@@ -290,12 +292,9 @@ const fireBullets = (actor, act, aimedUnit, squareMatrixEndPointCoordinate, opti
   return bullets;
 };
 
-/**
- * @param {State~Effect} effect
- * @param {State~Unit} unit
- * @return {{newUnit, effectLogs}}
- */
-const applyEffectToUnit = (effect, unit) => {
+const applyEffectToUnit = (
+  effect/*:EffectState*/, unit/*:UnitState*/
+)/*:{ newUnit: UnitState, effectLogs: EffectLogState[] }*/ => {
   let newUnit = Object.assign({}, unit);
   const effectLogs = [];
 
@@ -307,7 +306,7 @@ const applyEffectToUnit = (effect, unit) => {
   if (effect.healingPoints > 0) {
     const result = unitMethods.calculateHealing(unit, effect.healingPoints);
 
-    newUnit = Object.assign(newUnit, { hitPoints: result.hitPoints });
+    newUnit = Object.assign({}, newUnit, { hitPoints: result.hitPoints });
     log({ healingPoints: result.healingPoints });
   }
 
@@ -315,7 +314,7 @@ const applyEffectToUnit = (effect, unit) => {
   if (effect.damagePoints > 0) {
     const result = unitMethods.calculateDamage(unit, effect.damagePoints);
 
-    newUnit = Object.assign(newUnit, { hitPoints: result.hitPoints });
+    newUnit = Object.assign({}, newUnit, { hitPoints: result.hitPoints });
     log({ damagePoints: result.damagePoints });
   }
 
@@ -327,11 +326,10 @@ const applyEffectToUnit = (effect, unit) => {
 
 /**
  * Apply effect to units within the effective range
- * @param {State~Effect} effect
- * @param {State~Unit[]} units
- * @return {{units:<State~Unit[]>, effectLogs:<State~EffectLog[]>}}
  */
-const effectOccurs = (effect, units) => {
+const effectOccurs = (
+  effect/*:EffectState*/, units/*:UnitState[]*/
+)/*:{ units: UnitState[], effectLogs: EffectLogState[] }*/ => {
   const effectLogs = [];
 
   const effectiveRectangles = effectMethods.createEffectiveRectangles(effect);
@@ -380,10 +378,9 @@ const effectOccurs = (effect, units) => {
  * <section>
  *   The "tick" is a coined word, which means so-called "one game loop".
  * </section>
- * @param {Object} state - A plain object generated from `store.getState()`
- * @return {Object}
+ * @param state - A plain object generated from `store.getState()`
  */
-const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }) => {
+const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }/*:Object*/)/*:Object*/ => {
   const battleBoardEndPointCoordinate = squareMatrixMethods.getEndPointCoordinate(battleBoard.squareMatrix);
 
   let newBullets = bullets.slice();

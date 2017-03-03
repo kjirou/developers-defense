@@ -1,6 +1,7 @@
 // @flow
 
 /*::
+import type { BoardType } from '../immutable/constants';
 import type { CoordinateState, PlacementState } from '../types/states';
  */
 
@@ -12,7 +13,7 @@ const { createNewCoordinateState } = require('./coordinate');
 
 
 const createNewPlacementState = (
-  boardType/*:string|null*/ = null, coordinate/*:CoordinateState|null*/ = null
+  boardType/*:BoardType|null*/ = null, coordinate/*:CoordinateState|null*/ = null
 )/*:PlacementState*/ => {
   return {
     boardType,

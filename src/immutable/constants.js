@@ -8,6 +8,7 @@ const ACT_AIM_RANGE_TYPES = {
   REACHABLE: 'REACHABLE',
   SLANTING_LINE: 'SLANTING_LINE',
 };
+/*::export type ActAimRangeType = $Keys<typeof ACT_AIM_RANGE_TYPES>; */
 
 const ACT_EFFECT_RANGE_TYPES = {
   BALL: 'BALL',
@@ -16,6 +17,7 @@ const ACT_EFFECT_RANGE_TYPES = {
   SLANTING_LINE: 'SLANTING_LINE',
   UNIT: 'UNIT',
 };
+/*::export type ActEffectRangeType = $Keys<typeof ACT_EFFECT_RANGE_TYPES>; */
 
 const ACTION_TYPES = keymirror({
   ALTER_PROGRESS: null,
@@ -36,11 +38,13 @@ const ANIMATION_DESTINATION_TYPES = {
   SQUARE: 'SQUARE',
   UNIT: 'UNIT',
 };
+/*::export type AnimationDestinationType = $Keys<typeof ANIMATION_DESTINATION_TYPES>; */
 
-const BOARD_TYPES = keymirror({
-  SORTIE_BOARD: null,
-  BATTLE_BOARD: null,
-});
+const BOARD_TYPES = {
+  SORTIE_BOARD: 'SORTIE_BOARD',
+  BATTLE_BOARD: 'BATTLE_BOARD',
+};
+/*::export type BoardType = $Keys<typeof BOARD_TYPES>; */
 
 const EFFECT_DIRECTIONS = {
   UP: 'UP',
@@ -55,22 +59,25 @@ const FACTION_TYPES = {
   ENEMY: 'ENEMY',
   NONE: 'NONE',
 };
+/*::export type FactionType = $Keys<typeof FACTION_TYPES>; */
 
-const FRIENDSHIP_TYPES = keymirror({
-  FRIENDLY: null,
-  UNFRIENDLY: null,
-});
+const FRIENDSHIP_TYPES = {
+  FRIENDLY: 'FRIENDLY',
+  UNFRIENDLY: 'UNFRIENDLY',
+};
+/*::export type FriendshipType = $Keys<typeof FRIENDSHIP_TYPES>; */
 
-const LANDFORM_TYPES = keymirror({
-  CASTLE: null,
-  DESERT: null,
-  FOREST: null,
-  FORT: null,
-  GRASSFIELD: null,
-  MOUNTAIN: null,
-  RIVER: null,
-  ROAD: null,
-});
+const LANDFORM_TYPES = {
+  CASTLE: 'CASTLE',
+  DESERT: 'DESERT',
+  FOREST: 'FOREST',
+  FORT: 'FORT',
+  GRASSFIELD: 'GRASSFIELD',
+  MOUNTAIN: 'MOUNTAIN',
+  RIVER: 'RIVER',
+  ROAD: 'ROAD',
+};
+/*::export type LandformType = $Keys<typeof LANDFORM_TYPES>; */
 
 // Must sync to styles
 const ticksPerSecond = 20;

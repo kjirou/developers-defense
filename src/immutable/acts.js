@@ -1,4 +1,9 @@
 // @flow
+
+/*::
+import type { AnimationDestinationType, FriendshipType } from './constants';
+ */
+
 const keyBy = require('lodash.keyby');
 const keymirror = require('keymirror');
 
@@ -18,8 +23,7 @@ type EffectRangeFixtureField = (
 
 export type ActImmutableObject = {
   id: string,
-  // One of FRIENDSHIP_TYPES
-  friendshipType: string,
+  friendshipType: FriendshipType,
   aimRange: (
     {
       type: 'REACHABLE',
@@ -36,8 +40,7 @@ export type ActImmutableObject = {
   },
   effectAnimation: {
     id: string,
-    // One of ANIMATION_DESTINATION_TYPES
-    destinationType: string,
+    destinationType: AnimationDestinationType,
   },
   expandEffectRangeToRelativeCoordinates: Function,
 };

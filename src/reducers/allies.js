@@ -1,3 +1,5 @@
+// @flow
+
 const { createReducer } = require('redux-create-reducer');
 
 const { ACTION_TYPES, PARAMETERS } = require('../immutable/constants');
@@ -9,7 +11,7 @@ const createInitialState = () => {
 };
 
 
-const reducements = {
+const handlers = {
   [ACTION_TYPES.UPDATE_ALLY]: (state, { ally }) => {
     const currentAlly = findUnitByUid(state, ally.uid);
     if (!currentAlly) {
@@ -33,5 +35,5 @@ const reducements = {
 
 module.exports = {
   _createInitialState: createInitialState,
-  reduceAllies: createReducer(createInitialState(), reducements),
+  reduceAllies: createReducer(createInitialState(), handlers),
 };

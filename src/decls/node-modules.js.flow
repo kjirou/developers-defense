@@ -22,6 +22,10 @@ declare module 'keymirror' {
   declare function exports({[id: string]: any}): {[id: string]: string};
 }
 
+declare module 'redux-create-reducer' {
+  declare function exports(Object, {[id: string]: (Object, Object) => Object}): (Object, Object) => Object;
+}
+
 declare module 'rpgparameter' {
   declare var exports: any;
 }

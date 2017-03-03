@@ -22,6 +22,10 @@ declare module 'keymirror' {
   declare function exports({[id: string]: any}): {[id: string]: string};
 }
 
+declare module 'random-weighted-choice' {
+  declare var exports: any;
+}
+
 declare module 'redux-create-reducer' {
   declare function exports(Object, {[id: string]: (Object, Object) => Object}): (Object, Object) => Object;
 }

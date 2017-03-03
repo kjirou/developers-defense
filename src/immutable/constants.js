@@ -1,20 +1,23 @@
+// @flow
 const keymirror = require('keymirror');
 
 
-const ACT_AIM_RANGE_TYPES = keymirror({
-  CONE: null,
-  LINE: null,
-  REACHABLE: null,
-  SLANTING_LINE: null,
-});
+const ACT_AIM_RANGE_TYPES = {
+  CONE: 'CONE',
+  LINE: 'LINE',
+  REACHABLE: 'REACHABLE',
+  SLANTING_LINE: 'SLANTING_LINE',
+};
+/*::export type ActAimRangeType = $Keys<typeof ACT_AIM_RANGE_TYPES>; */
 
-const ACT_EFFECT_RANGE_TYPES = keymirror({
-  BALL: null,
-  CONE: null,
-  LINE: null,
-  SLANTING_LINE: null,
-  UNIT: null,
-});
+const ACT_EFFECT_RANGE_TYPES = {
+  BALL: 'BALL',
+  CONE: 'CONE',
+  LINE: 'LINE',
+  SLANTING_LINE: 'SLANTING_LINE',
+  UNIT: 'UNIT',
+};
+/*::export type ActEffectRangeType = $Keys<typeof ACT_EFFECT_RANGE_TYPES>; */
 
 const ACTION_TYPES = keymirror({
   ALTER_PROGRESS: null,
@@ -30,45 +33,51 @@ const ACTION_TYPES = keymirror({
   UPDATE_ENEMIES: null,
 });
 
-const ANIMATION_DESTINATION_TYPES = keymirror({
-  NONE: null,
-  SQUARE: null,
-  UNIT: null,
-});
+const ANIMATION_DESTINATION_TYPES = {
+  NONE: 'NONE',
+  SQUARE: 'SQUARE',
+  UNIT: 'UNIT',
+};
+/*::export type AnimationDestinationType = $Keys<typeof ANIMATION_DESTINATION_TYPES>; */
 
-const BOARD_TYPES = keymirror({
-  SORTIE_BOARD: null,
-  BATTLE_BOARD: null,
-});
+const BOARD_TYPES = {
+  SORTIE_BOARD: 'SORTIE_BOARD',
+  BATTLE_BOARD: 'BATTLE_BOARD',
+};
+/*::export type BoardType = $Keys<typeof BOARD_TYPES>; */
 
-const EFFECT_DIRECTIONS = keymirror({
-  UP: null,
-  LEFT: null,
-  DOWN: null,
-  RIGHT: null,
-  NONE: null,
-});
+const EFFECT_DIRECTIONS = {
+  UP: 'UP',
+  LEFT: 'LEFT',
+  DOWN: 'DOWN',
+  RIGHT: 'RIGHT',
+  NONE: 'NONE',
+};
 
-const FACTION_TYPES = keymirror({
-  ALLY: null,
-  ENEMY: null,
-});
+const FACTION_TYPES = {
+  ALLY: 'ALLY',
+  ENEMY: 'ENEMY',
+  NONE: 'NONE',
+};
+/*::export type FactionType = $Keys<typeof FACTION_TYPES>; */
 
-const FRIENDSHIP_TYPES = keymirror({
-  FRIENDLY: null,
-  UNFRIENDLY: null,
-});
+const FRIENDSHIP_TYPES = {
+  FRIENDLY: 'FRIENDLY',
+  UNFRIENDLY: 'UNFRIENDLY',
+};
+/*::export type FriendshipType = $Keys<typeof FRIENDSHIP_TYPES>; */
 
-const LANDFORM_TYPES = keymirror({
-  CASTLE: null,
-  DESERT: null,
-  FOREST: null,
-  FORT: null,
-  GRASSFIELD: null,
-  MOUNTAIN: null,
-  RIVER: null,
-  ROAD: null,
-});
+const LANDFORM_TYPES = {
+  CASTLE: 'CASTLE',
+  DESERT: 'DESERT',
+  FOREST: 'FOREST',
+  FORT: 'FORT',
+  GRASSFIELD: 'GRASSFIELD',
+  MOUNTAIN: 'MOUNTAIN',
+  RIVER: 'RIVER',
+  ROAD: 'ROAD',
+};
+/*::export type LandformType = $Keys<typeof LANDFORM_TYPES>; */
 
 // Must sync to styles
 const ticksPerSecond = 20;

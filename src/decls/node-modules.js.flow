@@ -1,0 +1,47 @@
+declare module 'angles' {
+  declare var exports: any;
+}
+
+declare module 'box-overlap' {
+  declare var exports: any;
+}
+
+declare module 'lodash.clamp' {
+  declare function exports(number_: number, lower?: number, upper: number): number;
+}
+
+declare module 'lodash.keyby' {
+  declare function exports(Object[], Function | string): Object;
+}
+
+declare module 'lodash.memoize' {
+  declare function exports(Function, ?Function): Function;
+}
+
+declare module 'keymirror' {
+  declare function exports({[id: string]: any}): {[id: string]: string};
+}
+
+declare module 'random-weighted-choice' {
+  declare var exports: any;
+}
+
+declare module 'redux-create-reducer' {
+  declare function exports(Object, {[id: string]: (Object, Object) => Object}): (Object, Object) => Object;
+}
+
+declare module 'rpgparameter' {
+  declare var exports: any;
+}
+
+declare module 'string' {
+  declare var exports: any;
+}
+
+declare module 'uuid/v4' {
+  declare function exports(): string;
+}
+
+declare module 'victor' {
+  declare var exports: any;
+}

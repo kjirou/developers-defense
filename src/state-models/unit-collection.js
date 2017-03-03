@@ -1,26 +1,26 @@
-/**
- * @typedef {State~Unit[]} State~UnitCollection
+// @flow
+
+/*::
+import type { PlacementState, UnitCollectionState, UnitState } from '../types/states';
  */
 
-
-/** @module */
 const { areSamePlacements } = require('./placement');
 
 
-const createNewUnitCollectionState = () => {
+const createNewUnitCollectionState = ()/*:UnitCollectionState*/ => {
   return [];
 };
 
 
-const findUnitsByPlacement = (unitCollection, placement) => {
+const findUnitsByPlacement = (
+  unitCollection/*:UnitCollectionState*/, placement/*:PlacementState*/
+)/*:UnitCollectionState*/ => {
   return unitCollection.filter(unit => areSamePlacements(unit.placement, placement));
 };
 
-/**
- * @param {string} uid
- * @return {?State~Unit}
- */
-const findUnitByUid = (unitCollection, uid) => {
+const findUnitByUid = (
+  unitCollection/*:UnitCollectionState*/, uid/*:string*/
+)/*:UnitState|null*/ => {
   for (let index = 0; index < unitCollection.length; index += 1) {
     const unit = unitCollection[index];
     if (unit.uid === uid) return unit;

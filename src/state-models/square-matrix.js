@@ -1,17 +1,17 @@
-/**
- * @typedef {Array<Array<State~Square>>} State~SquareMatrix
- * @description Each side is at least 1 or more in length.
+// @flow
+
+/*::
+import type { CoordinateState, SquareMatrixState, SquareState } from '../types/states';
  */
 
 
-/** @module */
 const { LANDFORM_TYPES } = require('../immutable/constants');
 const { areSameSizeMatrices } = require('../lib/core');
 const { createNewCoordinateState } = require('./coordinate');
 const { createNewSquareState, extendSquare } = require('./square');
 
 
-const createNewSquareMatrixState = (rowLength, columnLength) => {
+const createNewSquareMatrixState = (rowLength/*:number*/, columnLength/*:number*/)/*:SquareMatrixState*/ => {
   if (rowLength <= 0 || columnLength <= 0) {
     throw new Error('Each side is at least 1 or more in length');
   }
@@ -23,14 +23,13 @@ const createNewSquareMatrixState = (rowLength, columnLength) => {
   });
 };
 
-/**
- * @return {State~Coordinate}
- */
-const getEndPointCoordinate = (squareMatrix) => {
+const getEndPointCoordinate = (squareMatrix/*:SquareMatrixState*/)/*:CoordinateState*/ => {
   return createNewCoordinateState(squareMatrix.length - 1, squareMatrix[0].length - 1);
 };
 
-const mapSquareMatrix = (squareMatrix, callback) => {
+const mapSquareMatrix = (
+  squareMatrix/*:SquareMatrixState*/, callback/*:(SquareState) => SquareState*/
+)/*:SquareMatrixState*/ => {
   return squareMatrix.map(rowSquares => {
     return rowSquares.map(square => {
       return callback(square);
@@ -38,18 +37,7 @@ const mapSquareMatrix = (squareMatrix, callback) => {
   });
 };
 
-const cloneSquareMatrix = (squareMatrix) => {
-  return mapSquareMatrix(squares, (square) => {
-    return Object.assign({}, square);
-  });
-};
-
-/**
- * @param {State~squareMatrix} squareMatrix
- * @param {string} uid
- * @return {?State~Square}
- */
-const findSquareByUid = (squareMatrix, uid) => {
+const findSquareByUid = (squareMatrix/*:SquareMatrixState*/, uid/*:string*/)/*:SquareState|null*/ => {
   for (let rowIndex = 0; rowIndex < squareMatrix.length; rowIndex += 1) {
     const rowSquares = squareMatrix[rowIndex];
     for (let columnIndex = 0; columnIndex < rowSquares.length; columnIndex += 1) {
@@ -60,22 +48,19 @@ const findSquareByUid = (squareMatrix, uid) => {
   return null;
 };
 
-/**
- * @param {State~squareMatrix} squareMatrix
- * @return {?State~Square}
- */
-const findSquareByCoordinate = (squareMatrix, [ rowIndex, columnIndex ]) => {
+const findSquareByCoordinate = (
+  squareMatrix/*:SquareMatrixState*/, coordinate/*:CoordinateState*/
+)/*:SquareState|null*/ => {
+  const [ rowIndex, columnIndex ] = coordinate;
   const row = squareMatrix[rowIndex];
   if (!row) return null;
   const square = row[columnIndex];
   return square || null;
 };
 
-/**
- * @param {Object[]} squareMatrix
- * @param {Object[]} propertiesMatrix - A 2D array of the same size as square-matrix
- */
-const extendSquareMatrix = (squareMatrix, propertiesMatrix) => {
+const extendSquareMatrix = (
+  squareMatrix/*:SquareMatrixState*/, propertiesMatrix/*:{}[][]*/
+)/*:SquareMatrixState*/ => {
   if (!areSameSizeMatrices(squareMatrix, propertiesMatrix)) {
     throw new Error('Both arrarys are not the same size');
   }
@@ -86,11 +71,7 @@ const extendSquareMatrix = (squareMatrix, propertiesMatrix) => {
   });
 };
 
-/**
- * @param {string} mapSymbol - A single character string
- * @return {?string}
- */
-const parseMapSymbol = (mapSymbol) => {
+const parseMapSymbol = (mapSymbol/*:string*/)/*:string|null*/ => {
   return {
     'C': LANDFORM_TYPES.CASTLE,
     '.': LANDFORM_TYPES.GRASSFIELD,
@@ -100,10 +81,9 @@ const parseMapSymbol = (mapSymbol) => {
 };
 
 /**
- * @param {string} mapText
- * @return {Object[]} An object list to use as the `extendSquareMatrix`
+ * @return An object list to use as the `extendSquareMatrix`
  */
-const parseMapText = (mapText) => {
+const parseMapText = (mapText/*:string*/)/*:{}[][]*/ => {
   return mapText.trim().split('\n')
     .map(line => {
       return line.split('').map(mapSymbol => {
@@ -119,7 +99,6 @@ const parseMapText = (mapText) => {
 
 
 module.exports = {
-  cloneSquareMatrix,
   createNewSquareMatrixState,
   extendSquareMatrix,
   getEndPointCoordinate,

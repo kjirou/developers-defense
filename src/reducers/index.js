@@ -1,3 +1,5 @@
+// @flow
+
 const { combineReducers } = require('redux');
 
 const { reduceAllies } = require('./allies');

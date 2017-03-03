@@ -1,15 +1,17 @@
-/**
- * @typedef {Object} State~Board
- * @property {string} boardType - One of the BOARD_TYPES
- * @property {State~SquareMatrix} squareMatrix
+// @flow
+
+/*::
+import type { BoardType } from '../immutable/constants';
+import type { BoardState } from '../types/states';
  */
 
 
-/** @module */
 const { createNewSquareMatrixState } = require('./square-matrix');
 
 
-const createNewBoardState = (boardType, rowLength, columnLength) => {
+const createNewBoardState = (
+  boardType/*:BoardType*/, rowLength/*:number*/, columnLength/*:number*/
+)/*:BoardState*/ => {
   return {
     boardType,
     squareMatrix: createNewSquareMatrixState(rowLength, columnLength),

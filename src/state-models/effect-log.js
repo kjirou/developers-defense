@@ -1,18 +1,21 @@
-/**
- * @typedef {Object} State~EffectLog
- * @description Log of the effect occured for the unit
- * @property {string} unitUid
- * @property {?number} damagePoints
- * @property {?number} healingPoints
+// @flow
+
+/*::
+import type { EffectLogState } from '../types/states';
  */
 
 
-/** @module */
-const createNewEffectLogState = (unitUid, options = {}) => {
+const createNewEffectLogState = (
+  unitUid/*:string*/,
+  options/*:{
+    damagePoints?: number|null,
+    healingPoints?: number|null,
+  }*/ = {}
+)/*:EffectLogState*/ => {
   const {
     damagePoints,
     healingPoints,
-  } = Object.assign({
+  } = Object.assign({}, {
     damagePoints: null,
     healingPoints: null,
   }, options);

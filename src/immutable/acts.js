@@ -1,15 +1,50 @@
-/**
- * @typedef {Object} Immutable~Act
+// @flow
+
+/*::
+import type { AnimationDestinationType, FriendshipType } from './constants';
  */
 
-
-/** @module */
-const dictify = require('dictify');
+const keyBy = require('lodash.keyby');
 const keymirror = require('keymirror');
 
 const { ACT_EFFECT_RANGE_TYPES, EFFECT_DIRECTIONS } = require('./constants');
 const { expandReachToRelativeCoordinates } = require('../lib/core');
 
+
+/*::
+type EffectRangeFixtureField = (
+  {
+    type: 'UNIT',
+  } | {
+    type: 'BALL',
+    radius: number,
+  }
+);
+
+export type ActImmutableObject = {
+  id: string,
+  friendshipType: FriendshipType,
+  aimRange: (
+    {
+      type: 'REACHABLE',
+      reach: number,
+    }
+  ),
+  bullet: {
+    speed: number,
+  },
+  effectRange: EffectRangeFixtureField,
+  effectParameters: {
+    damagePoints: number,
+    healingPoints: number,
+  },
+  effectAnimation: {
+    id: string,
+    destinationType: AnimationDestinationType,
+  },
+  expandEffectRangeToRelativeCoordinates: Function,
+};
+ */
 
 const fixtures = [
   {
@@ -83,11 +118,12 @@ const fixtures = [
 
 
 /**
- * @param {Object} effectRange - Props are determined for each `effectRange.type`
- * @param {string} effectDirection - One of EFFECT_DIRECTIONS
- * @return {Array<Array<number>>}
+ * @param effectRange - Props are determined for each `effectRange.type`
+ * @param effectDirection - One of EFFECT_DIRECTIONS
  */
-const _expandEffectRangeToRelativeCoordinates = (effectRange, direction) => {
+const _expandEffectRangeToRelativeCoordinates = (
+  effectRange/*:EffectRangeFixtureField*/, direction/*:string*/
+)/*:number[][]*/ => {
   let relativeCoordinates = [];
 
   if (effectRange.type === ACT_EFFECT_RANGE_TYPES.BALL) {
@@ -104,19 +140,13 @@ const _expandEffectRangeToRelativeCoordinates = (effectRange, direction) => {
 
 
 const baseAct = {
-  id: null,
-  friendshipType: null,
-  aimRange: null,
-  effectRange: null,
-  effectParameters: null,
-
-  expandEffectRangeToRelativeCoordinates(direction) {
+  expandEffectRangeToRelativeCoordinates(direction/*:string*/) {
     return _expandEffectRangeToRelativeCoordinates(this.effectRange, direction);
   },
 };
 
-const actList = fixtures.map(fixture => {
-  const act =  Object.assign({}, baseAct, fixture);
+const fixtureToAct = (fixture/*:Object*/)/*:ActImmutableObject*/ => {
+  const act = Object.assign({}, baseAct, fixture);
 
   if (
     !act.id ||
@@ -130,9 +160,11 @@ const actList = fixtures.map(fixture => {
   }
 
   return act;
-});
-const acts = dictify(actList, 'id');
-const ACT_IDS = keymirror(acts);
+};
+
+const actList/*:ActImmutableObject[]*/ = fixtures.map(fixtureToAct);
+const acts/*:{[id:string]: ActImmutableObject}*/ = keyBy(actList, 'id');
+const ACT_IDS/*:{[id:string]: string}*/ = keymirror(acts);
 
 
 module.exports = {
@@ -140,5 +172,4 @@ module.exports = {
   ACT_IDS,
   actList,
   acts,
-  baseAct,
 };

@@ -1,11 +1,10 @@
-/**
- * Animation definitions what are attached to block-level elements
- * @typedef {Object} Immutable~Animation
+// @flow
+
+/*::
+import type { AnimationDestinationType } from './constants';
  */
 
-
-/** @module */
-const dictify = require('dictify');
+const keyBy = require('lodash.keyby');
 const keymirror = require('keymirror');
 
 const { STYLES } = require('./constants');
@@ -14,12 +13,25 @@ const { STYLES } = require('./constants');
 // TODO: 敵味方/攻撃回復補助でベースカラーを設定したい
 // TODO: 方向を持つアニメーションをどうするか
 // TODO: Make to validate by using `availableAnimationDestinationTypes`
+
+/*::
+//
+// Animation definitions what are attached to block-level elements
+//
+export type AnimationImmutableObject = {
+  id: string,
+  expression: {
+    availableAnimationDestinationTypes: AnimationDestinationType[],
+    classNames: string[],
+    style: string,
+  },
+  duration: number,
+};
+ */
+
 const fixtures = [
   {
     id: 'NONE',
-    position: {
-      type: 'NONE',
-    },
     expression: {
       availableAnimationDestinationTypes: ['SQUARE', 'UNIT'],
     },
@@ -51,17 +63,11 @@ const expressionDefaults = {
 };
 
 const baseAnimation = {
-  /**
-   * @return {string}
-   */
-  _getAnimationDurationClassName() {
+  _getAnimationDurationClassName()/*:string*/ {
     return `animation-duration-${ this.duration }ms`;
   },
 
-  /**
-   * @return {string[]}
-   */
-  getExpressionClassNames() {
+  getExpressionClassNames()/*:string[]*/ {
     return [
       ...this.expression.classNames,
       this._getAnimationDurationClassName(),
@@ -69,7 +75,7 @@ const baseAnimation = {
   },
 };
 
-const animationList = fixtures.map(fixture => {
+const fixtureToAnimation = (fixture/*:Object*/)/*:AnimationImmutableObject*/ => {
   // `duration` has some constraints for CSS
   if (
     !fixture.id ||
@@ -86,9 +92,11 @@ const animationList = fixtures.map(fixture => {
   const animation =  Object.assign({}, baseAnimation, fixture, { expression });
 
   return animation;
-});
-const animations = dictify(animationList, 'id');
-const ANIMATION_IDS = keymirror(animations);
+};
+
+const animationList/*:AnimationImmutableObject[]*/ = fixtures.map(fixtureToAnimation);
+const animations/*:{[id:string]: AnimationImmutableObject}*/ = keyBy(animationList, 'id');
+const ANIMATION_IDS/*:{[id:string]: string}*/ = keymirror(animations);
 
 
 module.exports = {

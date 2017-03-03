@@ -1,12 +1,20 @@
-/**
- * @typedef {Object} Immutable~Job
- */
+// @flow
 
-
-/** @module */
-const dictify = require('dictify');
+const keyBy = require('lodash.keyby');
 const keymirror = require('keymirror');
 
+
+/*::
+export type JobImmutableObject = {
+  id: string,
+  iconId: string,
+  maxHitPoints: number,
+  attackPower: number,
+  mattackPower: number,
+  defensePower: number,
+  mdefensePower: number,
+};
+ */
 
 const fixtures = [
   {
@@ -58,8 +66,6 @@ const fixtures = [
 
 
 const baseJob = {
-  id: null,
-  iconId: null,
   maxHitPoints: 0,
   attackPower: 0,
   defensePower: 0,
@@ -67,17 +73,22 @@ const baseJob = {
   mdefensePower: 0,
 };
 
-const jobList = fixtures.map(fixture => {
+const fixtureToJob = (fixture/*:Object*/)/*:JobImmutableObject*/ => {
   const job = Object.assign({}, baseJob, fixture);
 
-  if (!job.id || !job.iconId) {
+  if (
+    !job.id ||
+    !job.iconId
+  ) {
     throw new Error(`job.id="${ job.id }" is invalid`);
   }
 
   return job;
-});
-const jobs = dictify(jobList, 'id');
-const JOB_IDS = keymirror(jobs);
+};
+
+const jobList/*:JobImmutableObject[]*/ = fixtures.map(fixtureToJob);
+const jobs/*:{[id:string]: JobImmutableObject}*/ = keyBy(jobList, 'id');
+const JOB_IDS/*:{[id:string]: string}*/ = keymirror(jobs);
 
 
 module.exports = {

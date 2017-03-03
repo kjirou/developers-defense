@@ -1,9 +1,9 @@
-/* @flow */
+// @flow
+
 /*::
 import type { LocationState } from '../types/states';
  */
 
-/** @module */
 const angles = require('angles');
 
 const { EFFECT_DIRECTIONS, STYLES } = require('../immutable/constants');
@@ -48,7 +48,7 @@ const measureDistance = (a/*:LocationState*/, b/*:LocationState*/)/*:number*/ =>
  *          from(0, 0) / to(0, -1) -> 270
  *          from(0, 0) / to(0, 0)  -> null
  */
-const measureAngleWithTopAsZero = (from/*:LocationState*/, to/*:LocationState*/)/*:?number*/ => {
+const measureAngleWithTopAsZero = (from/*:LocationState*/, to/*:LocationState*/)/*:number|null*/ => {
   if (areSameLocations(from, to)) return null;
   return angles.normalize(angles.fromSlope([from.x, from.y], [to.x, to.y]) - 270);
 };
@@ -56,8 +56,9 @@ const measureAngleWithTopAsZero = (from/*:LocationState*/, to/*:LocationState*/)
 /**
  * TODO: enum
  * Returns One of EFFECT_DIRECTIONS or null
+ * @throws {Error}
  */
-const measureAngleAsEffectDirection = (from/*:LocationState*/, to/*:LocationState*/)/*:?string*/ => {
+const measureAngleAsEffectDirection = (from/*:LocationState*/, to/*:LocationState*/)/*:string|null*/ => {
   const angle = measureAngleWithTopAsZero(from, to);
 
   // from == to

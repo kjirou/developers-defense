@@ -1,3 +1,5 @@
+// @flow
+
 const { createReducer } = require('redux-create-reducer');
 
 const { ACTION_TYPES, BOARD_TYPES, PARAMETERS } = require('../immutable/constants');
@@ -14,7 +16,7 @@ const createInitialState = () => {
 };
 
 
-const reducements = {
+const handlers = {
   [ACTION_TYPES.EXTEND_BATTLE_BOARD_SQUARE_MATRIX]: (state, { extension }) => {
     return Object.assign({}, state, {
       squareMatrix: extendSquareMatrix(state.squareMatrix, extension),
@@ -25,5 +27,5 @@ const reducements = {
 
 module.exports = {
   _createInitialState: createInitialState,
-  reduceBattleBoard: createReducer(createInitialState(), reducements),
+  reduceBattleBoard: createReducer(createInitialState(), handlers),
 };

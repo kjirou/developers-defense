@@ -1,4 +1,9 @@
-/** @module */
+// @flow
+
+/*::
+import type { PlacementState } from '../types/states';
+ */
+
 const randomWeightedChoice = require('random-weighted-choice');
 
 const { ACTION_TYPES, BOARD_TYPES, PARAMETERS, STYLES } = require('../immutable/constants');
@@ -57,7 +62,7 @@ const moveCursor = (placement) => {
   };
 };
 
-const extendGameStatus = (extension) => {
+const extendGameStatus = (extension/*:Object*/) => {
   return {
     type: ACTION_TYPES.EXTEND_GAME_STATUS,
     extension,
@@ -96,11 +101,8 @@ const tick = (tickId, allies, enemies, bullets) => {
 };
 
 
-/**
- * @param {State~Placement} placement
- */
-const touchSquare = (newPlacement) => {
-  return (dispatch, getState) => {
+const touchSquare = (newPlacement/*:PlacementState*/)/*:Function*/ => {
+  return (dispatch/*:Function*/, getState/*:Function*/) => {
     const { cursor, sortieBoard, allies, battleBoard } = getState();
     const currentPlacement = cursor.placement;
     const isCurrentPlacementPlacedOnBoard = placementMethods.isPlacedOnBoard(currentPlacement);
@@ -182,8 +184,8 @@ const touchSquare = (newPlacement) => {
  * TODO: Probably, that is not correct as an Action Creator.
  *       I think that is an "Action Creator Creator".
  */
-const startGame = () => {
-  return (dispatch, getState) => {
+const startGame = ()/*:Function*/ => {
+  return (dispatch/*:Function*/, getState/*:Function*/) => {
     dispatch(extendGameStatus({ tickId: 0 }));
 
     const reserveTickTask = () => {
@@ -220,10 +222,7 @@ const startGame = () => {
   };
 };
 
-/**
- * @return {Function}
- */
-const initializeApp = () => {
+const initializeApp = ()/*:Function*/ => {
   const mapText = [
     '..... .',
     '.F     ',
@@ -256,7 +255,7 @@ const initializeApp = () => {
     });
   });
 
-  return (dispatch, getState) => {
+  return (dispatch/*:Function*/, getState/*:Function*/) => {
     dispatch({ type: ACTION_TYPES.EXTEND_BATTLE_BOARD_SQUARE_MATRIX, extension: squareMatrixExtension });
     dispatch(updateAllies(allies));
   };

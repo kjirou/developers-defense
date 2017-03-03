@@ -5,12 +5,13 @@ const {
   ACT_IDS,
   actList,
   acts,
-  baseAct,
 } = require('../../src/immutable/acts');
-const { ACT_EFFECT_RANGE_TYPES } = require('../../src/immutable/constants');
+const { ACT_EFFECT_RANGE_TYPES, EFFECT_DIRECTIONS } = require('../../src/immutable/constants');
 
 
 describe('immutable/acts', () => {
+  const _magicalBlastAct = acts.MAGICAL_BLAST;
+
   describe('_expandEffectRangeToRelativeCoordinates', () => {
     context('ACT_EFFECT_RANGE_TYPES.BALL', () => {
       it('can execute correctly', () => {
@@ -28,16 +29,12 @@ describe('immutable/acts', () => {
     });
   });
 
-  describe('baseAct', () => {
+  describe('act', () => {
     it('expandEffectRangeToRelativeCoordinates', () => {
-      const act = Object.assign({}, baseAct, {
-        effectRange: {
-          type: ACT_EFFECT_RANGE_TYPES.BALL,
-          radius: 0,
-        },
-      });
+      const actual = _magicalBlastAct.expandEffectRangeToRelativeCoordinates(EFFECT_DIRECTIONS.NONE);
 
-      assert.deepStrictEqual(act.expandEffectRangeToRelativeCoordinates(null), [[0, 0]]);
+      assert(actual instanceof Array);
+      assert(actual.length > 0);
     });
   });
 

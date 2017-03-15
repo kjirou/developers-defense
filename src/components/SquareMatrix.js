@@ -140,7 +140,7 @@ class SquareMatrix extends React.Component {
 
     const unitComponentsTransition = React.createElement(ReactCSSTransitionGroup, {
       key: 'react-css-transition-group-units',
-      transitionName: 'reactTransitionDeadUnit',
+      transitionName: 'react-transition-dead-unit',
       transitionEnter: false,
       transitionLeaveTimeout: 500,
     }, unitComponents);

@@ -36,31 +36,45 @@ describe('state-models/unit', () => {
       }, /not move/);
     });
 
-    it('can move', () => {
+    it('can walk destinations', () => {
       unit.destinations = [
         locationMethods.createNewLocationState(1, 2),
         locationMethods.createNewLocationState(2, 2),
         locationMethods.createNewLocationState(2, 3),
       ];
-      unit.movingSpeed = 99;
+      unit.movingSpeed = 51;
 
       assert.strictEqual(unit.location, null);
       assert.strictEqual(unit.destinationIndex, 0);
 
       Object.assign(unit, calculateMovementResults(unit));
       assert.deepStrictEqual(unit.location, locationMethods.createNewLocationState(1, 2));
+      assert.strictEqual(unit.movePoints, 0);
+      assert.strictEqual(unit.destinationIndex, 1);
+
+      Object.assign(unit, calculateMovementResults(unit));
+      assert.deepStrictEqual(unit.location, locationMethods.createNewLocationState(1, 2));
+      assert.strictEqual(unit.movePoints, 51);
       assert.strictEqual(unit.destinationIndex, 1);
 
       Object.assign(unit, calculateMovementResults(unit));
       assert.deepStrictEqual(unit.location, locationMethods.createNewLocationState(2, 2));
+      assert.strictEqual(unit.movePoints, 2);
+      assert.strictEqual(unit.destinationIndex, 2);
+
+      Object.assign(unit, calculateMovementResults(unit));
+      assert.deepStrictEqual(unit.location, locationMethods.createNewLocationState(2, 2));
+      assert.strictEqual(unit.movePoints, 53);
       assert.strictEqual(unit.destinationIndex, 2);
 
       Object.assign(unit, calculateMovementResults(unit));
       assert.deepStrictEqual(unit.location, locationMethods.createNewLocationState(2, 3));
+      assert.strictEqual(unit.movePoints, 4);
       assert.strictEqual(unit.destinationIndex, 3);
 
       Object.assign(unit, calculateMovementResults(unit));
       assert.deepStrictEqual(unit.location, locationMethods.createNewLocationState(2, 3));
+      assert.strictEqual(unit.movePoints, 0);
       assert.strictEqual(unit.destinationIndex, 3);
     });
   });

@@ -424,9 +424,10 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }/*:Obj
 
   // Enemy's movement
   alivedEnemies = alivedEnemies.map(enemy => {
-    const { location, destinationIndex } = unitMethods.calculateMovementResults(enemy);
+    const { movePoints, location, destinationIndex } = unitMethods.calculateMovementResults(enemy);
 
     return Object.assign({}, enemy, {
+      movePoints,
       location,
       destinationIndex,
     });

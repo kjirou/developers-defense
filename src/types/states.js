@@ -65,8 +65,11 @@ export type UnitState = {
   hitPoints: number,
   // A integer >= 0
   fixedMaxHitPoints: number | null,
-  // 1.0=2px/1tick
+  // 1 = Increase 1MP/1tick
   movingSpeed: number,
+  // Abbreviated name is "MP".
+  // 1 square can be moved by consuming 100 MP
+  movePoints: number,
   // A integer >= 0
   actionPoints: number,
   // A integer >= 0

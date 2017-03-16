@@ -130,7 +130,7 @@
     position: absolute;
     z-index: $z-index-unit
   &__unit--is-alive
-    transition: top $tick-interval + ms linear, left $tick-interval + ms linear
+    transition: top $tick-interval * 4 + ms ease, left $tick-interval * 4 + ms ease
   &__unit-on-square
     position: absolute;
     z-index: $z-index-unit-on-square

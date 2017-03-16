@@ -77,10 +77,18 @@ Object.assign(Unit, {
         uid: React.PropTypes.string.isRequired,
       }).isRequired
     ),
+    effects: React.PropTypes.arrayOf(
+      React.PropTypes.shape({
+        damagePoints: React.PropTypes.number,
+        healingPoints: React.PropTypes.number,
+        uid: React.PropTypes.string.isRequired,
+      }).isRequired
+    ),
   },
   defaultProps: {
     classNames: [],
     animations: [],
+    effects: [],
   },
 });
 

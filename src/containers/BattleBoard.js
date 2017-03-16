@@ -30,6 +30,7 @@ class BattleBoard extends React.Component {
         units={ this.props.enemiesInBattle }
         unitsOnSquares={ this.props.unitsOnSquares }
         unitBasedAnimations={ this.props.unitBasedAnimations }
+        unitBasedEffectLogs={ this.props.effectLogs }
         squareBasedAnimations={ this.props.squareBasedAnimations }
         handleTouchStartPad={ handleTouchStartPad }
       />

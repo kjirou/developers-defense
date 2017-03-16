@@ -90,13 +90,14 @@ const updateEnemies = (enemies) => {
   };
 };
 
-const tick = (tickId, allies, enemies, bullets) => {
+const tick = (tickId, allies, enemies, bullets, effectLogs) => {
   return {
     type: ACTION_TYPES.TICK,
     tickId,
     allies,
     enemies,
     bullets,
+    effectLogs,
   };
 };
 
@@ -210,7 +211,8 @@ const startGame = ()/*:Function*/ => {
             gameStatus.tickId + 1,
             newState.allies,
             newEnemies,
-            newState.bullets
+            newState.bullets,
+            newState.effectLogs
           )
         );
 

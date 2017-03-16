@@ -37,6 +37,15 @@ class SquareMatrix extends React.Component {
     return unitBasedAnimations.filter(unitBasedAnimation => unitBasedAnimation.unitUid == unitUid);
   }
 
+  /**
+   * @param {Object[]} unitBasedEffectLogs
+   * @param {string} unitUid
+   * @return {Object[]}
+   */
+  static _findUnitBasedEffectLogsByUnitUid(unitBasedEffectLogs, unitUid) {
+    return unitBasedEffectLogs.filter(unitBasedEffectLogs => unitBasedEffectLogs.unitUid == unitUid);
+  }
+
   constructor(...args) {
     super(...args);
 
@@ -78,6 +87,7 @@ class SquareMatrix extends React.Component {
       handleTouchStartPad,
       squareMatrix,
       unitBasedAnimations,
+      unitBasedEffectLogs,
       units,
       unitsOnSquares,
     } = this.props;
@@ -135,6 +145,7 @@ class SquareMatrix extends React.Component {
           ...(isAlive(unit) ? ['square-matrix__unit--is-alive'] : []),
         ],
         animations: SquareMatrix._findUnitBasedAnimationsByUnitUid(unitBasedAnimations, unit.uid),
+        effects: SquareMatrix._findUnitBasedEffectLogsByUnitUid(unitBasedEffectLogs, unit.uid),
       });
     });
 
@@ -207,6 +218,14 @@ Object.assign(SquareMatrix, {
         unitUid: React.PropTypes.string.isRequired,
       }).isRequired
     ),
+    unitBasedEffectLogs: React.PropTypes.arrayOf(
+      React.PropTypes.shape({
+        uid: React.PropTypes.string.isRequired,
+        unitUid: React.PropTypes.string.isRequired,
+        damagePoints: React.PropTypes.number,
+        healingPoints: React.PropTypes.number,
+      }).isRequired
+    ),
     units: React.PropTypes.arrayOf(
       React.PropTypes.object.isRequired
     ),
@@ -227,6 +246,7 @@ Object.assign(SquareMatrix, {
     cursorCoordinate: null,
     handleTouchStartPad: () => {},
     unitBasedAnimations: [],
+    unitBasedEffectLogs: [],
     units: [],
     unitsOnSquares: [],
     squareBasedAnimations: [],

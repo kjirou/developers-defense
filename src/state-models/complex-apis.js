@@ -386,6 +386,7 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }/*:Obj
   let newBullets = bullets.slice();
   let newAllies = allies.slice();
   let newEnemies = enemies.slice();
+  let newEffectLogs = [];
 
   // Send dead enemies to the graveyard
   // TODO: Move to another part of the state instead of delete.
@@ -406,6 +407,7 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }/*:Obj
       const effectResult = effectOccurs(bullet.effect, newAllies.concat(newEnemies));
       newAllies = effectResult.units.filter(unit => unit.factionType === FACTION_TYPES.ALLY);
       newEnemies = effectResult.units.filter(unit => unit.factionType === FACTION_TYPES.ENEMY);
+      newEffectLogs = newEffectLogs.concat(effectResult.effectLogs);
 
       return false;
     })
@@ -478,6 +480,7 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }/*:Obj
   return {
     allies: newAllies,
     enemies: alivedEnemies.concat(deadEnemies),
+    effectLogs: newEffectLogs,
     bullets: newBullets,
   };
 };

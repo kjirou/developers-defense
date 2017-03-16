@@ -30,6 +30,7 @@ const ACTION_TYPES = keymirror({
   UPDATE_ALLIES: null,
   UPDATE_ALLY: null,
   UPDATE_BULLETS: null,
+  UPDATE_EFFECT_LOGS: null,
   UPDATE_ENEMIES: null,
 });
 

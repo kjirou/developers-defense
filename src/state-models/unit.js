@@ -27,7 +27,8 @@ const createNewUnitState = ()/*:UnitState*/ => {
     jobId: JOB_IDS.NONE,
     hitPoints: parameters.maxHitPoints.min,
     fixedMaxHitPoints: null,
-    movingSpeed: 0,
+    movingSpeed: 5,
+    movePoints: 0,
     actionPoints: 0,
     maxActionPoints: 20,  // TODO: Temporary setting
     actionPointsRecovery: 1,  // TODO: Temporary setting
@@ -145,6 +146,7 @@ const calculateMovementResults = (unit/*:UnitState*/) => {
   // Movement is already finished
   if (unit.destinationIndex > unit.destinations.length - 1) {
     return {
+      movePoints: 0,
       location: unit.location,
       destinationIndex: unit.destinationIndex,
     };
@@ -152,11 +154,20 @@ const calculateMovementResults = (unit/*:UnitState*/) => {
 
   const currentDestination = unit.destinations[unit.destinationIndex];
 
+  let newMovePoints = unit.movePoints;
   let newLocation;
+
   if (unit.location) {
-    // TODO: Calculate moving speed
-    newLocation = performPseudoVectorAddition(unit.location, currentDestination, 2);
-  // The first movement means that the unit is placed on the board
+    newMovePoints += unit.movingSpeed;
+
+    if (newMovePoints >= PARAMETERS.NECESSARY_MOVE_POINTS) {
+      newMovePoints -= PARAMETERS.NECESSARY_MOVE_POINTS;
+      newLocation = performPseudoVectorAddition(unit.location, currentDestination, PARAMETERS.SQUARE_SIDE_LENGTH);
+    } else {
+      newLocation = unit.location;
+    }
+  // This case is the first movement.
+  // That means the unit is placed on the board.
   } else {
     newLocation = currentDestination;
   }
@@ -165,6 +176,7 @@ const calculateMovementResults = (unit/*:UnitState*/) => {
     unit.destinationIndex + (areSameLocations(newLocation, currentDestination) ? 1 : 0);
 
   return {
+    movePoints: newMovePoints,
     location: newLocation,
     destinationIndex: newDestinationIndex,
   };

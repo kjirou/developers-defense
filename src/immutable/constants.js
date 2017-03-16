@@ -85,6 +85,7 @@ const tickInterval = 1000 / ticksPerSecond;
 if (Math.ceil(tickInterval) !== tickInterval) {
   throw new Error(`The tick-interval must be an integer`);
 }
+const squareSideLength = 48;
 
 const PARAMETERS = {
   BATTLE_BOARD_COLUMN_LENGTH: 7,
@@ -93,8 +94,10 @@ const PARAMETERS = {
   MAX_MAX_HIT_POINTS: 999,
   MAX_PROGRESS: 100,
   MIN_PROGRESS: 0,
+  NECESSARY_MOVE_POINTS: 100,
   SORTIE_BOARD_COLUMN_LENGTH: 7,
   SORTIE_BOARD_ROW_LENGTH: 2,
+  SQUARE_SIDE_LENGTH: squareSideLength,
   TICK_INTERVAL: tickInterval,
   TICKS_PER_SECOND: ticksPerSecond,
 };
@@ -102,8 +105,8 @@ const PARAMETERS = {
 const STYLES = {
   MAX_ANIMATION_DURATION: 10000,
   // TODO: They are not just styles. Move to the `PARAMETERS`
-  SQUARE_HEIGHT: 48,
-  SQUARE_WIDTH: 48,
+  SQUARE_HEIGHT: squareSideLength,
+  SQUARE_WIDTH: squareSideLength,
 };
 
 

@@ -115,6 +115,7 @@ export type EffectState = {
 
 // Log of the effect occured for the unit
 export type EffectLogState = {
+  uid: string,
   unitUid: string,
   damagePoints: number | null,
   healingPoints: number | null,

@@ -4,6 +4,8 @@
 import type { EffectLogState } from '../types/states';
  */
 
+const uuidV4 = require('uuid/v4');
+
 
 const createNewEffectLogState = (
   unitUid/*:string*/,
@@ -21,6 +23,7 @@ const createNewEffectLogState = (
   }, options);
 
   return {
+    uid: uuidV4(),
     unitUid,
     damagePoints,
     healingPoints,

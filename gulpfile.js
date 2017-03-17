@@ -10,6 +10,7 @@ const gulpConcat = require('gulp-concat');
 const gulpPostcss = require('gulp-postcss');
 const gulpRename = require('gulp-rename');
 const gulpSass = require('gulp-sass');
+const gulpUtil = require('gulp-util');
 const notifier = require('node-notifier');
 const path = require('path');
 const runSequence = require('run-sequence');
@@ -47,7 +48,7 @@ const babelRcData = JSON.parse(babelRc.toString());
  */
 
 const handleErrorAsWarning = function(err) {
-  console.error(err.stack || err.message);
+  gulpUtil.log(err.stack || err.message);
   notifier.notify({
     message: err.message,
     title: 'Gulp Error',
@@ -143,7 +144,7 @@ gulp.task('watch:js', function() {
   bundleJsSources(bundler);  // TODO: Why is this necessary?
 
   bundler.on('update', function() {
-    console.log(`Built .js at ${ new Date().toTimeString() }`);
+    gulpUtil.log(`Built JavaScript code`);
     bundleJsSources(bundler, { errorHandler: handleErrorAsWarning })
       .pipe(browserSyncInstance.stream({ once: true }))
     ;
@@ -188,7 +189,7 @@ gulp.task('watch:css', function() {
   gulp.watch(CSS_SOURCE_PATTERNS, function() {
     return bundleCssSources(CSS_SOURCE_INDEX_FILE_PATH, { errorHandler: handleErrorAsWarning })
       .pipe(browserSyncInstance.stream({ once: true }))
-      .on('data', () => console.log(`Built .css at ${ new Date().toTimeString() }`))
+      .on('data', () => gulpUtil.log('Built CSS code'))
     ;
   });
 });
@@ -211,7 +212,7 @@ gulp.task('watch:static-files', function() {
       .on('error', handleErrorAsWarning)
       .pipe(gulp.dest(PUBLIC_DIST_ROOT))
       // TODO: Output this message for each file
-      .on('data', () => console.log(`Built static files at ${ new Date().toTimeString() }`))
+      .on('data', () => gulpUtil.log('Built static files'))
     ;
   });
 });

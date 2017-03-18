@@ -12,11 +12,11 @@ const effectLogMethods = require('../../src/state-models/effect-log');
 const locationMethods = require('../../src/state-models/location');
 const {
   _applyEffectToUnit,
+  _effectOccurs,
   canActorAimActAtTargetedUnit,
   choiceAimedUnit,
   choiceClosestCoordinateUnderTargetedUnit,
   computeTick,
-  effectOccurs,
   findOneSquareFromBoardsByPlacement,
   fireBullets,
   judgeAffectableFractionTypes,
@@ -613,115 +613,106 @@ describe('state-models/complex-apis', function() {
     });
   });
 
-  describe('effectOccurs', () => {
-    describe('affectableFractionTypes', () => {
-      let ally;
-      let enemy;
-
-      beforeEach(() => {
-        ally = Object.assign(_createPlacedAlly(1, 2), {
+  describe('_effectOccurs', function() {
+    describe('affectableFractionTypes', function() {
+      beforeEach(function() {
+        this.ally = Object.assign(_createPlacedAlly(1, 2), {
           fixedMaxHitPoints: 5,
           hitPoints: 5,
         });
-        enemy = Object.assign(_createLocatedEnemy(48, 96), {
+        this.enemy = Object.assign(_createLocatedEnemy(48, 96), {
           fixedMaxHitPoints: 5,
           hitPoints: 5,
         });
       });
 
-      it('can affect to an ally', () => {
+      it('can affect to an ally', function() {
         const effect = _effect([FACTION_TYPES.ALLY], _loc(48, 96), {
           relativeCoordinates: [[0, 0]],
           damagePoints: 1,
         });
-        const { units } = effectOccurs(effect, [ally, enemy]);
+        const { units } = _effectOccurs(effect, [this.ally, this.enemy]);
 
-        assert(units[0].hitPoints < ally.hitPoints);
-        assert(units[1].hitPoints === enemy.hitPoints);
+        assert(units[0].hitPoints < this.ally.hitPoints);
+        assert(units[1].hitPoints === this.enemy.hitPoints);
       });
 
-      it('can affect to an enemy', () => {
+      it('can affect to an enemy', function() {
         const effect = _effect([FACTION_TYPES.ENEMY], _loc(48, 96), {
           relativeCoordinates: [[0, 0]],
           damagePoints: 1,
         });
-        const { units } = effectOccurs(effect, [ally, enemy]);
+        const { units } = _effectOccurs(effect, [this.ally, this.enemy]);
 
-        assert(units[0].hitPoints === ally.hitPoints);
-        assert(units[1].hitPoints < enemy.hitPoints);
+        assert(units[0].hitPoints === this.ally.hitPoints);
+        assert(units[1].hitPoints < this.enemy.hitPoints);
       });
     });
 
-    describe('target type', () => {
-      let enemy;
-      let effect;
-
-      beforeEach(() => {
-        enemy = Object.assign(_createLocatedEnemy(48, 96), {
+    describe('target type', function() {
+      beforeEach(function() {
+        this.enemy = Object.assign(_createLocatedEnemy(48, 96), {
           fixedMaxHitPoints: 5,
           hitPoints: 5,
         });
 
-        effect = _effect([FACTION_TYPES.ENEMY], _loc(72, 120), {
-          aimedUnitUid: enemy.uid,
+        this.effect = _effect([FACTION_TYPES.ENEMY], _loc(72, 120), {
+          aimedUnitUid: this.enemy.uid,
           damagePoints: 1,
         });
       });
 
-      it('can affect', () => {
-        const { units: [ newEnemy ] } = effectOccurs(effect, [enemy]);
+      it('can affect', function() {
+        const { units: [ newEnemy ] } = _effectOccurs(this.effect, [this.enemy]);
 
-        assert(newEnemy.hitPoints < enemy.hitPoints);
+        assert(newEnemy.hitPoints < this.enemy.hitPoints);
       });
 
-      it('can not affect if uids are different', () => {
-        enemy.uid = 'another_uid';
+      it('can not affect if uids are different', function() {
+        this.enemy.uid = 'another_uid';
 
-        const { units: [ newEnemy ] } = effectOccurs(effect, [enemy]);
+        const { units: [ newEnemy ] } = _effectOccurs(this.effect, [this.enemy]);
 
-        assert(newEnemy.hitPoints === enemy.hitPoints);
+        assert(newEnemy.hitPoints === this.enemy.hitPoints);
       });
 
-      it('can not affect if the bullet does not hit', () => {
-        effect.impactedLocation = _loc(0, 0);
+      it('can not affect if the bullet does not hit', function() {
+        this.effect.impactedLocation = _loc(0, 0);
 
-        const { units: [ newEnemy ] } = effectOccurs(effect, [enemy]);
+        const { units: [ newEnemy ] } = _effectOccurs(this.effect, [this.enemy]);
 
-        assert(newEnemy.hitPoints === enemy.hitPoints);
+        assert(newEnemy.hitPoints === this.enemy.hitPoints);
       });
     });
 
-    describe('range type', () => {
-      let ally;
-      let effect;
-
-      beforeEach(() => {
-        ally = Object.assign(_createPlacedAlly(1, 2), {
+    describe('range type', function() {
+      beforeEach(function() {
+        this.ally = Object.assign(_createPlacedAlly(1, 2), {
           fixedMaxHitPoints: 5,
           hitPoints: 5,
         });
 
-        effect = _effect([FACTION_TYPES.ALLY], _loc(72, 120), {
+        this.effect = _effect([FACTION_TYPES.ALLY], _loc(72, 120), {
           relativeCoordinates: [ [0, 0] ],
           damagePoints: 1,
         });
       });
 
-      it('can affect', () => {
-        const { units: [ newAlly ] } = effectOccurs(effect, [ally]);
+      it('can affect', function() {
+        const { units: [ newAlly ] } = _effectOccurs(this.effect, [this.ally]);
 
-        assert(newAlly.hitPoints < ally.hitPoints);
+        assert(newAlly.hitPoints < this.ally.hitPoints);
       });
 
-      it('can not affect if it is out of range', () => {
-        effect = _effect([FACTION_TYPES.ALLY], _loc(72, 120), {
+      it('can not affect if it is out of range', function() {
+        const effect = _effect([FACTION_TYPES.ALLY], _loc(72, 120), {
           relativeCoordinates: [ [2, 0] ],
           damagePoints: 1,
         });
 
-        const { units: [ newAlly ] } = effectOccurs(effect, [ally]);
+        const { units: [ newAlly ] } = _effectOccurs(effect, [this.ally]);
 
-        assert(newAlly.hitPoints === ally.hitPoints);
+        assert(newAlly.hitPoints === this.ally.hitPoints);
       });
     });
   });

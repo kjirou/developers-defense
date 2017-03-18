@@ -332,7 +332,7 @@ const _applyEffectToUnit = (
 /**
  * Apply effect to units within the effective range
  */
-const effectOccurs = (
+const _effectOccurs = (
   effect/*:EffectState*/, units/*:UnitState[]*/
 )/*:{ units: UnitState[], effectLogs: EffectLogState[] }*/ => {
   const effectLogs = [];
@@ -409,7 +409,7 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }/*:Obj
       };
 
       // TODO: effectLogs
-      const effectResult = effectOccurs(bullet.effect, newAllies.concat(newEnemies));
+      const effectResult = _effectOccurs(bullet.effect, newAllies.concat(newEnemies));
       newAllies = effectResult.units.filter(unit => unit.factionType === FACTION_TYPES.ALLY);
       newEnemies = effectResult.units.filter(unit => unit.factionType === FACTION_TYPES.ENEMY);
       newEffectLogs = newEffectLogs.concat(effectResult.effectLogs);
@@ -493,11 +493,11 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }/*:Obj
 
 module.exports = {
   _applyEffectToUnit,
+  _effectOccurs,
   canActorAimActAtTargetedUnit,
   choiceAimedUnit,
   choiceClosestCoordinateUnderTargetedUnit,
   computeTick,
-  effectOccurs,
   findOneSquareFromBoardsByPlacement,
   fireBullets,
   judgeAffectableFractionTypes,

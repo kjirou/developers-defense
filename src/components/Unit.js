@@ -1,10 +1,13 @@
 const React = require('react');
 
+const { STYLES } = require('../immutable/constants');
+
 
 class Unit extends React.Component {
   constructor(...args) {
     super(...args);
 
+    this._effectContainerDomNode = null;
     this._animationContainerDomNode = null;
   }
 
@@ -30,6 +33,42 @@ class Unit extends React.Component {
         }
       }, duration);
     });
+
+    // Execute effects
+    // TODO: Add UI tests
+    this.props.effects.forEach(({ uid, damagePoints, healingPoints }) => {
+      const uidAttrName = 'data-uid';
+
+      // If the DOM element remains, the animation is deemed to have been executed.
+      if (this._effectContainerDomNode.querySelector(`[${ uidAttrName }="${ uid }"]`)) {
+        return;
+      }
+
+      const messages = [];
+
+      if (typeof damagePoints === 'number') {
+        messages.push({ text: String(damagePoints), addionalClassNames: ['unit-state-change-effect--damage-points'] });
+      }
+      if (typeof healingPoints === 'number') {
+        messages.push({ text: String(healingPoints), addionalClassNames: ['unit-state-change-effect--healing-points'] });
+      }
+
+      messages.forEach(({ text, addionalClassNames }, messageIndex) => {
+        const effectNode = document.createElement('div');
+        effectNode.setAttribute(uidAttrName, uid);
+        effectNode.classList.add('unit-state-change-effect', ...addionalClassNames);
+        effectNode.textContent = text;
+
+        setTimeout(() => {
+          this._effectContainerDomNode.appendChild(effectNode);
+          setTimeout(() => {
+            if (this._effectContainerDomNode) {
+              this._effectContainerDomNode.removeChild(effectNode);
+            }
+          }, STYLES.UNIT_STATE_CHANGE_EFFECT_DURATION);
+        }, messageIndex * STYLES.UNIT_STATE_CHANGE_EFFECT_DURATION / 4);
+      });
+    });
   }
 
   render() {
@@ -47,6 +86,12 @@ class Unit extends React.Component {
       style: styles,
     };
 
+    const effectContainer = React.createElement('div', {
+      key: 'effect-container',
+      className: 'unit__effect-container',
+      ref: (node) => { this._effectContainerDomNode = node; },
+    });
+
     const animationContainer = React.createElement('div', {
       key: 'animaion-container',
       className: 'unit__animation-container',
@@ -58,7 +103,7 @@ class Unit extends React.Component {
       className: ['ra', iconId, 'ra-2x', 'unit__icon'].join(' '),
     });
 
-    return React.createElement('div', props, animationContainer, icon);
+    return React.createElement('div', props, effectContainer, animationContainer, icon);
   }
 }
 

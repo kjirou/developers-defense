@@ -80,7 +80,7 @@ const LANDFORM_TYPES = {
 };
 /*::export type LandformType = $Keys<typeof LANDFORM_TYPES>; */
 
-// Must sync to styles
+// Must sync to styles/variables.sass
 const ticksPerSecond = 20;
 const tickInterval = 1000 / ticksPerSecond;
 if (Math.ceil(tickInterval) !== tickInterval) {
@@ -103,11 +103,13 @@ const PARAMETERS = {
   TICKS_PER_SECOND: ticksPerSecond,
 };
 
+// Must sync to styles/variables.sass
 const STYLES = {
   MAX_ANIMATION_DURATION: 10000,
   // TODO: They are not just styles. Move to the `PARAMETERS`
   SQUARE_HEIGHT: squareSideLength,
   SQUARE_WIDTH: squareSideLength,
+  UNIT_STATE_CHANGE_EFFECT_DURATION: 1000
 };
 
 

@@ -16,7 +16,7 @@ import type {
   PlacementState,
   SquareState,
   UnitState,
-  UnitStateChangeLog,
+  UnitStateChangeLogState,
 } from '../types/states';
  */
 
@@ -297,7 +297,7 @@ const fireBullets = (
 
 const _applyEffectToUnit = (
   effect/*:EffectState*/, unit/*:UnitState*/, tickId/*:number*/
-)/*:{ newUnit: UnitState, unitStateChangeLogs: UnitStateChangeLog[] }*/ => {
+)/*:{ newUnit: UnitState, unitStateChangeLogs: UnitStateChangeLogState[] }*/ => {
   let newUnit = Object.assign({}, unit);
   const unitStateChangeLogs = [];
 
@@ -333,9 +333,9 @@ const _applyEffectToUnit = (
  * Apply effect to units within the effective range
  */
 const _effectOccurs = (
-  effect/*:EffectState*/, units/*:UnitState[]*/
-)/*:{ units: UnitState[], effectLogs: EffectLogState[] }*/ => {
-  const effectLogs = [];
+  effect/*:EffectState*/, units/*:UnitState[]*/, tickId/*:number*/
+)/*:{ units: UnitState[], unitStateChangeLogs: UnitStateChangeLogState[] }*/ => {
+  const unitStateChangeLogs = [];
 
   const effectiveRectangles = effectMethods.createEffectiveRectangles(effect);
 
@@ -361,9 +361,9 @@ const _effectOccurs = (
           effectiveRectangles.some(rect => areBoxesOverlapping(rect, unitRectangle))
         )
       ) {
-        const resultApplied = _applyEffectToUnit(effect, unit, 1);  // TODO: Pass correct tickId
+        const resultApplied = _applyEffectToUnit(effect, unit, tickId);
 
-        //resultApplied.effectLogs.forEach(v => effectLogs.push(v));
+        resultApplied.unitStateChangeLogs.forEach(v => unitStateChangeLogs.push(v));
 
         return resultApplied.newUnit;
       }
@@ -374,7 +374,7 @@ const _effectOccurs = (
 
   return {
     units: newUnits,
-    effectLogs,
+    unitStateChangeLogs,
   };
 };
 
@@ -409,10 +409,10 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }/*:Obj
       };
 
       // TODO: effectLogs
-      const effectResult = _effectOccurs(bullet.effect, newAllies.concat(newEnemies));
+      const effectResult = _effectOccurs(bullet.effect, newAllies.concat(newEnemies), gameStatus.tickId);
       newAllies = effectResult.units.filter(unit => unit.factionType === FACTION_TYPES.ALLY);
       newEnemies = effectResult.units.filter(unit => unit.factionType === FACTION_TYPES.ENEMY);
-      newEffectLogs = newEffectLogs.concat(effectResult.effectLogs);
+      //newEffectLogs = newEffectLogs.concat(effectResult.effectLogs);
 
       return false;
     })

@@ -46,23 +46,21 @@
   height: $unit-state-change-effect-height
   width: $square-width
   line-height: $unit-state-change-effect-height
-  font-size: $unit-state-change-effect-height
-  font-weight: bold
+  font-size: 16px
   text-align: center
-  opacity: 0.0
   @keyframes unit-state-change-effect
     0%
-      transform: translateY(16px)
-      opacity: 1.0
+      transform: translateY(20px)
     100%
       transform: translateY(0px)
-      opacity: 0.0
   animation-name: unit-state-change-effect
   animation-duration: $unit-state-change-effect-duration + ms
   &.unit-state-change-effect--damage-points
-    color: blue
+    color: red
+    @include text-bordering(white, 1px)
   &.unit-state-change-effect--healing-points
     color: lime
+    @include text-bordering(white, 1px)
 
 
 .unit

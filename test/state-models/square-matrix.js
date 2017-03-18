@@ -1,16 +1,18 @@
 const assert = require('power-assert');
 
 const { createNewCoordinateState } = require('../../src/state-models/coordinate');
+const { createNewRectangleState } = require('../../src/state-models/rectangle');
 const {
   createNewSquareMatrixState,
   findSquareByCoordinate,
   findSquareByUid,
   getEndPointCoordinate,
   parseMapText,
+  toRectangle,
 } = require('../../src/state-models/square-matrix');
 
 
-describe('state-models/square-matrix', () => {
+describe('state-models/square-matrix', function() {
   describe('getEndPointCoordinate', () => {
     it('can execute correctly', () => {
       assert.deepStrictEqual(
@@ -59,6 +61,15 @@ describe('state-models/square-matrix', () => {
       assert.throws(() => {
         parseMapText(mapText);
       }, /Z/);
+    });
+  });
+
+  describe('toRectangle', function() {
+    it('can execute correctly', () => {
+      assert.deepStrictEqual(
+        toRectangle(createNewSquareMatrixState(1, 2)),
+        createNewRectangleState({ x: 0, y: 0, width: 96, height: 48 })
+      );
     });
   });
 });

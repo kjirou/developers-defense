@@ -2,7 +2,8 @@ const assert = require('power-assert');
 
 const { baseAct } = require('../../src/immutable/acts');
 const {
-  ACT_AIM_RANGE_TYPES, ACT_EFFECT_RANGE_TYPES, ACTION_TYPES, BOARD_TYPES, FACTION_TYPES, FRIENDSHIP_TYPES
+  ACT_AIM_RANGE_TYPES, ACT_EFFECT_RANGE_TYPES, ACTION_TYPES, BOARD_TYPES,
+  FACTION_TYPES, FRIENDSHIP_TYPES,
 } = require('../../src/immutable/constants');
 const reducer = require('../../src/reducers');
 const boardMethods = require('../../src/state-models/board');
@@ -12,10 +13,10 @@ const effectLogMethods = require('../../src/state-models/effect-log');
 const locationMethods = require('../../src/state-models/location');
 const {
   _applyEffectToUnit,
+  _choiceAimedUnit,
+  _choiceClosestCoordinateUnderTargetedUnit,
   _effectOccurs,
   canActorAimActAtTargetedUnit,
-  choiceAimedUnit,
-  choiceClosestCoordinateUnderTargetedUnit,
   computeTick,
   findOneSquareFromBoardsByPlacement,
   fireBullets,
@@ -81,7 +82,7 @@ describe('state-models/complex-apis', function() {
   };
 
 
-  describe('choiceClosestCoordinateUnderTargetedUnit', () => {
+  describe('_choiceClosestCoordinateUnderTargetedUnit', () => {
     //  - | - | -
     // ---+---+---
     //  a | t | -
@@ -93,7 +94,7 @@ describe('state-models/complex-apis', function() {
       const endPointCoordinate = coordinateMethods.createNewCoordinateState(2, 2);
 
       assert.deepStrictEqual(
-        choiceClosestCoordinateUnderTargetedUnit(actor, target, endPointCoordinate),
+        _choiceClosestCoordinateUnderTargetedUnit(actor, target, endPointCoordinate),
         coordinateMethods.createNewCoordinateState(1, 1)
       );
     });
@@ -109,7 +110,7 @@ describe('state-models/complex-apis', function() {
       const endPointCoordinate = coordinateMethods.createNewCoordinateState(2, 2);
 
       assert.deepStrictEqual(
-        choiceClosestCoordinateUnderTargetedUnit(actor, target, endPointCoordinate),
+        _choiceClosestCoordinateUnderTargetedUnit(actor, target, endPointCoordinate),
         coordinateMethods.createNewCoordinateState(1, 2)
       );
     });
@@ -125,7 +126,7 @@ describe('state-models/complex-apis', function() {
       const endPointCoordinate = coordinateMethods.createNewCoordinateState(2, 2);
 
       assert.deepStrictEqual(
-        choiceClosestCoordinateUnderTargetedUnit(actor, target, endPointCoordinate),
+        _choiceClosestCoordinateUnderTargetedUnit(actor, target, endPointCoordinate),
         coordinateMethods.createNewCoordinateState(0, 1)
       );
     });
@@ -141,7 +142,7 @@ describe('state-models/complex-apis', function() {
       const endPointCoordinate = coordinateMethods.createNewCoordinateState(2, 2);
 
       assert.deepStrictEqual(
-        choiceClosestCoordinateUnderTargetedUnit(actor, target, endPointCoordinate),
+        _choiceClosestCoordinateUnderTargetedUnit(actor, target, endPointCoordinate),
         coordinateMethods.createNewCoordinateState(1, 1)
       );
     });
@@ -157,7 +158,7 @@ describe('state-models/complex-apis', function() {
       const endPointCoordinate = coordinateMethods.createNewCoordinateState(2, 2);
 
       assert.deepStrictEqual(
-        choiceClosestCoordinateUnderTargetedUnit(actor, target, endPointCoordinate),
+        _choiceClosestCoordinateUnderTargetedUnit(actor, target, endPointCoordinate),
         coordinateMethods.createNewCoordinateState(0, 1)
       );
     });
@@ -370,13 +371,47 @@ describe('state-models/complex-apis', function() {
     });
   });
 
-  describe('choiceAimedUnit', () => {
+  describe('_choiceAimedUnit', function() {
     const ZeroReachAct = _createNReachAct(0, { friendshipType: FRIENDSHIP_TYPES.FRIENDLY });
     const OneReachAct = _createNReachAct(1, { friendshipType: FRIENDSHIP_TYPES.FRIENDLY });
     const TwoReachAct = _createNReachAct(2, { friendshipType: FRIENDSHIP_TYPES.FRIENDLY });
+    const bigRect = _rect({ x: 0, y: 0, width: 48 * 10, height: 48 * 10 });
 
-    describe('reach check', () => {
-      it('should aim the reach=0 act to same place', () => {
+    describe('only units on the board', function() {
+      beforeEach(function() {
+        this.boardRect = _rect({ x: 0, y: 0, width: 48 * 3, height: 48 * 3 });
+      });
+
+      it('should only aims at units within the range of the board', function() {
+        //
+        //   012
+        //     T
+        // 0 ---T
+        // 1 ---
+        // 2T---
+        //   T
+        //
+        const targets = [
+          _createLocatedEnemy(48 * -1, 48 * 2),
+          _createLocatedEnemy(0, 48 * 3),
+          _createLocatedEnemy(48 * 2, 48 * -1),
+          _createLocatedEnemy(48 * 3, 0),
+        ];
+
+        assert.strictEqual(
+          _choiceAimedUnit(_createLocatedEnemy(0, 48 * 2), OneReachAct, targets, this.boardRect),
+          null
+        );
+
+        assert.strictEqual(
+          _choiceAimedUnit(_createLocatedEnemy(48 * 2, 0), OneReachAct, targets, this.boardRect),
+          null
+        );
+      });
+    });
+
+    describe('reach check', function() {
+      it('should aim the reach=0 act to same place', function() {
         //
         //  012
         // 0-T-
@@ -391,11 +426,11 @@ describe('state-models/complex-apis', function() {
           _createPlacedAlly(2, 1),
         ];
 
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(1, 1), ZeroReachAct, targets), targets[2]);
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(2, 2), ZeroReachAct, targets), null);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(1, 1), ZeroReachAct, targets, bigRect), targets[2]);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(2, 2), ZeroReachAct, targets, bigRect), null);
       });
 
-      it('should aim the reach=1 act to adjacent place', () => {
+      it('should aim the reach=1 act to adjacent place', function() {
         //
         //  012
         // 0T--
@@ -407,14 +442,14 @@ describe('state-models/complex-apis', function() {
           _createPlacedAlly(2, 2),
         ];
 
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(0, 1), OneReachAct, targets), targets[0]);
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(1, 0), OneReachAct, targets), targets[0]);
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(1, 2), OneReachAct, targets), targets[1]);
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(2, 1), OneReachAct, targets), targets[1]);
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(1, 1), OneReachAct, targets), null);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(0, 1), OneReachAct, targets, bigRect), targets[0]);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(1, 0), OneReachAct, targets, bigRect), targets[0]);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(1, 2), OneReachAct, targets, bigRect), targets[1]);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(2, 1), OneReachAct, targets, bigRect), targets[1]);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(1, 1), OneReachAct, targets, bigRect), null);
       });
 
-      it('should aim the reach=2 act to distant place', () => {
+      it('should aim the reach=2 act to distant place', function() {
         //
         //  012
         // 0T--
@@ -425,16 +460,16 @@ describe('state-models/complex-apis', function() {
           _createPlacedAlly(0, 0),
         ];
 
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(0, 2), TwoReachAct, targets), targets[0]);
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(1, 1), TwoReachAct, targets), targets[0]);
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(2, 0), TwoReachAct, targets), targets[0]);
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(1, 2), TwoReachAct, targets), null);
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(2, 1), TwoReachAct, targets), null);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(0, 2), TwoReachAct, targets, bigRect), targets[0]);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(1, 1), TwoReachAct, targets, bigRect), targets[0]);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(2, 0), TwoReachAct, targets, bigRect), targets[0]);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(1, 2), TwoReachAct, targets, bigRect), null);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(2, 1), TwoReachAct, targets, bigRect), null);
       });
     });
 
-    describe('closest order', () => {
-      it('can execute correctly', () => {
+    describe('closest order', function() {
+      it('can execute correctly', function() {
         //
         //  012
         // 0T--
@@ -447,13 +482,13 @@ describe('state-models/complex-apis', function() {
           _createPlacedAlly(1, 1),
         ];
 
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(2, 0), TwoReachAct, targets), targets[1]);
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(1, 2), TwoReachAct, targets), targets[2]);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(2, 0), TwoReachAct, targets, bigRect), targets[1]);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(1, 2), TwoReachAct, targets, bigRect), targets[2]);
       });
     });
 
-    describe('clock-wise order', () => {
-      it('should give priority to the top', () => {
+    describe('clock-wise order', function() {
+      it('should give priority to the top', function() {
         //
         //  012
         // 0-T-
@@ -467,10 +502,10 @@ describe('state-models/complex-apis', function() {
           _createPlacedAlly(1, 0),
         ];
 
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(1, 1), OneReachAct, targets), targets[1]);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(1, 1), OneReachAct, targets, bigRect), targets[1]);
       });
 
-      it('should give priority to the right', () => {
+      it('should give priority to the right', function() {
         //
         //  012
         // 0---
@@ -483,10 +518,10 @@ describe('state-models/complex-apis', function() {
           _createPlacedAlly(1, 2),
         ];
 
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(1, 1), OneReachAct, targets), targets[2]);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(1, 1), OneReachAct, targets, bigRect), targets[2]);
       });
 
-      it('should give priority to the down', () => {
+      it('should give priority to the down', function() {
         //
         //  012
         // 0---
@@ -498,7 +533,7 @@ describe('state-models/complex-apis', function() {
           _createPlacedAlly(1, 0),
         ];
 
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(1, 1), OneReachAct, targets), targets[0]);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(1, 1), OneReachAct, targets, bigRect), targets[0]);
       });
     });
   });

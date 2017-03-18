@@ -14,6 +14,7 @@ import type {
   EffectLogState,
   LocationState,
   PlacementState,
+  RectangleState,
   SquareState,
   UnitState,
   UnitStateChangeLogState,
@@ -194,10 +195,17 @@ const canActorAimActAtTargetedUnit = (
 };
 
 const choiceAimedUnit = (
-  actor/*:UnitState*/, act/*:ActImmutableObject*/, units/*:UnitState[]*/
-)/*:UnitState|null*/ => {
+  actor/*:UnitState*/,
+  act/*:ActImmutableObject*/,
+  units/*:UnitState[]*/,
+  boardRectangle/*:RectangleState*/
+)/*:UnitState | null*/ => {
   const aimableUnits = units
     .filter(unit => willActorAimActAtUnit(actor, act, unit))
+    .filter(unit => {
+      const unitRectangle = locationToRectangle(getUnitPositionAsLocation(unit));
+      return areBoxesOverlapping(unitRectangle, boardRectangle);
+    })
     .filter(unit => canActorAimActAtTargetedUnit(actor, act, unit));
 
   const actorLocation = getUnitPositionAsLocation(actor);
@@ -387,6 +395,7 @@ const effectOccurs = (
  */
 const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }/*:Object*/)/*:Object*/ => {
   const battleBoardEndPointCoordinate = squareMatrixMethods.getEndPointCoordinate(battleBoard.squareMatrix);
+  const battleBoardRectangle = squareMatrixMethods.toRectangle(battleBoard.squareMatrix);
 
   let newBullets = bullets.slice();
   let newAllies = allies.slice();
@@ -453,7 +462,7 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }/*:Obj
     let didAct = false;
 
     if (unitMethods.canDoAct(newAlly, act)) {
-      const aimedUnit = choiceAimedUnit(newAlly, act, newAllies.concat(alivedEnemies));
+      const aimedUnit = choiceAimedUnit(newAlly, act, newAllies.concat(alivedEnemies), battleBoardRectangle);
 
       if (aimedUnit) {
         if (config.isEnabledTickLog) {
@@ -492,10 +501,10 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }/*:Obj
 
 module.exports = {
   _applyEffectToUnit: applyEffectToUnit,
+  _choiceAimedUnit: choiceAimedUnit,
+  _choiceClosestCoordinateUnderTargetedUnit: choiceClosestCoordinateUnderTargetedUnit,
   _effectOccurs: effectOccurs,
   canActorAimActAtTargetedUnit,
-  choiceAimedUnit,
-  choiceClosestCoordinateUnderTargetedUnit,
   computeTick,
   findOneSquareFromBoardsByPlacement,
   fireBullets,

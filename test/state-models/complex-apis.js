@@ -2,7 +2,8 @@ const assert = require('power-assert');
 
 const { baseAct } = require('../../src/immutable/acts');
 const {
-  ACT_AIM_RANGE_TYPES, ACT_EFFECT_RANGE_TYPES, ACTION_TYPES, BOARD_TYPES, FACTION_TYPES, FRIENDSHIP_TYPES
+  ACT_AIM_RANGE_TYPES, ACT_EFFECT_RANGE_TYPES, ACTION_TYPES, BOARD_TYPES,
+  FACTION_TYPES, FRIENDSHIP_TYPES,
 } = require('../../src/immutable/constants');
 const reducer = require('../../src/reducers');
 const boardMethods = require('../../src/state-models/board');
@@ -11,12 +12,12 @@ const effectMethods = require('../../src/state-models/effect');
 const effectLogMethods = require('../../src/state-models/effect-log');
 const locationMethods = require('../../src/state-models/location');
 const {
-  applyEffectToUnit,
+  _applyEffectToUnit,
+  _choiceAimedUnit,
+  _choiceClosestCoordinateUnderTargetedUnit,
+  _effectOccurs,
   canActorAimActAtTargetedUnit,
-  choiceAimedUnit,
-  choiceClosestCoordinateUnderTargetedUnit,
   computeTick,
-  effectOccurs,
   findOneSquareFromBoardsByPlacement,
   fireBullets,
   judgeAffectableFractionTypes,
@@ -27,7 +28,7 @@ const rectangleMethods = require('../../src/state-models/rectangle');
 const unitMethods = require('../../src/state-models/unit');
 
 
-describe('state-models/complex-apis', () => {
+describe('state-models/complex-apis', function() {
   const _coord = coordinateMethods.createNewCoordinateState;
   const _loc = locationMethods.createNewLocationState;
   const _log = effectLogMethods.createNewEffectLogState;
@@ -81,7 +82,7 @@ describe('state-models/complex-apis', () => {
   };
 
 
-  describe('choiceClosestCoordinateUnderTargetedUnit', () => {
+  describe('_choiceClosestCoordinateUnderTargetedUnit', () => {
     //  - | - | -
     // ---+---+---
     //  a | t | -
@@ -93,7 +94,7 @@ describe('state-models/complex-apis', () => {
       const endPointCoordinate = coordinateMethods.createNewCoordinateState(2, 2);
 
       assert.deepStrictEqual(
-        choiceClosestCoordinateUnderTargetedUnit(actor, target, endPointCoordinate),
+        _choiceClosestCoordinateUnderTargetedUnit(actor, target, endPointCoordinate),
         coordinateMethods.createNewCoordinateState(1, 1)
       );
     });
@@ -109,7 +110,7 @@ describe('state-models/complex-apis', () => {
       const endPointCoordinate = coordinateMethods.createNewCoordinateState(2, 2);
 
       assert.deepStrictEqual(
-        choiceClosestCoordinateUnderTargetedUnit(actor, target, endPointCoordinate),
+        _choiceClosestCoordinateUnderTargetedUnit(actor, target, endPointCoordinate),
         coordinateMethods.createNewCoordinateState(1, 2)
       );
     });
@@ -125,7 +126,7 @@ describe('state-models/complex-apis', () => {
       const endPointCoordinate = coordinateMethods.createNewCoordinateState(2, 2);
 
       assert.deepStrictEqual(
-        choiceClosestCoordinateUnderTargetedUnit(actor, target, endPointCoordinate),
+        _choiceClosestCoordinateUnderTargetedUnit(actor, target, endPointCoordinate),
         coordinateMethods.createNewCoordinateState(0, 1)
       );
     });
@@ -141,7 +142,7 @@ describe('state-models/complex-apis', () => {
       const endPointCoordinate = coordinateMethods.createNewCoordinateState(2, 2);
 
       assert.deepStrictEqual(
-        choiceClosestCoordinateUnderTargetedUnit(actor, target, endPointCoordinate),
+        _choiceClosestCoordinateUnderTargetedUnit(actor, target, endPointCoordinate),
         coordinateMethods.createNewCoordinateState(1, 1)
       );
     });
@@ -157,7 +158,7 @@ describe('state-models/complex-apis', () => {
       const endPointCoordinate = coordinateMethods.createNewCoordinateState(2, 2);
 
       assert.deepStrictEqual(
-        choiceClosestCoordinateUnderTargetedUnit(actor, target, endPointCoordinate),
+        _choiceClosestCoordinateUnderTargetedUnit(actor, target, endPointCoordinate),
         coordinateMethods.createNewCoordinateState(0, 1)
       );
     });
@@ -370,13 +371,47 @@ describe('state-models/complex-apis', () => {
     });
   });
 
-  describe('choiceAimedUnit', () => {
+  describe('_choiceAimedUnit', function() {
     const ZeroReachAct = _createNReachAct(0, { friendshipType: FRIENDSHIP_TYPES.FRIENDLY });
     const OneReachAct = _createNReachAct(1, { friendshipType: FRIENDSHIP_TYPES.FRIENDLY });
     const TwoReachAct = _createNReachAct(2, { friendshipType: FRIENDSHIP_TYPES.FRIENDLY });
+    const bigRect = _rect({ x: 0, y: 0, width: 48 * 10, height: 48 * 10 });
 
-    describe('reach check', () => {
-      it('should aim the reach=0 act to same place', () => {
+    describe('only units on the board', function() {
+      beforeEach(function() {
+        this.boardRect = _rect({ x: 0, y: 0, width: 48 * 3, height: 48 * 3 });
+      });
+
+      it('should only aims at units within the range of the board', function() {
+        //
+        //   012
+        //     T
+        // 0 ---T
+        // 1 ---
+        // 2T---
+        //   T
+        //
+        const targets = [
+          _createLocatedEnemy(48 * -1, 48 * 2),
+          _createLocatedEnemy(0, 48 * 3),
+          _createLocatedEnemy(48 * 2, 48 * -1),
+          _createLocatedEnemy(48 * 3, 0),
+        ];
+
+        assert.strictEqual(
+          _choiceAimedUnit(_createLocatedEnemy(0, 48 * 2), OneReachAct, targets, this.boardRect),
+          null
+        );
+
+        assert.strictEqual(
+          _choiceAimedUnit(_createLocatedEnemy(48 * 2, 0), OneReachAct, targets, this.boardRect),
+          null
+        );
+      });
+    });
+
+    describe('reach check', function() {
+      it('should aim the reach=0 act to same place', function() {
         //
         //  012
         // 0-T-
@@ -391,11 +426,11 @@ describe('state-models/complex-apis', () => {
           _createPlacedAlly(2, 1),
         ];
 
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(1, 1), ZeroReachAct, targets), targets[2]);
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(2, 2), ZeroReachAct, targets), null);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(1, 1), ZeroReachAct, targets, bigRect), targets[2]);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(2, 2), ZeroReachAct, targets, bigRect), null);
       });
 
-      it('should aim the reach=1 act to adjacent place', () => {
+      it('should aim the reach=1 act to adjacent place', function() {
         //
         //  012
         // 0T--
@@ -407,14 +442,14 @@ describe('state-models/complex-apis', () => {
           _createPlacedAlly(2, 2),
         ];
 
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(0, 1), OneReachAct, targets), targets[0]);
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(1, 0), OneReachAct, targets), targets[0]);
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(1, 2), OneReachAct, targets), targets[1]);
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(2, 1), OneReachAct, targets), targets[1]);
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(1, 1), OneReachAct, targets), null);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(0, 1), OneReachAct, targets, bigRect), targets[0]);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(1, 0), OneReachAct, targets, bigRect), targets[0]);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(1, 2), OneReachAct, targets, bigRect), targets[1]);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(2, 1), OneReachAct, targets, bigRect), targets[1]);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(1, 1), OneReachAct, targets, bigRect), null);
       });
 
-      it('should aim the reach=2 act to distant place', () => {
+      it('should aim the reach=2 act to distant place', function() {
         //
         //  012
         // 0T--
@@ -425,16 +460,16 @@ describe('state-models/complex-apis', () => {
           _createPlacedAlly(0, 0),
         ];
 
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(0, 2), TwoReachAct, targets), targets[0]);
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(1, 1), TwoReachAct, targets), targets[0]);
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(2, 0), TwoReachAct, targets), targets[0]);
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(1, 2), TwoReachAct, targets), null);
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(2, 1), TwoReachAct, targets), null);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(0, 2), TwoReachAct, targets, bigRect), targets[0]);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(1, 1), TwoReachAct, targets, bigRect), targets[0]);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(2, 0), TwoReachAct, targets, bigRect), targets[0]);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(1, 2), TwoReachAct, targets, bigRect), null);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(2, 1), TwoReachAct, targets, bigRect), null);
       });
     });
 
-    describe('closest order', () => {
-      it('can execute correctly', () => {
+    describe('closest order', function() {
+      it('can execute correctly', function() {
         //
         //  012
         // 0T--
@@ -447,13 +482,13 @@ describe('state-models/complex-apis', () => {
           _createPlacedAlly(1, 1),
         ];
 
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(2, 0), TwoReachAct, targets), targets[1]);
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(1, 2), TwoReachAct, targets), targets[2]);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(2, 0), TwoReachAct, targets, bigRect), targets[1]);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(1, 2), TwoReachAct, targets, bigRect), targets[2]);
       });
     });
 
-    describe('clock-wise order', () => {
-      it('should give priority to the top', () => {
+    describe('clock-wise order', function() {
+      it('should give priority to the top', function() {
         //
         //  012
         // 0-T-
@@ -467,10 +502,10 @@ describe('state-models/complex-apis', () => {
           _createPlacedAlly(1, 0),
         ];
 
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(1, 1), OneReachAct, targets), targets[1]);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(1, 1), OneReachAct, targets, bigRect), targets[1]);
       });
 
-      it('should give priority to the right', () => {
+      it('should give priority to the right', function() {
         //
         //  012
         // 0---
@@ -483,10 +518,10 @@ describe('state-models/complex-apis', () => {
           _createPlacedAlly(1, 2),
         ];
 
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(1, 1), OneReachAct, targets), targets[2]);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(1, 1), OneReachAct, targets, bigRect), targets[2]);
       });
 
-      it('should give priority to the down', () => {
+      it('should give priority to the down', function() {
         //
         //  012
         // 0---
@@ -498,7 +533,7 @@ describe('state-models/complex-apis', () => {
           _createPlacedAlly(1, 0),
         ];
 
-        assert.strictEqual(choiceAimedUnit(_createPlacedAlly(1, 1), OneReachAct, targets), targets[0]);
+        assert.strictEqual(_choiceAimedUnit(_createPlacedAlly(1, 1), OneReachAct, targets, bigRect), targets[0]);
       });
     });
   });
@@ -555,162 +590,193 @@ describe('state-models/complex-apis', () => {
     });
   });
 
-  describe('applyEffectToUnit', () => {
-    let healthyUnit;
-    let woundedUnit;
-    let effect;
-
-    beforeEach(() => {
-      healthyUnit = _createLocatedUnit(0, 0);
-      Object.assign(healthyUnit, {
-        hitPoints: unitMethods.calculateHealingByRate(healthyUnit, 1.0).hitPoints,
+  describe('_applyEffectToUnit', function() {
+    beforeEach(function() {
+      this.healthyUnit = _createLocatedUnit(0, 0);
+      Object.assign(this.healthyUnit, {
+        hitPoints: unitMethods.calculateHealingByRate(this.healthyUnit, 1.0).hitPoints,
       });
 
-      woundedUnit = Object.assign(_createLocatedUnit(0, 0), {
+      this.woundedUnit = Object.assign(_createLocatedUnit(0, 0), {
         hitPoints: 1,
       });
 
-      effect = _createEffectTemplate();
+      this.effect = _createEffectTemplate();
     });
 
-    describe('healing', () => {
-      it('can heal 1 pont', () => {
-        Object.assign(effect, {
+    describe('healing', function() {
+      it('can heal 1 pont', function() {
+        Object.assign(this.effect, {
           healingPoints: 1,
         });
 
-        const { newUnit, effectLogs } = applyEffectToUnit(effect, woundedUnit);
+        const { newUnit, unitStateChangeLogs } = _applyEffectToUnit(this.effect, this.woundedUnit, 1);
 
-        assert(newUnit.hitPoints > woundedUnit.hitPoints);
-        assert.strictEqual(effectLogs.length, 1);
-        assert.strictEqual(effectLogs[0].healingPoints, 1);
+        assert(newUnit.hitPoints > this.woundedUnit.hitPoints);
+        assert.strictEqual(unitStateChangeLogs.length, 1);
+        assert.strictEqual(unitStateChangeLogs[0].type, 'HEALING');
+        assert.strictEqual(unitStateChangeLogs[0].value, 1);
       });
     });
 
-    describe('damaging', () => {
-      it('can damage 1 point', () => {
-        Object.assign(effect, {
+    describe('damaging', function() {
+      it('can damage 1 point', function() {
+        Object.assign(this.effect, {
           damagePoints: 1,
         });
 
-        const { newUnit, effectLogs } = applyEffectToUnit(effect, healthyUnit);
+        const { newUnit, unitStateChangeLogs } = _applyEffectToUnit(this.effect, this.healthyUnit, 1);
 
-        assert(healthyUnit.hitPoints > newUnit.hitPoints);
-        assert.strictEqual(effectLogs.length, 1);
-        assert.strictEqual(effectLogs[0].damagePoints, 1);
+        assert(this.healthyUnit.hitPoints > newUnit.hitPoints);
+        assert.strictEqual(unitStateChangeLogs.length, 1);
+        assert.strictEqual(unitStateChangeLogs[0].type, 'DAMAGE');
+        assert.strictEqual(unitStateChangeLogs[0].value, 1);
+      });
+    });
+
+    describe('multiple state changes', function() {
+      it('can return multiple logs', function() {
+        Object.assign(this.effect, {
+          damagePoints: 1,
+          healingPoints: 2,
+        });
+
+        const { unitStateChangeLogs } = _applyEffectToUnit(this.effect, this.healthyUnit, 1);
+
+        assert.strictEqual(unitStateChangeLogs.length, 2);
       });
     });
   });
 
-  describe('effectOccurs', () => {
-    describe('affectableFractionTypes', () => {
-      let ally;
-      let enemy;
-
-      beforeEach(() => {
-        ally = Object.assign(_createPlacedAlly(1, 2), {
+  describe('_effectOccurs', function() {
+    describe('affectableFractionTypes', function() {
+      beforeEach(function() {
+        this.ally = Object.assign(_createPlacedAlly(1, 2), {
           fixedMaxHitPoints: 5,
           hitPoints: 5,
         });
-        enemy = Object.assign(_createLocatedEnemy(48, 96), {
+        this.enemy = Object.assign(_createLocatedEnemy(48, 96), {
           fixedMaxHitPoints: 5,
           hitPoints: 5,
         });
       });
 
-      it('can affect to an ally', () => {
+      it('can affect to an ally', function() {
         const effect = _effect([FACTION_TYPES.ALLY], _loc(48, 96), {
           relativeCoordinates: [[0, 0]],
           damagePoints: 1,
         });
-        const { units } = effectOccurs(effect, [ally, enemy]);
+        const { units } = _effectOccurs(effect, [this.ally, this.enemy], 1);
 
-        assert(units[0].hitPoints < ally.hitPoints);
-        assert(units[1].hitPoints === enemy.hitPoints);
+        assert(units[0].hitPoints < this.ally.hitPoints);
+        assert(units[1].hitPoints === this.enemy.hitPoints);
       });
 
-      it('can affect to an enemy', () => {
+      it('can affect to an enemy', function() {
         const effect = _effect([FACTION_TYPES.ENEMY], _loc(48, 96), {
           relativeCoordinates: [[0, 0]],
           damagePoints: 1,
         });
-        const { units } = effectOccurs(effect, [ally, enemy]);
+        const { units } = _effectOccurs(effect, [this.ally, this.enemy], 1);
 
-        assert(units[0].hitPoints === ally.hitPoints);
-        assert(units[1].hitPoints < enemy.hitPoints);
+        assert(units[0].hitPoints === this.ally.hitPoints);
+        assert(units[1].hitPoints < this.enemy.hitPoints);
       });
     });
 
-    describe('target type', () => {
-      let enemy;
-      let effect;
-
-      beforeEach(() => {
-        enemy = Object.assign(_createLocatedEnemy(48, 96), {
+    describe('target type', function() {
+      beforeEach(function() {
+        this.enemy = Object.assign(_createLocatedEnemy(48, 96), {
           fixedMaxHitPoints: 5,
           hitPoints: 5,
         });
 
-        effect = _effect([FACTION_TYPES.ENEMY], _loc(72, 120), {
-          aimedUnitUid: enemy.uid,
+        this.effect = _effect([FACTION_TYPES.ENEMY], _loc(72, 120), {
+          aimedUnitUid: this.enemy.uid,
           damagePoints: 1,
         });
       });
 
-      it('can affect', () => {
-        const { units: [ newEnemy ] } = effectOccurs(effect, [enemy]);
+      it('can affect', function() {
+        const { units: [ newEnemy ] } = _effectOccurs(this.effect, [this.enemy], 1);
 
-        assert(newEnemy.hitPoints < enemy.hitPoints);
+        assert(newEnemy.hitPoints < this.enemy.hitPoints);
       });
 
-      it('can not affect if uids are different', () => {
-        enemy.uid = 'another_uid';
+      it('can not affect if uids are different', function() {
+        this.enemy.uid = 'another_uid';
 
-        const { units: [ newEnemy ] } = effectOccurs(effect, [enemy]);
+        const { units: [ newEnemy ] } = _effectOccurs(this.effect, [this.enemy], 1);
 
-        assert(newEnemy.hitPoints === enemy.hitPoints);
+        assert(newEnemy.hitPoints === this.enemy.hitPoints);
       });
 
-      it('can not affect if the bullet does not hit', () => {
-        effect.impactedLocation = _loc(0, 0);
+      it('can not affect if the bullet does not hit', function() {
+        this.effect.impactedLocation = _loc(0, 0);
 
-        const { units: [ newEnemy ] } = effectOccurs(effect, [enemy]);
+        const { units: [ newEnemy ] } = _effectOccurs(this.effect, [this.enemy], 1);
 
-        assert(newEnemy.hitPoints === enemy.hitPoints);
+        assert(newEnemy.hitPoints === this.enemy.hitPoints);
       });
     });
 
-    describe('range type', () => {
-      let ally;
-      let effect;
-
-      beforeEach(() => {
-        ally = Object.assign(_createPlacedAlly(1, 2), {
+    describe('range type', function() {
+      beforeEach(function() {
+        this.ally = Object.assign(_createPlacedAlly(1, 2), {
           fixedMaxHitPoints: 5,
           hitPoints: 5,
         });
 
-        effect = _effect([FACTION_TYPES.ALLY], _loc(72, 120), {
+        this.effect = _effect([FACTION_TYPES.ALLY], _loc(72, 120), {
           relativeCoordinates: [ [0, 0] ],
           damagePoints: 1,
         });
       });
 
-      it('can affect', () => {
-        const { units: [ newAlly ] } = effectOccurs(effect, [ally]);
+      it('can affect', function() {
+        const { units: [ newAlly ] } = _effectOccurs(this.effect, [this.ally], 1);
 
-        assert(newAlly.hitPoints < ally.hitPoints);
+        assert(newAlly.hitPoints < this.ally.hitPoints);
       });
 
-      it('can not affect if it is out of range', () => {
-        effect = _effect([FACTION_TYPES.ALLY], _loc(72, 120), {
+      it('can not affect if it is out of range', function() {
+        const effect = _effect([FACTION_TYPES.ALLY], _loc(72, 120), {
           relativeCoordinates: [ [2, 0] ],
           damagePoints: 1,
         });
 
-        const { units: [ newAlly ] } = effectOccurs(effect, [ally]);
+        const { units: [ newAlly ] } = _effectOccurs(effect, [this.ally], 1);
 
-        assert(newAlly.hitPoints === ally.hitPoints);
+        assert(newAlly.hitPoints === this.ally.hitPoints);
+      });
+    });
+
+    describe('log creation', function() {
+      beforeEach(function() {
+        this.enemy = Object.assign(_createLocatedEnemy(48, 96), {
+          fixedMaxHitPoints: 5,
+          hitPoints: 5,
+        });
+
+        this.effect = _effect([FACTION_TYPES.ENEMY], _loc(72, 120), {
+          aimedUnitUid: this.enemy.uid,
+        });
+      });
+
+      it('can return a log about damaging', function() {
+        Object.assign(this.effect, {
+          damagePoints: 10,
+        });
+
+        const { unitStateChangeLogs } = _effectOccurs(this.effect, [this.enemy], 123);
+
+        assert.strictEqual(unitStateChangeLogs.length, 1);
+
+        assert.strictEqual(typeof unitStateChangeLogs[0].uid, 'string');
+        assert.strictEqual(unitStateChangeLogs[0].unitUid, this.enemy.uid);
+        assert.strictEqual(unitStateChangeLogs[0].tickId, 123);
+        assert.strictEqual(unitStateChangeLogs[0].type, 'DAMAGE');
+        assert.strictEqual(unitStateChangeLogs[0].value, 10);
       });
     });
   });

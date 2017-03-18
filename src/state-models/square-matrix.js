@@ -1,13 +1,14 @@
 // @flow
 
 /*::
-import type { CoordinateState, SquareMatrixState, SquareState } from '../types/states';
+import type { CoordinateState, RectangleState, SquareMatrixState, SquareState } from '../types/states';
  */
 
 
-const { LANDFORM_TYPES } = require('../immutable/constants');
+const { LANDFORM_TYPES, PARAMETERS } = require('../immutable/constants');
 const { areSameSizeMatrices } = require('../lib/core');
 const { createNewCoordinateState } = require('./coordinate');
+const { createNewRectangleState } = require('./rectangle');
 const { createNewSquareState, extendSquare } = require('./square');
 
 
@@ -25,6 +26,15 @@ const createNewSquareMatrixState = (rowLength/*:number*/, columnLength/*:number*
 
 const getEndPointCoordinate = (squareMatrix/*:SquareMatrixState*/)/*:CoordinateState*/ => {
   return createNewCoordinateState(squareMatrix.length - 1, squareMatrix[0].length - 1);
+};
+
+const toRectangle = (squareMatrix/*:SquareMatrixState*/)/*:RectangleState*/ => {
+  return createNewRectangleState({
+    x: 0,
+    y: 0,
+    width: squareMatrix[0].length * PARAMETERS.SQUARE_SIDE_LENGTH,
+    height: squareMatrix.length * PARAMETERS.SQUARE_SIDE_LENGTH,
+  });
 };
 
 const mapSquareMatrix = (
@@ -106,4 +116,5 @@ module.exports = {
   findSquareByUid,
   mapSquareMatrix,
   parseMapText,
+  toRectangle,
 };

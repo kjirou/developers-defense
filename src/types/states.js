@@ -1,13 +1,12 @@
 // @flow
 
-/*::
 import type {
   BoardType,
   FactionType,
   FriendshipType,
   LandformType,
+  UnitStateChangeType,
 } from '../immutable/constants';
- */
 
 
 // A position on the battle-board
@@ -115,9 +114,22 @@ export type EffectState = {
 
 // Log of the effect occured for the unit
 export type EffectLogState = {
+  uid: string,
   unitUid: string,
   damagePoints: number | null,
   healingPoints: number | null,
+};
+
+// Log of the state change of units.
+// However, all changes are not recorded. It is only what is displayed as a visual effect.
+export type UnitStateChangeLogState = {
+  uid: string,
+  unitUid: string,
+  // Now it is not used, because logs are truncated for each tick.
+  tickId: number,
+  type: UnitStateChangeType,
+  // The meaning changes according to the `type`
+  value: number | string | null,
 };
 
 export type BulletState = {

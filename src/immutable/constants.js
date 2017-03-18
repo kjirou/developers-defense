@@ -79,7 +79,7 @@ const LANDFORM_TYPES = {
 };
 /*::export type LandformType = $Keys<typeof LANDFORM_TYPES>; */
 
-// Must sync to styles
+// Must sync to styles/variables.sass
 const ticksPerSecond = 20;
 const tickInterval = 1000 / ticksPerSecond;
 if (Math.ceil(tickInterval) !== tickInterval) {
@@ -102,12 +102,22 @@ const PARAMETERS = {
   TICKS_PER_SECOND: ticksPerSecond,
 };
 
+// Must sync to styles/variables.sass
 const STYLES = {
   MAX_ANIMATION_DURATION: 10000,
   // TODO: They are not just styles. Move to the `PARAMETERS`
   SQUARE_HEIGHT: squareSideLength,
   SQUARE_WIDTH: squareSideLength,
+  UNIT_STATE_CHANGE_EFFECT_DURATION: 1000
 };
+
+const UNIT_STATE_CHANGE_LOG_TYPES = {
+  ATTACHING_BUFF: 'ATTACHING_BUFF',
+  DAMAGE: 'DAMAGE',
+  DETACHING_BUFF: 'DETACHING_BUFF',
+  HEALING: 'HEALING',
+};
+/*::export type UnitStateChangeType = $Keys<typeof UNIT_STATE_CHANGE_LOG_TYPES>; */
 
 
 module.exports = {
@@ -121,5 +131,6 @@ module.exports = {
   FRIENDSHIP_TYPES,
   LANDFORM_TYPES,
   STYLES,
+  UNIT_STATE_CHANGE_LOG_TYPES,
   PARAMETERS,
 };

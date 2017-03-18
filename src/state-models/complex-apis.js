@@ -14,8 +14,10 @@ import type {
   EffectLogState,
   LocationState,
   PlacementState,
+  RectangleState,
   SquareState,
   UnitState,
+  UnitStateChangeLogState,
 } from '../types/states';
  */
 
@@ -29,6 +31,7 @@ const {
   FACTION_TYPES,
   FRIENDSHIP_TYPES,
   STYLES,
+  UNIT_STATE_CHANGE_LOG_TYPES,
 } = require('../immutable/constants');
 const { expandReachToRelativeCoordinates } = require('../lib/core');
 const bulletMethods = require('./bullet');
@@ -48,6 +51,7 @@ const locationMethods = require('./location');
 const rectangleMethods = require('./rectangle');
 const squareMatrixMethods = require('./square-matrix');
 const unitMethods = require('./unit');
+const unitStateChangeLogMethods = require('./unit-state-change-log');
 
 
 const getUnitPositionAsLocationOrNull = (unit/*:UnitState*/)/*:LocationState|null*/ => {
@@ -191,10 +195,17 @@ const canActorAimActAtTargetedUnit = (
 };
 
 const choiceAimedUnit = (
-  actor/*:UnitState*/, act/*:ActImmutableObject*/, units/*:UnitState[]*/
-)/*:UnitState|null*/ => {
+  actor/*:UnitState*/,
+  act/*:ActImmutableObject*/,
+  units/*:UnitState[]*/,
+  boardRectangle/*:RectangleState*/
+)/*:UnitState | null*/ => {
   const aimableUnits = units
     .filter(unit => willActorAimActAtUnit(actor, act, unit))
+    .filter(unit => {
+      const unitRectangle = locationToRectangle(getUnitPositionAsLocation(unit));
+      return areBoxesOverlapping(unitRectangle, boardRectangle);
+    })
     .filter(unit => canActorAimActAtTargetedUnit(actor, act, unit));
 
   const actorLocation = getUnitPositionAsLocation(actor);
@@ -293,13 +304,15 @@ const fireBullets = (
 };
 
 const applyEffectToUnit = (
-  effect/*:EffectState*/, unit/*:UnitState*/
-)/*:{ newUnit: UnitState, effectLogs: EffectLogState[] }*/ => {
+  effect/*:EffectState*/, unit/*:UnitState*/, tickId/*:number*/
+)/*:{ newUnit: UnitState, unitStateChangeLogs: UnitStateChangeLogState[] }*/ => {
   let newUnit = Object.assign({}, unit);
-  const effectLogs = [];
+  const unitStateChangeLogs = [];
 
-  const log = (options) => {
-    effectLogs.push(effectLogMethods.createNewEffectLogState(unit.uid, options));
+  const log = (type, value) => {
+    unitStateChangeLogs.push(
+      unitStateChangeLogMethods.createNewUnitStateChangeLogState(unit.uid, tickId, type, value)
+    );
   };
 
   // Healing
@@ -307,7 +320,7 @@ const applyEffectToUnit = (
     const result = unitMethods.calculateHealing(unit, effect.healingPoints);
 
     newUnit = Object.assign({}, newUnit, { hitPoints: result.hitPoints });
-    log({ healingPoints: result.healingPoints });
+    log(UNIT_STATE_CHANGE_LOG_TYPES.HEALING, result.healingPoints);
   }
 
   // Damaging
@@ -315,12 +328,12 @@ const applyEffectToUnit = (
     const result = unitMethods.calculateDamage(unit, effect.damagePoints);
 
     newUnit = Object.assign({}, newUnit, { hitPoints: result.hitPoints });
-    log({ damagePoints: result.damagePoints });
+    log(UNIT_STATE_CHANGE_LOG_TYPES.DAMAGE, result.damagePoints);
   }
 
   return {
     newUnit,
-    effectLogs,
+    unitStateChangeLogs,
   };
 };
 
@@ -328,9 +341,9 @@ const applyEffectToUnit = (
  * Apply effect to units within the effective range
  */
 const effectOccurs = (
-  effect/*:EffectState*/, units/*:UnitState[]*/
-)/*:{ units: UnitState[], effectLogs: EffectLogState[] }*/ => {
-  const effectLogs = [];
+  effect/*:EffectState*/, units/*:UnitState[]*/, tickId/*:number*/
+)/*:{ units: UnitState[], unitStateChangeLogs: UnitStateChangeLogState[] }*/ => {
+  const unitStateChangeLogs = [];
 
   const effectiveRectangles = effectMethods.createEffectiveRectangles(effect);
 
@@ -356,9 +369,9 @@ const effectOccurs = (
           effectiveRectangles.some(rect => areBoxesOverlapping(rect, unitRectangle))
         )
       ) {
-        const resultApplied = applyEffectToUnit(effect, unit);
+        const resultApplied = applyEffectToUnit(effect, unit, tickId);
 
-        resultApplied.effectLogs.forEach(v => effectLogs.push(v));
+        resultApplied.unitStateChangeLogs.forEach(v => unitStateChangeLogs.push(v));
 
         return resultApplied.newUnit;
       }
@@ -369,7 +382,7 @@ const effectOccurs = (
 
   return {
     units: newUnits,
-    effectLogs,
+    unitStateChangeLogs,
   };
 };
 
@@ -382,10 +395,12 @@ const effectOccurs = (
  */
 const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }/*:Object*/)/*:Object*/ => {
   const battleBoardEndPointCoordinate = squareMatrixMethods.getEndPointCoordinate(battleBoard.squareMatrix);
+  const battleBoardRectangle = squareMatrixMethods.toRectangle(battleBoard.squareMatrix);
 
   let newBullets = bullets.slice();
   let newAllies = allies.slice();
   let newEnemies = enemies.slice();
+  let newUnitStateChangeLogs = [];
 
   // Send dead enemies to the graveyard
   // TODO: Move to another part of the state instead of delete.
@@ -402,10 +417,10 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }/*:Obj
         return true;
       };
 
-      // TODO: effectLogs
-      const effectResult = effectOccurs(bullet.effect, newAllies.concat(newEnemies));
+      const effectResult = effectOccurs(bullet.effect, newAllies.concat(newEnemies), gameStatus.tickId);
       newAllies = effectResult.units.filter(unit => unit.factionType === FACTION_TYPES.ALLY);
       newEnemies = effectResult.units.filter(unit => unit.factionType === FACTION_TYPES.ENEMY);
+      newUnitStateChangeLogs = newUnitStateChangeLogs.concat(effectResult.unitStateChangeLogs);
 
       return false;
     })
@@ -447,7 +462,7 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }/*:Obj
     let didAct = false;
 
     if (unitMethods.canDoAct(newAlly, act)) {
-      const aimedUnit = choiceAimedUnit(newAlly, act, newAllies.concat(alivedEnemies));
+      const aimedUnit = choiceAimedUnit(newAlly, act, newAllies.concat(alivedEnemies), battleBoardRectangle);
 
       if (aimedUnit) {
         if (config.isEnabledTickLog) {
@@ -479,17 +494,18 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }/*:Obj
     allies: newAllies,
     enemies: alivedEnemies.concat(deadEnemies),
     bullets: newBullets,
+    unitStateChangeLogs: newUnitStateChangeLogs,
   };
 };
 
 
 module.exports = {
-  applyEffectToUnit,
+  _applyEffectToUnit: applyEffectToUnit,
+  _choiceAimedUnit: choiceAimedUnit,
+  _choiceClosestCoordinateUnderTargetedUnit: choiceClosestCoordinateUnderTargetedUnit,
+  _effectOccurs: effectOccurs,
   canActorAimActAtTargetedUnit,
-  choiceAimedUnit,
-  choiceClosestCoordinateUnderTargetedUnit,
   computeTick,
-  effectOccurs,
   findOneSquareFromBoardsByPlacement,
   fireBullets,
   judgeAffectableFractionTypes,

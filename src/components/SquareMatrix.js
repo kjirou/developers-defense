@@ -78,6 +78,7 @@ class SquareMatrix extends React.Component {
       handleTouchStartPad,
       squareMatrix,
       unitBasedAnimations,
+      unitStateChangeLogs,
       units,
       unitsOnSquares,
     } = this.props;
@@ -135,6 +136,7 @@ class SquareMatrix extends React.Component {
           ...(isAlive(unit) ? ['square-matrix__unit--is-alive'] : []),
         ],
         animations: SquareMatrix._findUnitBasedAnimationsByUnitUid(unitBasedAnimations, unit.uid),
+        stateChanges: unitStateChangeLogs.filter(v => v.unitUid === unit.uid),
       });
     });
 
@@ -207,6 +209,15 @@ Object.assign(SquareMatrix, {
         unitUid: React.PropTypes.string.isRequired,
       }).isRequired
     ),
+    unitStateChangeLogs: React.PropTypes.arrayOf(
+      React.PropTypes.shape({
+        uid: React.PropTypes.string.isRequired,
+        unitUid: React.PropTypes.string.isRequired,
+        tickId: React.PropTypes.number.isRequired,
+        type: React.PropTypes.string.isRequired,
+        value: React.PropTypes.any.isRequired,
+      }).isRequired
+    ),
     units: React.PropTypes.arrayOf(
       React.PropTypes.object.isRequired
     ),
@@ -227,6 +238,7 @@ Object.assign(SquareMatrix, {
     cursorCoordinate: null,
     handleTouchStartPad: () => {},
     unitBasedAnimations: [],
+    unitStateChangeLogs: [],
     units: [],
     unitsOnSquares: [],
     squareBasedAnimations: [],

@@ -9,6 +9,7 @@ const { reduceCursor } = require('./cursor');
 const { reduceEnemies } = require('./enemies');
 const { reduceGameStatus } = require('./game-status');
 const { reduceSortieBoard } = require('./sortie-board');
+const { reduceUnitStateChangeLogs } = require('./unit-state-change-logs');
 
 
 const reduceApp = combineReducers({
@@ -19,6 +20,7 @@ const reduceApp = combineReducers({
   enemies: reduceEnemies,
   gameStatus: reduceGameStatus,
   sortieBoard: reduceSortieBoard,
+  unitStateChangeLogs: reduceUnitStateChangeLogs,
 });
 
 

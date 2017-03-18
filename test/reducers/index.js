@@ -13,5 +13,6 @@ describe('reducers/index', () => {
     assert('cursor' in state);
     assert('enemies' in state);
     assert('sortieBoard' in state);
+    assert('unitStateChangeLogs' in state);
   });
 });

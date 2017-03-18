@@ -30,6 +30,7 @@ class BattleBoard extends React.Component {
         units={ this.props.enemiesInBattle }
         unitsOnSquares={ this.props.unitsOnSquares }
         unitBasedAnimations={ this.props.unitBasedAnimations }
+        unitStateChangeLogs={ this.props.unitStateChangeLogs }
         squareBasedAnimations={ this.props.squareBasedAnimations }
         handleTouchStartPad={ handleTouchStartPad }
       />
@@ -80,13 +81,16 @@ BattleBoard = connect(state => {
     })
   ;
 
-  return Object.assign({}, state, {
+  return {
+    battleBoard: state.battleBoard,
+    bullets: state.bullets,
     cursorCoordinate,
     enemiesInBattle,
     unitsOnSquares,
     unitBasedAnimations,
+    unitStateChangeLogs: state.unitStateChangeLogs,
     squareBasedAnimations,
-  });
+  };
 })(BattleBoard);
 
 

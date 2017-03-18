@@ -4,6 +4,56 @@ const { STYLES } = require('../immutable/constants');
 
 
 class Unit extends React.Component {
+  /**
+   * @param {Object[]} stateChanges
+   * @param {HTMLElement} containerDomNode
+   * @param {number} effectDuration
+   * @param {number} intervalOfContinuousCreation
+   */
+  static _animateStateChangeEffects(stateChanges, containerDomNode, effectDuration, intervalOfContinuousCreation) {
+    stateChanges.forEach(({ uid, damagePoints, healingPoints }) => {
+      const uidAttrName = 'data-uid';
+
+      // If the DOM element remains, the animation is deemed to have been executed.
+      if (containerDomNode.querySelector(`[${ uidAttrName }="${ uid }"]`)) {
+        return;
+      }
+
+      const messages = [];
+
+      if (damagePoints !== null) {
+        messages.push({
+          text: String(damagePoints),
+          additionalClassNames: ['unit-state-change-effect--damage-points'],
+        });
+      }
+      if (healingPoints !== null) {
+        messages.push({
+          text: String(healingPoints),
+          additionalClassNames: ['unit-state-change-effect--healing-points'],
+        });
+      }
+
+      messages.forEach(({ text, additionalClassNames }, messageIndex) => {
+        const effectNode = document.createElement('div');
+        effectNode.setAttribute(uidAttrName, uid);
+        effectNode.classList.add('unit-state-change-effect', ...additionalClassNames);
+        effectNode.textContent = text;
+
+        setTimeout(() => {
+          if (containerDomNode.parentNode) {
+            containerDomNode.appendChild(effectNode);
+            setTimeout(() => {
+              if (containerDomNode.parentNode) {
+                containerDomNode.removeChild(effectNode);
+              }
+            }, effectDuration);
+          }
+        }, intervalOfContinuousCreation * messageIndex);
+      });
+    });
+  }
+
   constructor(...args) {
     super(...args);
 
@@ -34,73 +84,42 @@ class Unit extends React.Component {
       }, duration);
     });
 
-    // Execute effects
-    // TODO: Add UI tests
-    this.props.stateChanges.forEach(({ uid, damagePoints, healingPoints }) => {
-      const uidAttrName = 'data-uid';
-
-      // If the DOM element remains, the animation is deemed to have been executed.
-      if (this._stateChangeEffectContainerDomNode.querySelector(`[${ uidAttrName }="${ uid }"]`)) {
-        return;
-      }
-
-      const messages = [];
-
-      if (typeof damagePoints === 'number') {
-        messages.push({ text: String(damagePoints), addionalClassNames: ['unit-state-change-effect--damage-points'] });
-      }
-      if (typeof healingPoints === 'number') {
-        messages.push({ text: String(healingPoints), addionalClassNames: ['unit-state-change-effect--healing-points'] });
-      }
-
-      messages.forEach(({ text, addionalClassNames }, messageIndex) => {
-        const effectNode = document.createElement('div');
-        effectNode.setAttribute(uidAttrName, uid);
-        effectNode.classList.add('unit-state-change-effect', ...addionalClassNames);
-        effectNode.textContent = text;
-
-        setTimeout(() => {
-          this._stateChangeEffectContainerDomNode.appendChild(effectNode);
-          setTimeout(() => {
-            if (this._stateChangeEffectContainerDomNode) {
-              this._stateChangeEffectContainerDomNode.removeChild(effectNode);
-            }
-          }, STYLES.UNIT_STATE_CHANGE_EFFECT_DURATION);
-        }, messageIndex * STYLES.UNIT_STATE_CHANGE_EFFECT_DURATION / 4);
-      });
-    });
+    Unit._animateStateChangeEffects(
+      this.props.stateChanges,
+      this._stateChangeEffectContainerDomNode,
+      STYLES.UNIT_STATE_CHANGE_EFFECT_DURATION,
+      250
+    );
   }
 
   render() {
-    const { iconId, top, left, classNames } = this.props;
-
-    const mergedClassNames = ['unit'].concat(classNames);
-
-    const styles = {
-      top,
-      left,
-    };
-
     const props = {
-      className: mergedClassNames.join(' '),
-      style: styles,
+      className: ['unit'].concat(this.props.classNames).join(' '),
+      style: {
+        top: this.props.top,
+        left: this.props.left,
+      },
     };
 
     const stateChangeEffectContainer = React.createElement('div', {
       key: 'state-change-effect-container',
       className: 'unit__state-change-effect-container',
-      ref: (node) => { this._stateChangeEffectContainerDomNode = node; },
+      ref: node => {
+        this._stateChangeEffectContainerDomNode = node;
+      },
     });
 
     const animationContainer = React.createElement('div', {
       key: 'animaion-container',
       className: 'unit__animation-container',
-      ref: (node) => { this._animationContainerDomNode = node; },
+      ref: node => {
+        this._animationContainerDomNode = node;
+      },
     });
 
     const icon = React.createElement('i', {
       key: 'icon',
-      className: ['ra', iconId, 'ra-2x', 'unit__icon'].join(' '),
+      className: ['ra', this.props.iconId, 'ra-2x', 'unit__icon'].join(' '),
     });
 
     return React.createElement('div', props, stateChangeEffectContainer, animationContainer, icon);

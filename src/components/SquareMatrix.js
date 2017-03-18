@@ -145,7 +145,7 @@ class SquareMatrix extends React.Component {
           ...(isAlive(unit) ? ['square-matrix__unit--is-alive'] : []),
         ],
         animations: SquareMatrix._findUnitBasedAnimationsByUnitUid(unitBasedAnimations, unit.uid),
-        effects: SquareMatrix._findUnitBasedEffectLogsByUnitUid(unitBasedEffectLogs, unit.uid),
+        stateChanges: SquareMatrix._findUnitBasedEffectLogsByUnitUid(unitBasedEffectLogs, unit.uid),
       });
     });
 

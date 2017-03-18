@@ -30,7 +30,7 @@ const {
   FACTION_TYPES,
   FRIENDSHIP_TYPES,
   STYLES,
-  UNIT_STATE_CHANGE_TYPES,
+  UNIT_STATE_CHANGE_LOG_TYPES,
 } = require('../immutable/constants');
 const { expandReachToRelativeCoordinates } = require('../lib/core');
 const bulletMethods = require('./bullet');
@@ -295,7 +295,7 @@ const fireBullets = (
   return bullets;
 };
 
-const _applyEffectToUnit = (
+const applyEffectToUnit = (
   effect/*:EffectState*/, unit/*:UnitState*/, tickId/*:number*/
 )/*:{ newUnit: UnitState, unitStateChangeLogs: UnitStateChangeLogState[] }*/ => {
   let newUnit = Object.assign({}, unit);
@@ -312,7 +312,7 @@ const _applyEffectToUnit = (
     const result = unitMethods.calculateHealing(unit, effect.healingPoints);
 
     newUnit = Object.assign({}, newUnit, { hitPoints: result.hitPoints });
-    log(UNIT_STATE_CHANGE_TYPES.HEALING, result.healingPoints);
+    log(UNIT_STATE_CHANGE_LOG_TYPES.HEALING, result.healingPoints);
   }
 
   // Damaging
@@ -320,7 +320,7 @@ const _applyEffectToUnit = (
     const result = unitMethods.calculateDamage(unit, effect.damagePoints);
 
     newUnit = Object.assign({}, newUnit, { hitPoints: result.hitPoints });
-    log(UNIT_STATE_CHANGE_TYPES.DAMAGE, result.damagePoints);
+    log(UNIT_STATE_CHANGE_LOG_TYPES.DAMAGE, result.damagePoints);
   }
 
   return {
@@ -332,7 +332,7 @@ const _applyEffectToUnit = (
 /**
  * Apply effect to units within the effective range
  */
-const _effectOccurs = (
+const effectOccurs = (
   effect/*:EffectState*/, units/*:UnitState[]*/, tickId/*:number*/
 )/*:{ units: UnitState[], unitStateChangeLogs: UnitStateChangeLogState[] }*/ => {
   const unitStateChangeLogs = [];
@@ -361,7 +361,7 @@ const _effectOccurs = (
           effectiveRectangles.some(rect => areBoxesOverlapping(rect, unitRectangle))
         )
       ) {
-        const resultApplied = _applyEffectToUnit(effect, unit, tickId);
+        const resultApplied = applyEffectToUnit(effect, unit, tickId);
 
         resultApplied.unitStateChangeLogs.forEach(v => unitStateChangeLogs.push(v));
 
@@ -391,7 +391,7 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }/*:Obj
   let newBullets = bullets.slice();
   let newAllies = allies.slice();
   let newEnemies = enemies.slice();
-  let newEffectLogs = [];
+  let newUnitStateChangeLogs = [];
 
   // Send dead enemies to the graveyard
   // TODO: Move to another part of the state instead of delete.
@@ -408,11 +408,10 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }/*:Obj
         return true;
       };
 
-      // TODO: effectLogs
-      const effectResult = _effectOccurs(bullet.effect, newAllies.concat(newEnemies), gameStatus.tickId);
+      const effectResult = effectOccurs(bullet.effect, newAllies.concat(newEnemies), gameStatus.tickId);
       newAllies = effectResult.units.filter(unit => unit.factionType === FACTION_TYPES.ALLY);
       newEnemies = effectResult.units.filter(unit => unit.factionType === FACTION_TYPES.ENEMY);
-      //newEffectLogs = newEffectLogs.concat(effectResult.effectLogs);
+      newUnitStateChangeLogs = newUnitStateChangeLogs.concat(effectResult.unitStateChangeLogs);
 
       return false;
     })
@@ -485,15 +484,15 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }/*:Obj
   return {
     allies: newAllies,
     enemies: alivedEnemies.concat(deadEnemies),
-    effectLogs: newEffectLogs,
     bullets: newBullets,
+    unitStateChangeLogs: newUnitStateChangeLogs,
   };
 };
 
 
 module.exports = {
-  _applyEffectToUnit,
-  _effectOccurs,
+  _applyEffectToUnit: applyEffectToUnit,
+  _effectOccurs: effectOccurs,
   canActorAimActAtTargetedUnit,
   choiceAimedUnit,
   choiceClosestCoordinateUnderTargetedUnit,

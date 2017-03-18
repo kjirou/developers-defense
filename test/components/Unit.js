@@ -4,6 +4,8 @@ const assert = require('power-assert');
 const React = require('react');
 
 const Unit = require('../../src/components/Unit');
+const { UNIT_STATE_CHANGE_LOG_TYPES } = require('../../src/immutable/constants');
+const { createNewUnitStateChangeLogState } = require('../../src/state-models/unit-state-change-log');
 
 
 describe('components/Unit', function() {
@@ -20,15 +22,13 @@ describe('components/Unit', function() {
   describe('_animateStateChangeEffects', function() {
     beforeEach(function() {
       this.containerDomNode = document.createElement('div');
-      this.fakeDomTree = document.createElement('body');
-      this.fakeDomTree.appendChild(this.containerDomNode);
     });
 
-    it('should create a html element if damagePoints exists', function(done) {
-      const stateChanges = [
-        { uid: 'a', damagePoints: 123, healingPoints: null },
+    it('should create an element into the container from one log', function(done) {
+      const logs = [
+        createNewUnitStateChangeLogState('uid', 1, UNIT_STATE_CHANGE_LOG_TYPES.DAMAGE, 123),
       ];
-      Unit._animateStateChangeEffects(stateChanges, this.containerDomNode, 50, 0);
+      Unit._animateStateChangeEffects(logs, this.containerDomNode, 50, 0);
 
       setTimeout(() => {
         const effects = this.containerDomNode.querySelectorAll('.unit-state-change-effect');
@@ -41,11 +41,12 @@ describe('components/Unit', function() {
       }, 0)
     });
 
-    it('shoud create two html elements if damagePoints and healingPoints exist', function(done) {
-      const stateChanges = [
-        { uid: 'a', damagePoints: 123, healingPoints: 456 },
+    it('should create elements into the container from plural logs', function(done) {
+      const logs = [
+        createNewUnitStateChangeLogState('uid1', 1, UNIT_STATE_CHANGE_LOG_TYPES.DAMAGE, 123),
+        createNewUnitStateChangeLogState('uid2', 1, UNIT_STATE_CHANGE_LOG_TYPES.HEALING, 456),
       ];
-      Unit._animateStateChangeEffects(stateChanges, this.containerDomNode, 50, 0);
+      Unit._animateStateChangeEffects(logs, this.containerDomNode, 50, 0);
 
       setTimeout(() => {
         const effects = this.containerDomNode.querySelectorAll('.unit-state-change-effect');
@@ -59,14 +60,44 @@ describe('components/Unit', function() {
       }, 0)
     });
 
-    // TODO:
-    //   以下のテストケース群も必要だが、その前に stateChanges のデータ構造がおかしいので
-    //   1 変更 = 1 レコードになるように変更した方が良い
-    //
-    //   - 複数 stateChanges がある際に連続して作成されること
-    //   - 同じ uid の要素が一つでも存在する場合は無視すること
-    //   - parentNode が無い場合はなにもしないこと
-    //
+    it('should remove the created element after `effectDuration`', function(done) {
+      const logs = [
+        createNewUnitStateChangeLogState('uid', 1, UNIT_STATE_CHANGE_LOG_TYPES.DAMAGE, 123),
+      ];
+      Unit._animateStateChangeEffects(logs, this.containerDomNode, 0, 0);
+
+      setTimeout(() => {
+        const effects = this.containerDomNode.querySelectorAll('.unit-state-change-effect');
+
+        assert.strictEqual(effects.length, 0);
+
+        done();
+      }, 10)
+    });
+
+    it('can prevent duplication of rendering with `uid`', function() {
+      const logs = [
+        createNewUnitStateChangeLogState('uid', 1, UNIT_STATE_CHANGE_LOG_TYPES.DAMAGE, 123),
+      ];
+
+      return Promise.resolve()
+        .then(() => {
+          Unit._animateStateChangeEffects(logs, this.containerDomNode, 50, 0);
+        })
+        .then(() => new Promise(resolve => setTimeout(resolve, 5)))
+        .then(() => {
+          const effects = this.containerDomNode.querySelectorAll('.unit-state-change-effect');
+          assert.strictEqual(effects.length, 1);
+
+          Unit._animateStateChangeEffects(logs, this.containerDomNode, 50, 0);
+        })
+        .then(() => new Promise(resolve => setTimeout(resolve, 5)))
+        .then(() => {
+          const effects = this.containerDomNode.querySelectorAll('.unit-state-change-effect');
+          assert.strictEqual(effects.length, 1);
+        })
+      ;
+    });
   });
 
   describe('constructor', function() {

@@ -30,7 +30,6 @@ const ACTION_TYPES = keymirror({
   UPDATE_ALLIES: null,
   UPDATE_ALLY: null,
   UPDATE_BULLETS: null,
-  UPDATE_EFFECT_LOGS: null,
   UPDATE_ENEMIES: null,
 });
 
@@ -112,13 +111,13 @@ const STYLES = {
   UNIT_STATE_CHANGE_EFFECT_DURATION: 1000
 };
 
-const UNIT_STATE_CHANGE_TYPES = {
+const UNIT_STATE_CHANGE_LOG_TYPES = {
   ATTACHING_BUFF: 'ATTACHING_BUFF',
   DAMAGE: 'DAMAGE',
   DETACHING_BUFF: 'DETACHING_BUFF',
   HEALING: 'HEALING',
 };
-/*::export type UnitStateChangeType = $Keys<typeof UNIT_STATE_CHANGE_TYPES>; */
+/*::export type UnitStateChangeType = $Keys<typeof UNIT_STATE_CHANGE_LOG_TYPES>; */
 
 
 module.exports = {
@@ -132,6 +131,6 @@ module.exports = {
   FRIENDSHIP_TYPES,
   LANDFORM_TYPES,
   STYLES,
-  UNIT_STATE_CHANGE_TYPES,
+  UNIT_STATE_CHANGE_LOG_TYPES,
   PARAMETERS,
 };

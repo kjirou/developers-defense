@@ -1,56 +1,58 @@
 const React = require('react');
 
-const { STYLES } = require('../immutable/constants');
+const { STYLES, UNIT_STATE_CHANGE_LOG_TYPES } = require('../immutable/constants');
 
 
 class Unit extends React.Component {
-  /**
-   * @param {Object[]} stateChanges
-   * @param {HTMLElement} containerDomNode
-   * @param {number} effectDuration
-   * @param {number} intervalOfContinuousCreation
-   */
-  static _animateStateChangeEffects(stateChanges, containerDomNode, effectDuration, intervalOfContinuousCreation) {
-    stateChanges.forEach(({ uid, damagePoints, healingPoints }) => {
+  static _generateStateChangeEffectData({ type, value }/*:UnitStateChangeLogState*/) {
+    let text = '';
+    const additionalClassNames = [];
+
+    switch (type) {
+      case UNIT_STATE_CHANGE_LOG_TYPES.DAMAGE: {
+        text = String(value);
+        additionalClassNames.push('unit-state-change-effect--damage-points');
+        break;
+      }
+      case UNIT_STATE_CHANGE_LOG_TYPES.HEALING: {
+        text = String(value);
+        additionalClassNames.push('unit-state-change-effect--healing-points');
+        break;
+      }
+    }
+
+    return {
+      text,
+      additionalClassNames,
+    };
+  }
+
+  static _animateStateChangeEffects(
+    unitStateChangeLogs/*:UnitStateChangeLogState[]*/,
+    containerDomNode/*:Object*/,
+    effectDuration/*:number*/,
+    intervalOfContinuousCreation/*:number*/
+  ) {
+    unitStateChangeLogs.forEach((unitStateChangeLog, stateChangeIndex) => {
       const uidAttrName = 'data-uid';
 
-      // If the DOM element remains, the animation is deemed to have been executed.
-      if (containerDomNode.querySelector(`[${ uidAttrName }="${ uid }"]`)) {
+      if (containerDomNode.querySelector(`[${ uidAttrName }="${ unitStateChangeLog.uid }"]`)) {
         return;
       }
 
-      const messages = [];
+      const { text, additionalClassNames } = Unit._generateStateChangeEffectData(unitStateChangeLog);
 
-      if (damagePoints !== null) {
-        messages.push({
-          text: String(damagePoints),
-          additionalClassNames: ['unit-state-change-effect--damage-points'],
-        });
-      }
-      if (healingPoints !== null) {
-        messages.push({
-          text: String(healingPoints),
-          additionalClassNames: ['unit-state-change-effect--healing-points'],
-        });
-      }
+      const effectNode = document.createElement('div');
+      effectNode.setAttribute(uidAttrName, unitStateChangeLog.uid);
+      effectNode.classList.add('unit-state-change-effect', ...additionalClassNames);
+      effectNode.textContent = text;
 
-      messages.forEach(({ text, additionalClassNames }, messageIndex) => {
-        const effectNode = document.createElement('div');
-        effectNode.setAttribute(uidAttrName, uid);
-        effectNode.classList.add('unit-state-change-effect', ...additionalClassNames);
-        effectNode.textContent = text;
-
+      setTimeout(() => {
+        containerDomNode.appendChild(effectNode);
         setTimeout(() => {
-          if (containerDomNode.parentNode) {
-            containerDomNode.appendChild(effectNode);
-            setTimeout(() => {
-              if (containerDomNode.parentNode) {
-                containerDomNode.removeChild(effectNode);
-              }
-            }, effectDuration);
-          }
-        }, intervalOfContinuousCreation * messageIndex);
-      });
+          containerDomNode.removeChild(effectNode);
+        }, effectDuration);
+      }, intervalOfContinuousCreation * stateChangeIndex);
     });
   }
 
@@ -143,9 +145,11 @@ Object.assign(Unit, {
     ),
     stateChanges: React.PropTypes.arrayOf(
       React.PropTypes.shape({
-        damagePoints: React.PropTypes.number,
-        healingPoints: React.PropTypes.number,
         uid: React.PropTypes.string.isRequired,
+        unitUid: React.PropTypes.string.isRequired,
+        tickId: React.PropTypes.number.isRequired,
+        type: React.PropTypes.string.isRequired,
+        value: React.PropTypes.any.isRequired,
       }).isRequired
     ),
   },

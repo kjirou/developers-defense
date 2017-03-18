@@ -125,6 +125,7 @@ export type EffectLogState = {
 export type UnitStateChangeLogState = {
   uid: string,
   unitUid: string,
+  // Now it is not used, because logs are truncated for each tick.
   tickId: number,
   type: UnitStateChangeType,
   // The meaning changes according to the `type`

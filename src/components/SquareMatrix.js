@@ -37,15 +37,6 @@ class SquareMatrix extends React.Component {
     return unitBasedAnimations.filter(unitBasedAnimation => unitBasedAnimation.unitUid == unitUid);
   }
 
-  /**
-   * @param {Object[]} unitBasedEffectLogs
-   * @param {string} unitUid
-   * @return {Object[]}
-   */
-  static _findUnitBasedEffectLogsByUnitUid(unitBasedEffectLogs, unitUid) {
-    return unitBasedEffectLogs.filter(unitBasedEffectLogs => unitBasedEffectLogs.unitUid == unitUid);
-  }
-
   constructor(...args) {
     super(...args);
 
@@ -87,7 +78,7 @@ class SquareMatrix extends React.Component {
       handleTouchStartPad,
       squareMatrix,
       unitBasedAnimations,
-      unitBasedEffectLogs,
+      unitStateChangeLogs,
       units,
       unitsOnSquares,
     } = this.props;
@@ -145,7 +136,7 @@ class SquareMatrix extends React.Component {
           ...(isAlive(unit) ? ['square-matrix__unit--is-alive'] : []),
         ],
         animations: SquareMatrix._findUnitBasedAnimationsByUnitUid(unitBasedAnimations, unit.uid),
-        stateChanges: SquareMatrix._findUnitBasedEffectLogsByUnitUid(unitBasedEffectLogs, unit.uid),
+        stateChanges: unitStateChangeLogs.filter(v => v.unitUid === unit.uid),
       });
     });
 
@@ -218,12 +209,13 @@ Object.assign(SquareMatrix, {
         unitUid: React.PropTypes.string.isRequired,
       }).isRequired
     ),
-    unitBasedEffectLogs: React.PropTypes.arrayOf(
+    unitStateChangeLogs: React.PropTypes.arrayOf(
       React.PropTypes.shape({
         uid: React.PropTypes.string.isRequired,
         unitUid: React.PropTypes.string.isRequired,
-        damagePoints: React.PropTypes.number,
-        healingPoints: React.PropTypes.number,
+        tickId: React.PropTypes.number.isRequired,
+        type: React.PropTypes.string.isRequired,
+        value: React.PropTypes.any.isRequired,
       }).isRequired
     ),
     units: React.PropTypes.arrayOf(
@@ -246,7 +238,7 @@ Object.assign(SquareMatrix, {
     cursorCoordinate: null,
     handleTouchStartPad: () => {},
     unitBasedAnimations: [],
-    unitBasedEffectLogs: [],
+    unitStateChangeLogs: [],
     units: [],
     unitsOnSquares: [],
     squareBasedAnimations: [],

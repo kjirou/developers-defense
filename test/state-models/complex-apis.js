@@ -11,7 +11,7 @@ const effectMethods = require('../../src/state-models/effect');
 const effectLogMethods = require('../../src/state-models/effect-log');
 const locationMethods = require('../../src/state-models/location');
 const {
-  applyEffectToUnit,
+  _applyEffectToUnit,
   canActorAimActAtTargetedUnit,
   choiceAimedUnit,
   choiceClosestCoordinateUnderTargetedUnit,
@@ -27,7 +27,7 @@ const rectangleMethods = require('../../src/state-models/rectangle');
 const unitMethods = require('../../src/state-models/unit');
 
 
-describe('state-models/complex-apis', () => {
+describe('state-models/complex-apis', function() {
   const _coord = coordinateMethods.createNewCoordinateState;
   const _loc = locationMethods.createNewLocationState;
   const _log = effectLogMethods.createNewEffectLogState;
@@ -555,49 +555,60 @@ describe('state-models/complex-apis', () => {
     });
   });
 
-  describe('applyEffectToUnit', () => {
-    let healthyUnit;
-    let woundedUnit;
-    let effect;
-
-    beforeEach(() => {
-      healthyUnit = _createLocatedUnit(0, 0);
-      Object.assign(healthyUnit, {
-        hitPoints: unitMethods.calculateHealingByRate(healthyUnit, 1.0).hitPoints,
+  describe('_applyEffectToUnit', function() {
+    beforeEach(function() {
+      this.healthyUnit = _createLocatedUnit(0, 0);
+      Object.assign(this.healthyUnit, {
+        hitPoints: unitMethods.calculateHealingByRate(this.healthyUnit, 1.0).hitPoints,
       });
 
-      woundedUnit = Object.assign(_createLocatedUnit(0, 0), {
+      this.woundedUnit = Object.assign(_createLocatedUnit(0, 0), {
         hitPoints: 1,
       });
 
-      effect = _createEffectTemplate();
+      this.effect = _createEffectTemplate();
     });
 
-    describe('healing', () => {
-      it('can heal 1 pont', () => {
-        Object.assign(effect, {
+    describe('healing', function() {
+      it('can heal 1 pont', function() {
+        Object.assign(this.effect, {
           healingPoints: 1,
         });
 
-        const { newUnit, effectLogs } = applyEffectToUnit(effect, woundedUnit);
+        const { newUnit, unitStateChangeLogs } = _applyEffectToUnit(this.effect, this.woundedUnit, 1);
 
-        assert(newUnit.hitPoints > woundedUnit.hitPoints);
-        assert.strictEqual(effectLogs.length, 1);
-        assert.strictEqual(effectLogs[0].healingPoints, 1);
+        assert(newUnit.hitPoints > this.woundedUnit.hitPoints);
+        assert.strictEqual(unitStateChangeLogs.length, 1);
+        assert.strictEqual(unitStateChangeLogs[0].type, 'HEALING');
+        assert.strictEqual(unitStateChangeLogs[0].value, 1);
       });
     });
 
-    describe('damaging', () => {
-      it('can damage 1 point', () => {
-        Object.assign(effect, {
+    describe('damaging', function() {
+      it('can damage 1 point', function() {
+        Object.assign(this.effect, {
           damagePoints: 1,
         });
 
-        const { newUnit, effectLogs } = applyEffectToUnit(effect, healthyUnit);
+        const { newUnit, unitStateChangeLogs } = _applyEffectToUnit(this.effect, this.healthyUnit, 1);
 
-        assert(healthyUnit.hitPoints > newUnit.hitPoints);
-        assert.strictEqual(effectLogs.length, 1);
-        assert.strictEqual(effectLogs[0].damagePoints, 1);
+        assert(this.healthyUnit.hitPoints > newUnit.hitPoints);
+        assert.strictEqual(unitStateChangeLogs.length, 1);
+        assert.strictEqual(unitStateChangeLogs[0].type, 'DAMAGE');
+        assert.strictEqual(unitStateChangeLogs[0].value, 1);
+      });
+    });
+
+    describe('multiple state changes', function() {
+      it('can return multiple logs', function() {
+        Object.assign(this.effect, {
+          damagePoints: 1,
+          healingPoints: 2,
+        });
+
+        const { unitStateChangeLogs } = _applyEffectToUnit(this.effect, this.healthyUnit, 1);
+
+        assert.strictEqual(unitStateChangeLogs.length, 2);
       });
     });
   });

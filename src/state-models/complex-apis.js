@@ -16,6 +16,7 @@ import type {
   PlacementState,
   SquareState,
   UnitState,
+  UnitStateChangeLog,
 } from '../types/states';
  */
 
@@ -29,6 +30,7 @@ const {
   FACTION_TYPES,
   FRIENDSHIP_TYPES,
   STYLES,
+  UNIT_STATE_CHANGE_TYPES,
 } = require('../immutable/constants');
 const { expandReachToRelativeCoordinates } = require('../lib/core');
 const bulletMethods = require('./bullet');
@@ -48,6 +50,7 @@ const locationMethods = require('./location');
 const rectangleMethods = require('./rectangle');
 const squareMatrixMethods = require('./square-matrix');
 const unitMethods = require('./unit');
+const unitStateChangeLogMethods = require('./unit-state-change-log');
 
 
 const getUnitPositionAsLocationOrNull = (unit/*:UnitState*/)/*:LocationState|null*/ => {
@@ -292,14 +295,16 @@ const fireBullets = (
   return bullets;
 };
 
-const applyEffectToUnit = (
-  effect/*:EffectState*/, unit/*:UnitState*/
-)/*:{ newUnit: UnitState, effectLogs: EffectLogState[] }*/ => {
+const _applyEffectToUnit = (
+  effect/*:EffectState*/, unit/*:UnitState*/, tickId/*:number*/
+)/*:{ newUnit: UnitState, unitStateChangeLogs: UnitStateChangeLog[] }*/ => {
   let newUnit = Object.assign({}, unit);
-  const effectLogs = [];
+  const unitStateChangeLogs = [];
 
-  const log = (options) => {
-    effectLogs.push(effectLogMethods.createNewEffectLogState(unit.uid, options));
+  const log = (type, value) => {
+    unitStateChangeLogs.push(
+      unitStateChangeLogMethods.createNewUnitStateChangeLogState(unit.uid, tickId, type, value)
+    );
   };
 
   // Healing
@@ -307,7 +312,7 @@ const applyEffectToUnit = (
     const result = unitMethods.calculateHealing(unit, effect.healingPoints);
 
     newUnit = Object.assign({}, newUnit, { hitPoints: result.hitPoints });
-    log({ healingPoints: result.healingPoints });
+    log(UNIT_STATE_CHANGE_TYPES.HEALING, result.healingPoints);
   }
 
   // Damaging
@@ -315,12 +320,12 @@ const applyEffectToUnit = (
     const result = unitMethods.calculateDamage(unit, effect.damagePoints);
 
     newUnit = Object.assign({}, newUnit, { hitPoints: result.hitPoints });
-    log({ damagePoints: result.damagePoints });
+    log(UNIT_STATE_CHANGE_TYPES.DAMAGE, result.damagePoints);
   }
 
   return {
     newUnit,
-    effectLogs,
+    unitStateChangeLogs,
   };
 };
 
@@ -356,9 +361,9 @@ const effectOccurs = (
           effectiveRectangles.some(rect => areBoxesOverlapping(rect, unitRectangle))
         )
       ) {
-        const resultApplied = applyEffectToUnit(effect, unit);
+        const resultApplied = _applyEffectToUnit(effect, unit, 1);  // TODO: Pass correct tickId
 
-        resultApplied.effectLogs.forEach(v => effectLogs.push(v));
+        //resultApplied.effectLogs.forEach(v => effectLogs.push(v));
 
         return resultApplied.newUnit;
       }
@@ -487,7 +492,7 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }/*:Obj
 
 
 module.exports = {
-  applyEffectToUnit,
+  _applyEffectToUnit,
   canActorAimActAtTargetedUnit,
   choiceAimedUnit,
   choiceClosestCoordinateUnderTargetedUnit,

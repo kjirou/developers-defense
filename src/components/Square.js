@@ -13,7 +13,7 @@ const { LANDFORM_TYPES, STYLES } = require('../immutable/constants');
 type Props = {
   rowIndex: number,
   columnIndex: number,
-  landformType: LandformType | null,
+  landformType: LandformType,
 }
  */
 
@@ -24,7 +24,7 @@ const Square = ({ rowIndex, columnIndex, landformType }/*:Props*/) => {
   };
 
   const classNames = ['square'];
-  if (landformType !== null) {
+  if (landformType !== LANDFORM_TYPES.NONE) {
     classNames.push({
       [LANDFORM_TYPES.CASTLE]: 'square--landform-castle',
       [LANDFORM_TYPES.DESERT]: 'square--landform-desert',

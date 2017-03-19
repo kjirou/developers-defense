@@ -33,8 +33,8 @@ describe('reducers/battle-board', () => {
     });
 
     it('can extend all squares', () => {
-      assert.strictEqual(findSquareByCoordinate(state.squareMatrix, [0, 0]).landformType, null);
-      assert.strictEqual(findSquareByCoordinate(state.squareMatrix, [1, 1]).landformType, null);
+      assert.strictEqual(findSquareByCoordinate(state.squareMatrix, [0, 0]).landformType, 'NONE');
+      assert.strictEqual(findSquareByCoordinate(state.squareMatrix, [1, 1]).landformType, 'NONE');
 
       const extension = _createUpdates({ landformType: LANDFORM_TYPES.ROAD });
       state = reduceBattleBoard(state, { type: ACTION_TYPES.EXTEND_BATTLE_BOARD_SQUARE_MATRIX, extension });

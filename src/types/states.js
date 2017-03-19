@@ -32,8 +32,7 @@ export type RectangleState = {
 export type SquareState = {
   uid: string,
   coordinate: CoordinateState,
-  // TODO: Change to string only
-  landformType: LandformType | null,
+  landformType: LandformType,
 };
 
 // Each side is at least 1 or more in length.

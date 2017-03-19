@@ -1,3 +1,16 @@
+// @flow
+
+/*::
+import type {
+  BulletState,
+  CoordinateState,
+  LocationState,
+  SquareMatrixState,
+  UnitState,
+  UnitStateChangeLogState,
+} from '../types/states';
+ */
+
 const React = require('react');
 const ReactCSSTransitionGroup = require('react-addons-css-transition-group');
 
@@ -9,6 +22,30 @@ const Bullet = require('./Bullet');
 const Square = require('./Square');
 const Unit = require('./Unit');
 
+
+/*::
+type Props = {
+  bullets: BulletState[],
+  cursorCoordinate: CoordinateState | null,
+  handleTouchStartPad: ({ location: LocationState, coordinate: CoordinateState }) => void,
+  squareBasedAnimations: {
+    classNames: string[],
+    coordinates: CoordinateState[],
+    duration: number,
+    uid: string,
+  }[],
+  squareMatrix: SquareMatrixState,
+  unitBasedAnimations: {
+    classNames: string[],
+    duration: number,
+    uid: string,
+    unitUid: string,
+  }[],
+  unitStateChangeLogs: UnitStateChangeLogState[],
+  units: UnitState[],
+  unitsOnSquares: UnitState[],
+}
+ */
 
 class SquareMatrix extends React.Component {
   /**
@@ -37,10 +74,25 @@ class SquareMatrix extends React.Component {
     return unitBasedAnimations.filter(unitBasedAnimation => unitBasedAnimation.unitUid == unitUid);
   }
 
-  constructor(...args) {
-    super(...args);
+  /*::
+  static defaultProps: {
+    bullet: $PropertyType<Props, 'bullet'>,
+    cursorCoordinate: $PropertyType<Props, 'cursorCoordinate'>,
+    handleTouchStartPad: $PropertyType<Props, 'handleTouchStartPad'>,
+    squareBasedAnimations: $PropertyType<Props, 'squareBasedAnimations'>,
+    unitBasedAnimations: $PropertyType<Props, 'unitBasedAnimations'>,
+    unitStateChangeLogs: $PropertyType<Props, 'unitStateChangeLogs'>,
+    units: $PropertyType<Props, 'units'>,
+    unitsOnSquares: $PropertyType<Props, 'unitsOnSquares'>,
+  };
 
-    this._squareBasedAnimationDomNode = null;
+  props: Props;
+
+  _squareBasedAnimationDomNode: HTMLElement;
+   */
+
+  constructor(props/*:Props*/) {
+    super(props);
   }
 
   componentDidUpdate() {
@@ -186,64 +238,16 @@ class SquareMatrix extends React.Component {
   }
 }
 
-
-const coordinatePropType = React.PropTypes.arrayOf(React.PropTypes.number.isRequired);
-
-Object.assign(SquareMatrix, {
-  propTypes: {
-    bullets: React.PropTypes.arrayOf(
-      React.PropTypes.object.isRequired
-    ),
-    cursorCoordinate: coordinatePropType,
-    handleTouchStartPad: React.PropTypes.func,
-    squareMatrix: React.PropTypes.arrayOf(
-      React.PropTypes.arrayOf(
-        React.PropTypes.object.isRequired
-      ).isRequired
-    ).isRequired,
-    unitBasedAnimations: React.PropTypes.arrayOf(
-      React.PropTypes.shape({
-        classNames: React.PropTypes.arrayOf(React.PropTypes.string.isRequired).isRequired,
-        duration: React.PropTypes.number.isRequired,
-        uid: React.PropTypes.string.isRequired,
-        unitUid: React.PropTypes.string.isRequired,
-      }).isRequired
-    ),
-    unitStateChangeLogs: React.PropTypes.arrayOf(
-      React.PropTypes.shape({
-        uid: React.PropTypes.string.isRequired,
-        unitUid: React.PropTypes.string.isRequired,
-        tickId: React.PropTypes.number.isRequired,
-        type: React.PropTypes.string.isRequired,
-        value: React.PropTypes.any.isRequired,
-      }).isRequired
-    ),
-    units: React.PropTypes.arrayOf(
-      React.PropTypes.object.isRequired
-    ),
-    unitsOnSquares: React.PropTypes.arrayOf(
-      React.PropTypes.object.isRequired
-    ),
-    squareBasedAnimations: React.PropTypes.arrayOf(
-      React.PropTypes.shape({
-        classNames: React.PropTypes.arrayOf(React.PropTypes.string.isRequired).isRequired,
-        coordinates: React.PropTypes.arrayOf(coordinatePropType.isRequired).isRequired,
-        duration: React.PropTypes.number.isRequired,
-        uid: React.PropTypes.string.isRequired,
-      }).isRequired
-    ),
-  },
-  defaultProps: {
-    bullets: [],
-    cursorCoordinate: null,
-    handleTouchStartPad: () => {},
-    unitBasedAnimations: [],
-    unitStateChangeLogs: [],
-    units: [],
-    unitsOnSquares: [],
-    squareBasedAnimations: [],
-  },
-});
+SquareMatrix.defaultProps = {
+  bullets: [],
+  cursorCoordinate: null,
+  handleTouchStartPad: () => {},
+  squareBasedAnimations: [],
+  unitBasedAnimations: [],
+  unitStateChangeLogs: [],
+  units: [],
+  unitsOnSquares: [],
+};
 
 
 module.exports = SquareMatrix;

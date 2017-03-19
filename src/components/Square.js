@@ -1,9 +1,23 @@
+// @flow
+
+/*::
+import type { LandformType } from '../immutable/constants';
+ */
+
 const React = require('react');
 
 const { LANDFORM_TYPES, STYLES } = require('../immutable/constants');
 
 
-const Square = ({ rowIndex, columnIndex, landformType }) => {
+/*::
+type Props = {
+  rowIndex: number,
+  columnIndex: number,
+  landformType: LandformType | null,
+}
+ */
+
+const Square = ({ rowIndex, columnIndex, landformType }/*:Props*/) => {
   const styles = {
     top: STYLES.SQUARE_HEIGHT * rowIndex,
     left: STYLES.SQUARE_WIDTH * columnIndex,
@@ -29,15 +43,9 @@ const Square = ({ rowIndex, columnIndex, landformType }) => {
   });
 };
 
-Object.assign(Square, {
-  propTypes: {
-    rowIndex: React.PropTypes.number.isRequired,
-    columnIndex: React.PropTypes.number.isRequired,
-    landformType: React.PropTypes.string,
-  },
-  defaultProps: {
-    landformType: null,
-  },
-});
+Square.defaultProps = {
+  landformType: null,
+};
+
 
 module.exports = Square;

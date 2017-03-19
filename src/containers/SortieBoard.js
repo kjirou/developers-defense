@@ -32,7 +32,8 @@ class SortieBoard extends React.Component {
 
 SortieBoard = connect(state => {
   const cursorCoordinate =
-    state.cursor.placement.boardType === BOARD_TYPES.SORTIE_BOARD ? state.cursor.placement.coordinate : null;
+    state.cursor.placement && state.cursor.placement.boardType === BOARD_TYPES.SORTIE_BOARD ?
+      state.cursor.placement.coordinate : null;
 
   const unitsOnSquares =
     state.allies.filter(ally => ally.placement.boardType === state.sortieBoard.boardType);

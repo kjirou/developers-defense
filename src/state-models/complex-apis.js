@@ -56,7 +56,7 @@ const unitStateChangeLogMethods = require('./unit-state-change-log');
 const getUnitPositionAsLocationOrNull = (unit/*:UnitState*/)/*:LocationState|null*/ => {
   if (unit.location) {
     return unit.location;
-  } else if (unit.placement.boardType === BOARD_TYPES.BATTLE_BOARD && unit.placement.coordinate) {
+  } else if (unit.placement && unit.placement.boardType === BOARD_TYPES.BATTLE_BOARD && unit.placement.coordinate) {
     return coordinateToLocation(unit.placement.coordinate);
   }
   return null;

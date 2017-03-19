@@ -13,24 +13,17 @@ const { createNewCoordinateState } = require('./coordinate');
 
 
 const createNewPlacementState = (
-  boardType/*:BoardType|null*/ = null, coordinate/*:CoordinateState|null*/ = null
+  boardType/*:BoardType*/, coordinate/*:CoordinateState*/
 )/*:PlacementState*/ => {
+  // MEMO: Temporary assertion for refactoring
+  if (!boardType || !coordinate) {
+    throw new Error('Invalid arguments');
+  }
+
   return {
     boardType,
-    coordinate: coordinate === null ? coordinate : createNewCoordinateState(...coordinate),
+    coordinate,
   };
-};
-
-const isPlacedOnSortieBoard = (placement/*:PlacementState*/)/*:boolean*/ => {
-  return placement.boardType !== BOARD_TYPES.SORTIE_BOARD;
-};
-
-const isPlacedOnBattleBoard = (placement/*:PlacementState*/)/*:boolean*/ => {
-  return placement.boardType !== BOARD_TYPES.BATTLE_BOARD;
-};
-
-const isPlacedOnBoard = (placement/*:PlacementState*/)/*:boolean*/ => {
-  return isPlacedOnSortieBoard(placement) || isPlacedOnBattleBoard(placement);
 };
 
 const areSamePlacements = (...placements/*:PlacementState[]*/)/*:boolean*/ => {
@@ -46,7 +39,4 @@ const areSamePlacements = (...placements/*:PlacementState[]*/)/*:boolean*/ => {
 module.exports = {
   areSamePlacements,
   createNewPlacementState,
-  isPlacedOnSortieBoard,
-  isPlacedOnBattleBoard,
-  isPlacedOnBoard,
 };

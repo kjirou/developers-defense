@@ -45,14 +45,14 @@ export type BoardState = {
 };
 
 export type PlacementState = {
-  boardType: BoardType | null,
-  coordinate: CoordinateState | null,
+  boardType: BoardType,
+  coordinate: CoordinateState,
 };
 
 export type UnitState = {
   uid: string,
   factionType: FactionType,
-  placement: PlacementState,
+  placement: PlacementState | null,
   location: LocationState | null,
   destinations: LocationState[],
   // The index of the currently active element in destinations.

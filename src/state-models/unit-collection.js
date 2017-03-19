@@ -15,7 +15,7 @@ const createNewUnitCollectionState = ()/*:UnitCollectionState*/ => {
 const findUnitsByPlacement = (
   unitCollection/*:UnitCollectionState*/, placement/*:PlacementState*/
 )/*:UnitCollectionState*/ => {
-  return unitCollection.filter(unit => areSamePlacements(unit.placement, placement));
+  return unitCollection.filter(unit => unit.placement && areSamePlacements(unit.placement, placement));
 };
 
 const findUnitByUid = (

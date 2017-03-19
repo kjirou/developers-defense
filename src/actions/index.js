@@ -105,17 +105,26 @@ const tick = (tickId, allies, enemies, bullets, unitStateChangeLogs) => {
 const touchSquare = (newPlacement/*:PlacementState*/)/*:Function*/ => {
   return (dispatch/*:Function*/, getState/*:Function*/) => {
     const { cursor, sortieBoard, allies, battleBoard } = getState();
+
     const currentPlacement = cursor.placement;
-    const isCurrentPlacementPlacedOnBoard = placementMethods.isPlacedOnBoard(currentPlacement);
-    const currentSquare = complexApisMethods.findOneSquareFromBoardsByPlacement(currentPlacement, sortieBoard, battleBoard);
-    const newSquare = complexApisMethods.findOneSquareFromBoardsByPlacement(newPlacement, sortieBoard, battleBoard);
-    const currentCursorHittingAlly = unitCollectionMethods.findUnitsByPlacement(allies, currentPlacement)[0] || null;
+    let currentSquare = null;
+    let currentCursorHittingAlly = null;
+    if (currentPlacement) {
+      currentSquare =
+        complexApisMethods.findOneSquareFromBoardsByPlacement(currentPlacement, sortieBoard, battleBoard);
+      currentCursorHittingAlly =
+        unitCollectionMethods.findUnitsByPlacement(allies, currentPlacement)[0] || null;
+    }
+
+    const newSquare =
+      complexApisMethods.findOneSquareFromBoardsByPlacement(newPlacement, sortieBoard, battleBoard);
     const newCursorHittingAlly = unitCollectionMethods.findUnitsByPlacement(allies, newPlacement)[0] || null;
 
     // TODO: Probably, it becomes very verbose...
 
     // Make an ally sortie
     if (
+      currentPlacement &&
       currentPlacement.boardType === BOARD_TYPES.SORTIE_BOARD &&
       newPlacement.boardType === BOARD_TYPES.BATTLE_BOARD &&
       currentCursorHittingAlly &&
@@ -129,6 +138,7 @@ const touchSquare = (newPlacement/*:PlacementState*/)/*:Function*/ => {
 
     // Make an ally retreat
     } else if (
+      currentPlacement &&
       currentPlacement.boardType === BOARD_TYPES.BATTLE_BOARD &&
       newPlacement.boardType === BOARD_TYPES.SORTIE_BOARD &&
       currentCursorHittingAlly &&
@@ -142,6 +152,7 @@ const touchSquare = (newPlacement/*:PlacementState*/)/*:Function*/ => {
 
     // Move the position of an ally in the sortie-board
     } else if (
+      currentPlacement &&
       currentPlacement.boardType === BOARD_TYPES.SORTIE_BOARD &&
       newPlacement.boardType === BOARD_TYPES.SORTIE_BOARD &&
       currentCursorHittingAlly &&
@@ -155,6 +166,7 @@ const touchSquare = (newPlacement/*:PlacementState*/)/*:Function*/ => {
 
     // Exchange the positions of allies in the sortie-board
     } else if (
+      currentPlacement &&
       currentPlacement.boardType === BOARD_TYPES.SORTIE_BOARD &&
       newPlacement.boardType === BOARD_TYPES.SORTIE_BOARD &&
       currentCursorHittingAlly &&
@@ -171,7 +183,10 @@ const touchSquare = (newPlacement/*:PlacementState*/)/*:Function*/ => {
       dispatch(clearCursor());
 
     // Just the cursor disappears
-    } else if (placementMethods.areSamePlacements(newPlacement, currentPlacement)) {
+    } else if (
+      currentPlacement &&
+      placementMethods.areSamePlacements(newPlacement, currentPlacement)
+    ) {
       dispatch(clearCursor());
 
     // Just move the cursor

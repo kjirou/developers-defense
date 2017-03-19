@@ -40,7 +40,8 @@ class BattleBoard extends React.Component {
 
 BattleBoard = connect(state => {
   const cursorCoordinate =
-    state.cursor.placement.boardType === BOARD_TYPES.BATTLE_BOARD ? state.cursor.placement.coordinate : null;
+    state.cursor.placement && state.cursor.placement.boardType === BOARD_TYPES.BATTLE_BOARD ?
+      state.cursor.placement.coordinate : null;
 
   const enemiesInBattle = state.enemies.filter(enemy => enemy.location);
 

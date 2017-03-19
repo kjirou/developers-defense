@@ -1,3 +1,5 @@
+// @flow
+
 const React = require('react');
 
 const BattleBoard = require('../containers/BattleBoard');

@@ -1,3 +1,5 @@
+// @flow
+
 const React = require('react');
 const { connect } = require('react-redux');
 
@@ -10,27 +12,23 @@ const SquareMatrix = require('../components/SquareMatrix');
 
 class SortieBoard extends React.Component {
   render() {
-    const handleTouchStartPad = (event, { coordinate }) => {
-      const placement = createNewPlacementState(BOARD_TYPES.SORTIE_BOARD, coordinate);
-      this.props.dispatch(touchSquare(placement));
-    };
+    const squareMatrix = React.createElement(SquareMatrix, {
+      squareMatrix: this.props.squareMatrix,
+      cursorCoordinate: this.props.cursorCoordinate,
+      unitsOnSquares: this.props.unitsOnSquares,
+      handleTouchStartPad: this.props.handleTouchStartPad,
+    });
 
-    return <Board
-      rowLength={ PARAMETERS.SORTIE_BOARD_ROW_LENGTH }
-      columnLength={ PARAMETERS.SORTIE_BOARD_COLUMN_LENGTH }
-      additionalClassNames={ ['root__recruitment-board'] }
-    >
-      <SquareMatrix
-        squareMatrix={ this.props.sortieBoard.squareMatrix }
-        cursorCoordinate={ this.props.cursorCoordinate }
-        unitsOnSquares={ this.props.unitsOnSquares }
-        handleTouchStartPad={ handleTouchStartPad }
-      />
-    </Board>;
+    return React.createElement(Board, {
+      rowLength: PARAMETERS.SORTIE_BOARD_ROW_LENGTH,
+      columnLength: PARAMETERS.SORTIE_BOARD_COLUMN_LENGTH,
+      additionalClassNames: ['root__recruitment-board'],
+      children: squareMatrix,
+    });
   }
 }
 
-SortieBoard = connect(state => {
+const mapStateToProps = (state) => {
   const cursorCoordinate =
     state.cursor.placement && state.cursor.placement.boardType === BOARD_TYPES.SORTIE_BOARD ?
       state.cursor.placement.coordinate : null;
@@ -38,11 +36,23 @@ SortieBoard = connect(state => {
   const unitsOnSquares =
     state.allies.filter(ally => ally.placement.boardType === state.sortieBoard.boardType);
 
-  return Object.assign({}, state, {
+  return {
     cursorCoordinate,
+    squareMatrix: state.sortieBoard.squareMatrix,
     unitsOnSquares,
-  });
-})(SortieBoard);
+  };
+};
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    handleTouchStartPad: (event, { coordinate }) => {
+      const placement = createNewPlacementState(BOARD_TYPES.SORTIE_BOARD, coordinate);
+      dispatch(touchSquare(placement));
+    },
+  };
+};
+
+SortieBoard = connect(mapStateToProps, mapDispatchToProps)(SortieBoard);
 
 
 module.exports = SortieBoard;

@@ -10,31 +10,48 @@ const createNewCoordinateState = (rowIndex/*:number*/, columnIndex/*:number*/)/*
     throw new Error('`rowIndex` and `columnIndex` are integers only');
   }
 
-  if (rowIndex < 0 || columnIndex < 0) {
-    throw new Error('Negative numbers are not included in `rowIndex` and `columnIndex`');
-  }
-
-  return [rowIndex, columnIndex];
+  return {
+    rowIndex,
+    columnIndex,
+  };
 };
 
 const areSameCoordinates = (...coordinates/*:CoordinateState[]*/)/*:boolean*/ => {
   const [first, ...rest] = coordinates;
-  return rest.every(v => first[0] === v[0] && first[1] === v[1]);
+  return rest.every(v => first.rowIndex === v.rowIndex && first.columnIndex === v.columnIndex);
 };
 
-const tryToMoveCoordinate = (
-  coordinate/*:CoordinateState*/, rowIndexDelta/*:number*/, columnIndexDelta/*:number*/
-)/*:CoordinateState|null*/ => {
-  try {
-    return createNewCoordinateState(coordinate[0] + rowIndexDelta, coordinate[1] + columnIndexDelta);
-  } catch (error) {
-    return null;
-  }
+const addCoordinates = (...coordinates/*:CoordinateState[]*/)/*:CoordinateState*/ => {
+  const [first, ...rest] = coordinates;
+  let { rowIndex, columnIndex } = first;
+  rest.forEach(v => {
+    rowIndex += v.rowIndex;
+    columnIndex += v.columnIndex;
+  });
+  return createNewCoordinateState(rowIndex, columnIndex);
+};
+
+/**
+ * @param startPointCoordinate A point of the top/left
+ * @param endPointCoordinate A point of the bottom/right
+ */
+const isCoordinateInRange = (
+  targetPointCoordinate/*:CoordinateState*/,
+  startPointCoordinate/*:CoordinateState*/,
+  endPointCoordinate/*:CoordinateState*/
+)/*:boolean*/ => {
+  return (
+    startPointCoordinate.rowIndex <= targetPointCoordinate.rowIndex &&
+    startPointCoordinate.columnIndex <= targetPointCoordinate.columnIndex &&
+    targetPointCoordinate.rowIndex <= endPointCoordinate.rowIndex &&
+    targetPointCoordinate.columnIndex <= endPointCoordinate.columnIndex
+  );
 };
 
 
 module.exports = {
+  addCoordinates,
   areSameCoordinates,
   createNewCoordinateState,
-  tryToMoveCoordinate,
+  isCoordinateInRange,
 };

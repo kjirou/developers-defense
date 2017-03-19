@@ -1,9 +1,19 @@
+// @flow
+
 const React = require('react');
 
 const { PARAMETERS } = require('../immutable/constants');
 
 
-const Bullet = ({ classNames, top, left }) => {
+/*::
+type Props = {
+  top: number,
+  left: number,
+  classNames: string[],
+}
+ */
+
+const Bullet = ({ classNames, top, left }/*:Props*/) => {
   // TODO: The movement of the last one turn is slow
   const durationStr = `${ PARAMETERS.TICK_INTERVAL }ms`;
 
@@ -21,18 +31,9 @@ const Bullet = ({ classNames, top, left }) => {
   });
 };
 
-Object.assign(Bullet, {
-  propTypes: {
-    top: React.PropTypes.number.isRequired,
-    left: React.PropTypes.number.isRequired,
-    classNames: React.PropTypes.arrayOf(
-      React.PropTypes.string.isRequired
-    ),
-  },
-  defaultProps: {
-    classNames: [],
-  },
-});
+Bullet.defaultProps = {
+  classNames: [],
+};
 
 
 module.exports = Bullet;

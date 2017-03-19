@@ -60,8 +60,8 @@ const findSquareByUid = (squareMatrix/*:SquareMatrixState*/, uid/*:string*/)/*:S
 
 const findSquareByCoordinate = (
   squareMatrix/*:SquareMatrixState*/, coordinate/*:CoordinateState*/
-)/*:SquareState|null*/ => {
-  const [ rowIndex, columnIndex ] = coordinate;
+)/*:SquareState | null*/ => {
+  const { rowIndex, columnIndex } = coordinate;
   const row = squareMatrix[rowIndex];
   if (!row) return null;
   const square = row[columnIndex];
@@ -69,14 +69,14 @@ const findSquareByCoordinate = (
 };
 
 const extendSquareMatrix = (
-  squareMatrix/*:SquareMatrixState*/, propertiesMatrix/*:{}[][]*/
+  squareMatrix/*:SquareMatrixState*/, propertiesMatrix/*:Object[][]*/
 )/*:SquareMatrixState*/ => {
   if (!areSameSizeMatrices(squareMatrix, propertiesMatrix)) {
     throw new Error('Both arrarys are not the same size');
   }
 
   return mapSquareMatrix(squareMatrix, (square) => {
-    const updater = propertiesMatrix[square.coordinate[0]][square.coordinate[1]];
+    const updater = propertiesMatrix[square.coordinate.rowIndex][square.coordinate.columnIndex];
     return extendSquare(square, updater);
   });
 };

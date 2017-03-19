@@ -6,11 +6,11 @@ import type { CoordinateState, EffectState, LocationState, RectangleState } from
  */
 
 
-const uuidV4 = require('uuid/v4');
+const uuidV4 = require('uuid').v4;
 
 const { ANIMATION_IDS } = require('../immutable/animations');
 const { ACT_EFFECT_RANGE_TYPES, ANIMATION_DESTINATION_TYPES, PARAMETERS } = require('../immutable/constants');
-const { tryToMoveCoordinate } = require('./coordinate');
+const { addCoordinates, createNewCoordinateState, isCoordinateInRange } = require('./coordinate');
 const { coordinateToRectangle, locationToCoordinate } = require('./geometric-apis');
 
 
@@ -59,17 +59,24 @@ const createNewEffectState = (
   };
 };
 
-const createEffectiveCoordinates = (effect/*:EffectState*/)/*:any[]*/ => {
+const createEffectiveCoordinates = (
+  effect/*:EffectState*/, endPointCoordinate/*:CoordinateState*/
+)/*:any[]*/ => {
   const impactedCoordinate = locationToCoordinate(effect.impactedLocation);
+  const startPointCoordinate = createNewCoordinateState(0, 0);
 
   return (effect.relativeCoordinates || [])
-    .map(([ m, n ]) => tryToMoveCoordinate(impactedCoordinate, m, n))
-    .filter(coordinate => coordinate !== null)
+    .map(([ rowIndex, columnIndex ]) => {
+      return addCoordinates(impactedCoordinate, createNewCoordinateState(rowIndex, columnIndex));
+    })
+    .filter(coordinate => isCoordinateInRange(coordinate, startPointCoordinate, endPointCoordinate))
   ;
 };
 
-const createEffectiveRectangles = (effect/*:EffectState*/)/*:RectangleState[]*/ => {
-  return createEffectiveCoordinates(effect).map(coordinateToRectangle);
+const createEffectiveRectangles = (
+  effect/*:EffectState*/, endPointCoordinate/*:CoordinateState*/
+)/*:RectangleState[]*/ => {
+  return createEffectiveCoordinates(effect, endPointCoordinate).map(coordinateToRectangle);
 };
 
 

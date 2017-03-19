@@ -1,22 +1,25 @@
 // @flow
 
+/*::
+import type { PlacementState } from '../types/states';
+ */
+
 const { createReducer } = require('redux-create-reducer');
 
 const { ACTION_TYPES, PARAMETERS } = require('../immutable/constants');
-const { createNewPlacementState } = require('../state-models/placement');
 
 
-const createInitialState = () => {
+const createInitialState = ()/*:{ placement: PlacementState | null }*/ => {
   return {
-    placement: createNewPlacementState(),
+    placement: null,
   };
 };
 
 
-const reducements = {
+const handlers = {
   [ACTION_TYPES.CLEAR_CURSOR]: (state) => {
     return Object.assign({}, state, {
-      placement: createNewPlacementState(),
+      placement: null,
     });
   },
 
@@ -28,5 +31,5 @@ const reducements = {
 
 module.exports = {
   _createInitialState: createInitialState,
-  reduceCursor: createReducer(createInitialState(), reducements),
+  reduceCursor: createReducer(createInitialState(), handlers),
 };

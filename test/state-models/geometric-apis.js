@@ -36,9 +36,6 @@ describe('state-models/geometric-apis', () => {
         locationToCoordinate(_loc(47.9, 95.9)),
         _coord(0, 1)
       );
-      assert.throws(() => {
-        locationToCoordinate(_loc(-0.1, 1));
-      }, /negative/i);
     });
   });
 

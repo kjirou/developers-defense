@@ -1,7 +1,29 @@
+// @flow
+
+/*::
+import type { UnitStateChangeLogState } from '../types/states';
+ */
+
 const React = require('react');
 
 const { STYLES, UNIT_STATE_CHANGE_LOG_TYPES } = require('../immutable/constants');
 
+
+/*::
+type Props = {
+  animations: {
+    classNames: string[],
+    duration: number,
+    uid: string,
+    unitUid: string,
+  }[],
+  classNames: string[],
+  iconId: string,
+  left: number,
+  stateChanges: UnitStateChangeLogState[],
+  top: number,
+}
+ */
 
 class Unit extends React.Component {
   static _generateStateChangeEffectData({ type, value }/*:UnitStateChangeLogState*/) {
@@ -56,11 +78,21 @@ class Unit extends React.Component {
     });
   }
 
-  constructor(...args) {
-    super(...args);
+  /*::
+  static defaultProps: {
+    animations: $PropertyType<Props, 'animations'>,
+    classNames: $PropertyType<Props, 'classNames'>,
+    stateChanges: $PropertyType<Props, 'stateChanges'>,
+  };
 
-    this._stateChangeEffectContainerDomNode = null;
-    this._animationContainerDomNode = null;
+  props: Props;
+
+  _stateChangeEffectContainerDomNode: HTMLElement;
+  _animationContainerDomNode: HTMLElement;
+   */
+
+  constructor(props/*:Props*/) {
+    super(props);
   }
 
   componentDidUpdate() {
@@ -128,37 +160,11 @@ class Unit extends React.Component {
   }
 }
 
-Object.assign(Unit, {
-  propTypes: {
-    iconId: React.PropTypes.string.isRequired,
-    top: React.PropTypes.number.isRequired,
-    left: React.PropTypes.number.isRequired,
-    classNames: React.PropTypes.arrayOf(
-      React.PropTypes.string.isRequired
-    ),
-    animations: React.PropTypes.arrayOf(
-      React.PropTypes.shape({
-        classNames: React.PropTypes.arrayOf(React.PropTypes.string.isRequired).isRequired,
-        duration: React.PropTypes.number.isRequired,
-        uid: React.PropTypes.string.isRequired,
-      }).isRequired
-    ),
-    stateChanges: React.PropTypes.arrayOf(
-      React.PropTypes.shape({
-        uid: React.PropTypes.string.isRequired,
-        unitUid: React.PropTypes.string.isRequired,
-        tickId: React.PropTypes.number.isRequired,
-        type: React.PropTypes.string.isRequired,
-        value: React.PropTypes.any.isRequired,
-      }).isRequired
-    ),
-  },
-  defaultProps: {
-    classNames: [],
-    animations: [],
-    stateChanges: [],
-  },
-});
+Unit.defaultProps = {
+  classNames: [],
+  animations: [],
+  stateChanges: [],
+};
 
 
 module.exports = Unit;

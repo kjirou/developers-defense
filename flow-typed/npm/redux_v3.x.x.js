@@ -1,4 +1,6 @@
-// Copied from: https://raw.githubusercontent.com/flowtype/flow-typed/master/definitions/npm/redux_v3.x.x/flow_v0.33.x-/redux_v3.x.x.js
+// flow-typed signature: ba132c96664f1a05288f3eb2272a3c35
+// flow-typed version: c4bbd91cfc/redux_v3.x.x/flow_>=v0.33.x
+
 declare module 'redux' {
 
   /*

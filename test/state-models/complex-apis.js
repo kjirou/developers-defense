@@ -9,7 +9,6 @@ const reducer = require('../../src/reducers');
 const boardMethods = require('../../src/state-models/board');
 const coordinateMethods = require('../../src/state-models/coordinate');
 const effectMethods = require('../../src/state-models/effect');
-const effectLogMethods = require('../../src/state-models/effect-log');
 const locationMethods = require('../../src/state-models/location');
 const {
   _applyEffectToUnit,
@@ -31,17 +30,14 @@ const unitMethods = require('../../src/state-models/unit');
 describe('state-models/complex-apis', function() {
   const _coord = coordinateMethods.createNewCoordinateState;
   const _loc = locationMethods.createNewLocationState;
-  const _log = effectLogMethods.createNewEffectLogState;
   const _effect = effectMethods.createNewEffectState;
+  const _place = placementMethods.createNewPlacementState;
   const _rect = rectangleMethods.createNewRectangleState;
   const _unit = unitMethods.createNewUnitState;
 
   const _createPlacedUnit = (rowIndex, columnIndex) => {
     return Object.assign(_unit(), {
-      placement: Object.assign(placementMethods.createNewPlacementState(), {
-        boardType: BOARD_TYPES.BATTLE_BOARD,
-        coordinate: _coord(rowIndex, columnIndex),
-      }),
+      placement: _place(BOARD_TYPES.BATTLE_BOARD, _coord(rowIndex, columnIndex)),
     });
   };
 
@@ -175,20 +171,14 @@ describe('state-models/complex-apis', function() {
 
     it('can find a square from multiple boards by the placement interdisciplinary', () => {
       const s1 = findOneSquareFromBoardsByPlacement(
-        Object.assign(placementMethods.createNewPlacementState(), {
-          boardType: BOARD_TYPES.SORTIE_BOARD,
-          coordinate: [0, 0],
-        }),
+        _place(BOARD_TYPES.SORTIE_BOARD, _coord(0, 0)),
         sortieBoard,
         battleBoard
       );
       assert.strictEqual(s1, sortieBoard.squareMatrix[0][0]);
 
       const s2 = findOneSquareFromBoardsByPlacement(
-        Object.assign(placementMethods.createNewPlacementState(), {
-          boardType: BOARD_TYPES.BATTLE_BOARD,
-          coordinate: [3, 4],
-        }),
+        _place(BOARD_TYPES.BATTLE_BOARD, _coord(3, 4)),
         sortieBoard,
         battleBoard
       );
@@ -197,30 +187,17 @@ describe('state-models/complex-apis', function() {
 
     it('should return a null if the placement is not exist', () => {
       const s1 = findOneSquareFromBoardsByPlacement(
-        Object.assign(placementMethods.createNewPlacementState(), {
-          boardType: BOARD_TYPES.SORTIE_BOARD,
-          coordinate: [0, 3],
-        }),
+        _place(BOARD_TYPES.SORTIE_BOARD, _coord(0, 3)),
         sortieBoard,
         battleBoard
       );
       assert.strictEqual(s1, null);
-
-      const s2 = findOneSquareFromBoardsByPlacement(
-        Object.assign(placementMethods.createNewPlacementState()),
-        sortieBoard,
-        battleBoard
-      );
-      assert.strictEqual(s2, null);
     });
 
     it('should throw a error if it find multiple squares', () => {
       assert.throws(() => {
         findOneSquareFromBoardsByPlacement(
-          Object.assign(placementMethods.createNewPlacementState(), {
-            boardType: BOARD_TYPES.SORTIE_BOARD,
-            coordinate: [0, 0],
-          }),
+          _place(BOARD_TYPES.SORTIE_BOARD, _coord(0, 0)),
           sortieBoard,
           sortieBoard
         );
@@ -649,6 +626,10 @@ describe('state-models/complex-apis', function() {
   });
 
   describe('_effectOccurs', function() {
+    beforeEach(function() {
+      this.farEndPointCoordinate = _coord(99, 99);
+    });
+
     describe('affectableFractionTypes', function() {
       beforeEach(function() {
         this.ally = Object.assign(_createPlacedAlly(1, 2), {
@@ -666,7 +647,7 @@ describe('state-models/complex-apis', function() {
           relativeCoordinates: [[0, 0]],
           damagePoints: 1,
         });
-        const { units } = _effectOccurs(effect, [this.ally, this.enemy], 1);
+        const { units } = _effectOccurs(effect, [this.ally, this.enemy], 1, this.farEndPointCoordinate);
 
         assert(units[0].hitPoints < this.ally.hitPoints);
         assert(units[1].hitPoints === this.enemy.hitPoints);
@@ -677,7 +658,7 @@ describe('state-models/complex-apis', function() {
           relativeCoordinates: [[0, 0]],
           damagePoints: 1,
         });
-        const { units } = _effectOccurs(effect, [this.ally, this.enemy], 1);
+        const { units } = _effectOccurs(effect, [this.ally, this.enemy], 1, this.farEndPointCoordinate);
 
         assert(units[0].hitPoints === this.ally.hitPoints);
         assert(units[1].hitPoints < this.enemy.hitPoints);
@@ -698,7 +679,7 @@ describe('state-models/complex-apis', function() {
       });
 
       it('can affect', function() {
-        const { units: [ newEnemy ] } = _effectOccurs(this.effect, [this.enemy], 1);
+        const { units: [ newEnemy ] } = _effectOccurs(this.effect, [this.enemy], 1, this.farEndPointCoordinate);
 
         assert(newEnemy.hitPoints < this.enemy.hitPoints);
       });
@@ -706,7 +687,7 @@ describe('state-models/complex-apis', function() {
       it('can not affect if uids are different', function() {
         this.enemy.uid = 'another_uid';
 
-        const { units: [ newEnemy ] } = _effectOccurs(this.effect, [this.enemy], 1);
+        const { units: [ newEnemy ] } = _effectOccurs(this.effect, [this.enemy], 1, this.farEndPointCoordinate);
 
         assert(newEnemy.hitPoints === this.enemy.hitPoints);
       });
@@ -714,7 +695,7 @@ describe('state-models/complex-apis', function() {
       it('can not affect if the bullet does not hit', function() {
         this.effect.impactedLocation = _loc(0, 0);
 
-        const { units: [ newEnemy ] } = _effectOccurs(this.effect, [this.enemy], 1);
+        const { units: [ newEnemy ] } = _effectOccurs(this.effect, [this.enemy], 1, this.farEndPointCoordinate);
 
         assert(newEnemy.hitPoints === this.enemy.hitPoints);
       });
@@ -734,7 +715,7 @@ describe('state-models/complex-apis', function() {
       });
 
       it('can affect', function() {
-        const { units: [ newAlly ] } = _effectOccurs(this.effect, [this.ally], 1);
+        const { units: [ newAlly ] } = _effectOccurs(this.effect, [this.ally], 1, this.farEndPointCoordinate);
 
         assert(newAlly.hitPoints < this.ally.hitPoints);
       });
@@ -745,7 +726,7 @@ describe('state-models/complex-apis', function() {
           damagePoints: 1,
         });
 
-        const { units: [ newAlly ] } = _effectOccurs(effect, [this.ally], 1);
+        const { units: [ newAlly ] } = _effectOccurs(effect, [this.ally], 1, this.farEndPointCoordinate);
 
         assert(newAlly.hitPoints === this.ally.hitPoints);
       });
@@ -768,7 +749,7 @@ describe('state-models/complex-apis', function() {
           damagePoints: 10,
         });
 
-        const { unitStateChangeLogs } = _effectOccurs(this.effect, [this.enemy], 123);
+        const { unitStateChangeLogs } = _effectOccurs(this.effect, [this.enemy], 123, this.farEndPointCoordinate);
 
         assert.strictEqual(unitStateChangeLogs.length, 1);
 

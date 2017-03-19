@@ -9,52 +9,51 @@ const { createNewLocationState } = require('../../src/state-models/location');
 const { createNewRectangleState } = require('../../src/state-models/rectangle');
 
 
-describe('state-models/effect', () => {
-  describe('createEffectiveRectangles', () => {
-    it('should return [] if the effect does not have `relativeCoordinates`', () => {
+describe('state-models/effect', function() {
+  describe('createEffectiveRectangles', function() {
+    it('should return [] if the effect does not have `relativeCoordinates`', function() {
       const effect = createNewEffectState([], createNewLocationState(0, 0), { aimedUnitUid: 'a' });
 
-      assert.deepStrictEqual(createEffectiveRectangles(effect), []);
+      assert.deepStrictEqual(
+        createEffectiveRectangles(effect, createNewCoordinateState(1, 1)),
+        []
+      );
     });
 
-    it('can create rectangles from relative coordinates', () => {
+    //
+    //   xoooxx
+    //   -01234
+    // x-   x
+    // o0   o
+    // o1 oo*xx
+    // o2   o
+    // x3   x
+    //
+    it('can create rectangles from relative coordinates', function() {
       const effect = createNewEffectState([], createNewLocationState(48, 96), {
-        relativeCoordinates: [[-1, 0], [0, 1], [1, 0], [0, -1]],
+        relativeCoordinates: [[-1, 0], [0, 1], [1, 0], [0, -1], [-2, 0], [0, 2], [2, 0], [0, -2]],
       });
 
       assert.deepStrictEqual(
-        createEffectiveRectangles(effect),
+        createEffectiveRectangles(effect, createNewCoordinateState(2, 2)),
         [
           createNewRectangleState({ x: 96, y: 0, width: 48, height: 48 }),
-          createNewRectangleState({ x: 144, y: 48, width: 48, height: 48 }),
           createNewRectangleState({ x: 96, y: 96, width: 48, height: 48 }),
           createNewRectangleState({ x: 48, y: 48, width: 48, height: 48 }),
+          createNewRectangleState({ x: 0, y: 48, width: 48, height: 48 }),
         ]
       );
     });
 
-    it('should adjust the impacted location to a coordinate', () => {
+    it('should adjust the impacted location to a coordinate', function() {
       const effect = createNewEffectState([], createNewLocationState(47.9, 95.9), {
         relativeCoordinates: [[0 ,0]],
       });
 
       assert.deepStrictEqual(
-        createEffectiveRectangles(effect),
+        createEffectiveRectangles(effect, createNewCoordinateState(2, 2)),
         [
           createNewRectangleState({ x: 48, y: 0, width: 48, height: 48 }),
-        ]
-      );
-    });
-
-    it('should cut off negative value coordinates', () => {
-      const effect = createNewEffectState([], createNewLocationState(0, 0), {
-        relativeCoordinates: [[-1 ,0], [0, -1], [0, 0]],
-      });
-
-      assert.deepStrictEqual(
-        createEffectiveRectangles(effect),
-        [
-          createNewRectangleState({ x: 0, y: 0, width: 48, height: 48 }),
         ]
       );
     });

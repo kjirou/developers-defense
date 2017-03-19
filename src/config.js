@@ -1,12 +1,10 @@
-/**
- * Configurable global variables that can be changed during running of app
- * @module
- */
+// @flow
 
 /**
- * @typedef {Object} config
- * @property {boolean} isEnabledTickLog
+ * Configurable global variables that can be changed during running of app
  */
+
+
 const config = {
   isEnabledTickLog: false,
 };

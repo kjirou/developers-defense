@@ -37,7 +37,6 @@ const { expandReachToRelativeCoordinates } = require('../lib/core');
 const bulletMethods = require('./bullet');
 const coordinateMethods = require('./coordinate');
 const effectMethods = require('./effect');
-const effectLogMethods = require('./effect-log');
 const geometricApis = require('./geometric-apis');
 const {
   coordinateToLocation,
@@ -57,7 +56,7 @@ const unitStateChangeLogMethods = require('./unit-state-change-log');
 const getUnitPositionAsLocationOrNull = (unit/*:UnitState*/)/*:LocationState|null*/ => {
   if (unit.location) {
     return unit.location;
-  } else if (unit.placement.boardType === BOARD_TYPES.BATTLE_BOARD && unit.placement.coordinate) {
+  } else if (unit.placement && unit.placement.boardType === BOARD_TYPES.BATTLE_BOARD && unit.placement.coordinate) {
     return coordinateToLocation(unit.placement.coordinate);
   }
   return null;
@@ -341,11 +340,11 @@ const applyEffectToUnit = (
  * Apply effect to units within the effective range
  */
 const effectOccurs = (
-  effect/*:EffectState*/, units/*:UnitState[]*/, tickId/*:number*/
+  effect/*:EffectState*/, units/*:UnitState[]*/, tickId/*:number*/, endPointCoordinate/*:CoordinateState*/
 )/*:{ units: UnitState[], unitStateChangeLogs: UnitStateChangeLogState[] }*/ => {
   const unitStateChangeLogs = [];
 
-  const effectiveRectangles = effectMethods.createEffectiveRectangles(effect);
+  const effectiveRectangles = effectMethods.createEffectiveRectangles(effect, endPointCoordinate);
 
   const newUnits = units.map(unit => {
     if (!isUnitInBattle(unit)) return unit;
@@ -388,9 +387,7 @@ const effectOccurs = (
 
 /**
  * Compute the state transition during the "tick"
- * <section>
- *   The "tick" is a coined word, which means so-called "one game loop".
- * </section>
+ * The "tick" is a coined word, which means so-called "one game loop".
  * @param state - A plain object generated from `store.getState()`
  */
 const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }/*:Object*/)/*:Object*/ => {
@@ -417,7 +414,8 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }/*:Obj
         return true;
       };
 
-      const effectResult = effectOccurs(bullet.effect, newAllies.concat(newEnemies), gameStatus.tickId);
+      const effectResult = effectOccurs(
+        bullet.effect, newAllies.concat(newEnemies), gameStatus.tickId, battleBoardEndPointCoordinate);
       newAllies = effectResult.units.filter(unit => unit.factionType === FACTION_TYPES.ALLY);
       newEnemies = effectResult.units.filter(unit => unit.factionType === FACTION_TYPES.ENEMY);
       newUnitStateChangeLogs = newUnitStateChangeLogs.concat(effectResult.unitStateChangeLogs);

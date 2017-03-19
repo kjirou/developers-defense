@@ -9,6 +9,7 @@ const randomWeightedChoice = require('random-weighted-choice');
 const { ACTION_TYPES, BOARD_TYPES, PARAMETERS, STYLES } = require('../immutable/constants');
 const { JOB_IDS } = require('../immutable/jobs');
 const complexApisMethods = require('../state-models/complex-apis');
+const coordinateMethods = require('../state-models/coordinate');
 const locationMethods = require('../state-models/location');
 const placementMethods = require('../state-models/placement');
 const squareMatrixMethods = require('../state-models/square-matrix');
@@ -105,17 +106,26 @@ const tick = (tickId, allies, enemies, bullets, unitStateChangeLogs) => {
 const touchSquare = (newPlacement/*:PlacementState*/)/*:Function*/ => {
   return (dispatch/*:Function*/, getState/*:Function*/) => {
     const { cursor, sortieBoard, allies, battleBoard } = getState();
+
     const currentPlacement = cursor.placement;
-    const isCurrentPlacementPlacedOnBoard = placementMethods.isPlacedOnBoard(currentPlacement);
-    const currentSquare = complexApisMethods.findOneSquareFromBoardsByPlacement(currentPlacement, sortieBoard, battleBoard);
-    const newSquare = complexApisMethods.findOneSquareFromBoardsByPlacement(newPlacement, sortieBoard, battleBoard);
-    const currentCursorHittingAlly = unitCollectionMethods.findUnitsByPlacement(allies, currentPlacement)[0] || null;
+    let currentSquare = null;
+    let currentCursorHittingAlly = null;
+    if (currentPlacement) {
+      currentSquare =
+        complexApisMethods.findOneSquareFromBoardsByPlacement(currentPlacement, sortieBoard, battleBoard);
+      currentCursorHittingAlly =
+        unitCollectionMethods.findUnitsByPlacement(allies, currentPlacement)[0] || null;
+    }
+
+    const newSquare =
+      complexApisMethods.findOneSquareFromBoardsByPlacement(newPlacement, sortieBoard, battleBoard);
     const newCursorHittingAlly = unitCollectionMethods.findUnitsByPlacement(allies, newPlacement)[0] || null;
 
     // TODO: Probably, it becomes very verbose...
 
     // Make an ally sortie
     if (
+      currentPlacement &&
       currentPlacement.boardType === BOARD_TYPES.SORTIE_BOARD &&
       newPlacement.boardType === BOARD_TYPES.BATTLE_BOARD &&
       currentCursorHittingAlly &&
@@ -129,6 +139,7 @@ const touchSquare = (newPlacement/*:PlacementState*/)/*:Function*/ => {
 
     // Make an ally retreat
     } else if (
+      currentPlacement &&
       currentPlacement.boardType === BOARD_TYPES.BATTLE_BOARD &&
       newPlacement.boardType === BOARD_TYPES.SORTIE_BOARD &&
       currentCursorHittingAlly &&
@@ -142,6 +153,7 @@ const touchSquare = (newPlacement/*:PlacementState*/)/*:Function*/ => {
 
     // Move the position of an ally in the sortie-board
     } else if (
+      currentPlacement &&
       currentPlacement.boardType === BOARD_TYPES.SORTIE_BOARD &&
       newPlacement.boardType === BOARD_TYPES.SORTIE_BOARD &&
       currentCursorHittingAlly &&
@@ -155,6 +167,7 @@ const touchSquare = (newPlacement/*:PlacementState*/)/*:Function*/ => {
 
     // Exchange the positions of allies in the sortie-board
     } else if (
+      currentPlacement &&
       currentPlacement.boardType === BOARD_TYPES.SORTIE_BOARD &&
       newPlacement.boardType === BOARD_TYPES.SORTIE_BOARD &&
       currentCursorHittingAlly &&
@@ -171,7 +184,10 @@ const touchSquare = (newPlacement/*:PlacementState*/)/*:Function*/ => {
       dispatch(clearCursor());
 
     // Just the cursor disappears
-    } else if (placementMethods.areSamePlacements(newPlacement, currentPlacement)) {
+    } else if (
+      currentPlacement &&
+      placementMethods.areSamePlacements(newPlacement, currentPlacement)
+    ) {
       dispatch(clearCursor());
 
     // Just move the cursor
@@ -241,15 +257,21 @@ const initializeApp = ()/*:Function*/ => {
   const allies = unitCollectionMethods.createNewUnitCollectionState().concat([
     Object.assign(unitMethods.createNewAllyState(), {
       jobId: JOB_IDS.FIGHTER,
-      placement: placementMethods.createNewPlacementState(BOARD_TYPES.SORTIE_BOARD, [0, 0]),
+      placement: placementMethods.createNewPlacementState(
+        BOARD_TYPES.SORTIE_BOARD, coordinateMethods.createNewCoordinateState(0, 0)
+      ),
     }),
     Object.assign(unitMethods.createNewAllyState(), {
       jobId: JOB_IDS.HEALER,
-      placement: placementMethods.createNewPlacementState(BOARD_TYPES.SORTIE_BOARD, [0, 1]),
+      placement: placementMethods.createNewPlacementState(
+        BOARD_TYPES.SORTIE_BOARD, coordinateMethods.createNewCoordinateState(0, 1)
+      ),
     }),
     Object.assign(unitMethods.createNewAllyState(), {
       jobId: JOB_IDS.MAGE,
-      placement: placementMethods.createNewPlacementState(BOARD_TYPES.SORTIE_BOARD, [1, 3]),
+      placement: placementMethods.createNewPlacementState(
+        BOARD_TYPES.SORTIE_BOARD, coordinateMethods.createNewCoordinateState(1, 3)
+      ),
     }),
   ]).map(ally => {
     return Object.assign({}, ally, {

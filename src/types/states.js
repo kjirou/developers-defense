@@ -9,18 +9,39 @@ import type {
 } from '../immutable/constants';
 
 
-// A position on the battle-board
+//
+// A position in a rectangle from the top/left
+//
+//    0 1 2
+//   +-+-+-+
+//  0| |a| | a = { x: 1, y: 0 }
+//   +-+-+-+
+//  1| | |b| b = { x: 2, y: 1 }
+//   +-+-+-+
+//
+// Negative numbers are also allowed, since they may specify positions outside the rectangle.
+//
 export type LocationState = {
-  // A distance from top to bottom. In other words in CSS terms is "top".
   x: number,
-  // A distance from left to right. In other words in CSS terms is "left".
   y: number,
 }
 
-// The position of a square-matrix.
-// For example, it means [rowIndex, columnIndex] or [m, n].
-// TODO: Change to { rowIndex, columnIndex }
-export type CoordinateState = number[];
+//
+// A position in a SquareMatrixState from the top/left
+//
+//    0 1 2
+//   +-+-+-+
+//  0| |a| | a = { rowIndex: 0, columnIndex: 1 }
+//   +-+-+-+
+//  1| | |b| b = { rowIndex: 1, columnIndex: 2 }
+//   +-+-+-+
+//
+// Negative numbers are also allowed, since they may specify positions outside the matrix.
+//
+export type CoordinateState = {
+  rowIndex: number,
+  columnIndex: number,
+};
 
 export type RectangleState = {
   top: number,
@@ -32,8 +53,7 @@ export type RectangleState = {
 export type SquareState = {
   uid: string,
   coordinate: CoordinateState,
-  // TODO: Change to string only
-  landformType: LandformType | null,
+  landformType: LandformType,
 };
 
 // Each side is at least 1 or more in length.
@@ -45,14 +65,14 @@ export type BoardState = {
 };
 
 export type PlacementState = {
-  boardType: BoardType | null,
-  coordinate: CoordinateState | null,
+  boardType: BoardType,
+  coordinate: CoordinateState,
 };
 
 export type UnitState = {
   uid: string,
   factionType: FactionType,
-  placement: PlacementState,
+  placement: PlacementState | null,
   location: LocationState | null,
   destinations: LocationState[],
   // The index of the currently active element in destinations.

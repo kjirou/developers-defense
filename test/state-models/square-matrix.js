@@ -25,10 +25,10 @@ describe('state-models/square-matrix', function() {
   describe('findSquareByCoordinate', () => {
     it('should be executed correctly', () => {
       const matrix = createNewSquareMatrixState(2, 3);
-      assert.strictEqual(findSquareByCoordinate(matrix, [0, 0]), matrix[0][0]);
-      assert.strictEqual(findSquareByCoordinate(matrix, [1, 2]), matrix[1][2]);
-      assert.strictEqual(findSquareByCoordinate(matrix, [2, 2]), null);
-      assert.strictEqual(findSquareByCoordinate(matrix, [1, 3]), null);
+      assert.strictEqual(findSquareByCoordinate(matrix, createNewCoordinateState(0, 0)), matrix[0][0]);
+      assert.strictEqual(findSquareByCoordinate(matrix, createNewCoordinateState(1, 2)), matrix[1][2]);
+      assert.strictEqual(findSquareByCoordinate(matrix, createNewCoordinateState(2, 2)), null);
+      assert.strictEqual(findSquareByCoordinate(matrix, createNewCoordinateState(1, 3)), null);
     });
   });
 

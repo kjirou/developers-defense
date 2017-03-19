@@ -5,4 +5,4 @@
 src/types/
 
 [libs]
-src/decls/
+flow-typed/npm/

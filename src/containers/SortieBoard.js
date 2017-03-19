@@ -1,5 +1,3 @@
-// @flow
-
 const React = require('react');
 const { connect } = require('react-redux');
 
@@ -34,7 +32,7 @@ const mapStateToProps = (state) => {
       state.cursor.placement.coordinate : null;
 
   const unitsOnSquares =
-    state.allies.filter(ally => ally.placement.boardType === state.sortieBoard.boardType);
+    state.allies.filter(ally => ally.placement && ally.placement.boardType === state.sortieBoard.boardType);
 
   return {
     cursorCoordinate,
@@ -45,8 +43,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
-    handleTouchStartPad: (event, { coordinate }) => {
-      const placement = createNewPlacementState(BOARD_TYPES.SORTIE_BOARD, coordinate);
+    handleTouchStartPad: (event, eventData) => {
+      const placement = createNewPlacementState(BOARD_TYPES.SORTIE_BOARD, eventData.coordinate);
       dispatch(touchSquare(placement));
     },
   };

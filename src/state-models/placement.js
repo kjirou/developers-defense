@@ -6,7 +6,7 @@ import type { CoordinateState, PlacementState } from '../types/states';
  */
 
 
-const uuidV4 = require('uuid/v4');
+const uuidV4 = require('uuid').v4;
 
 const { BOARD_TYPES } = require('../immutable/constants');
 const { createNewCoordinateState } = require('./coordinate');

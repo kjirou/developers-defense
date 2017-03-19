@@ -6,7 +6,7 @@ import type { BulletState, EffectState, LocationState } from '../types/states';
  */
 
 const Victor = require('victor');
-const uuidV4 = require('uuid/v4');
+const uuidV4 = require('uuid').v4;
 
 const { areSameLocations, createNewLocationState } = require('./location');
 

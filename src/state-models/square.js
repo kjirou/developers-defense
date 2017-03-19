@@ -5,7 +5,7 @@ import type { CoordinateState, SquareState } from '../types/states';
  */
 
 
-const uuidV4 = require('uuid/v4');
+const uuidV4 = require('uuid').v4;
 
 const { createNewCoordinateState } = require('./coordinate');
 

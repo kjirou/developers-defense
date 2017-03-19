@@ -5,7 +5,7 @@ import type { UnitStateChangeType } from '../immutable/constants';
 import type { UnitStateChangeLogState } from '../types/states';
  */
 
-const uuidV4 = require('uuid/v4');
+const uuidV4 = require('uuid').v4;
 
 
 const createNewUnitStateChangeLogState = (

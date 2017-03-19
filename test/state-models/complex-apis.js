@@ -626,6 +626,10 @@ describe('state-models/complex-apis', function() {
   });
 
   describe('_effectOccurs', function() {
+    beforeEach(function() {
+      this.farEndPointCoordinate = _coord(99, 99);
+    });
+
     describe('affectableFractionTypes', function() {
       beforeEach(function() {
         this.ally = Object.assign(_createPlacedAlly(1, 2), {
@@ -643,7 +647,7 @@ describe('state-models/complex-apis', function() {
           relativeCoordinates: [[0, 0]],
           damagePoints: 1,
         });
-        const { units } = _effectOccurs(effect, [this.ally, this.enemy], 1);
+        const { units } = _effectOccurs(effect, [this.ally, this.enemy], 1, this.farEndPointCoordinate);
 
         assert(units[0].hitPoints < this.ally.hitPoints);
         assert(units[1].hitPoints === this.enemy.hitPoints);
@@ -654,7 +658,7 @@ describe('state-models/complex-apis', function() {
           relativeCoordinates: [[0, 0]],
           damagePoints: 1,
         });
-        const { units } = _effectOccurs(effect, [this.ally, this.enemy], 1);
+        const { units } = _effectOccurs(effect, [this.ally, this.enemy], 1, this.farEndPointCoordinate);
 
         assert(units[0].hitPoints === this.ally.hitPoints);
         assert(units[1].hitPoints < this.enemy.hitPoints);
@@ -675,7 +679,7 @@ describe('state-models/complex-apis', function() {
       });
 
       it('can affect', function() {
-        const { units: [ newEnemy ] } = _effectOccurs(this.effect, [this.enemy], 1);
+        const { units: [ newEnemy ] } = _effectOccurs(this.effect, [this.enemy], 1, this.farEndPointCoordinate);
 
         assert(newEnemy.hitPoints < this.enemy.hitPoints);
       });
@@ -683,7 +687,7 @@ describe('state-models/complex-apis', function() {
       it('can not affect if uids are different', function() {
         this.enemy.uid = 'another_uid';
 
-        const { units: [ newEnemy ] } = _effectOccurs(this.effect, [this.enemy], 1);
+        const { units: [ newEnemy ] } = _effectOccurs(this.effect, [this.enemy], 1, this.farEndPointCoordinate);
 
         assert(newEnemy.hitPoints === this.enemy.hitPoints);
       });
@@ -691,7 +695,7 @@ describe('state-models/complex-apis', function() {
       it('can not affect if the bullet does not hit', function() {
         this.effect.impactedLocation = _loc(0, 0);
 
-        const { units: [ newEnemy ] } = _effectOccurs(this.effect, [this.enemy], 1);
+        const { units: [ newEnemy ] } = _effectOccurs(this.effect, [this.enemy], 1, this.farEndPointCoordinate);
 
         assert(newEnemy.hitPoints === this.enemy.hitPoints);
       });
@@ -711,7 +715,7 @@ describe('state-models/complex-apis', function() {
       });
 
       it('can affect', function() {
-        const { units: [ newAlly ] } = _effectOccurs(this.effect, [this.ally], 1);
+        const { units: [ newAlly ] } = _effectOccurs(this.effect, [this.ally], 1, this.farEndPointCoordinate);
 
         assert(newAlly.hitPoints < this.ally.hitPoints);
       });
@@ -722,7 +726,7 @@ describe('state-models/complex-apis', function() {
           damagePoints: 1,
         });
 
-        const { units: [ newAlly ] } = _effectOccurs(effect, [this.ally], 1);
+        const { units: [ newAlly ] } = _effectOccurs(effect, [this.ally], 1, this.farEndPointCoordinate);
 
         assert(newAlly.hitPoints === this.ally.hitPoints);
       });
@@ -745,7 +749,7 @@ describe('state-models/complex-apis', function() {
           damagePoints: 10,
         });
 
-        const { unitStateChangeLogs } = _effectOccurs(this.effect, [this.enemy], 123);
+        const { unitStateChangeLogs } = _effectOccurs(this.effect, [this.enemy], 123, this.farEndPointCoordinate);
 
         assert.strictEqual(unitStateChangeLogs.length, 1);
 

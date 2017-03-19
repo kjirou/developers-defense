@@ -7,6 +7,7 @@ const { animations } = require('../immutable/animations');
 const { isArrivedToDestination } = require('../state-models/bullet');
 const { createEffectiveCoordinates } = require('../state-models/effect');
 const { createNewPlacementState } = require('../state-models/placement');
+const { getEndPointCoordinate } = require('../state-models/square-matrix');
 const Board = require('../components/Board');
 const SquareMatrix = require('../components/SquareMatrix');
 
@@ -75,7 +76,10 @@ BattleBoard = connect(state => {
 
       return {
         uid: bullet.effect.uid,
-        coordinates: createEffectiveCoordinates(bullet.effect),
+        coordinates: createEffectiveCoordinates(
+          bullet.effect,
+          getEndPointCoordinate(state.battleBoard.squareMatrix)
+        ),
         duration: animation.duration,
         classNames: animation.getExpressionClassNames(),
       };

@@ -107,8 +107,8 @@ class SquareMatrix extends React.Component {
       coordinates.forEach(coordinate => {
         const animation = document.createElement('div');
         animation.setAttribute(uidAttrName, uid);
-        animation.style.top = `${ STYLES.SQUARE_HEIGHT * coordinate[0] }px`;
-        animation.style.left = `${ STYLES.SQUARE_HEIGHT * coordinate[1] }px`;
+        animation.style.top = `${ STYLES.SQUARE_HEIGHT * coordinate.rowIndex }px`;
+        animation.style.left = `${ STYLES.SQUARE_HEIGHT * coordinate.columnIndex }px`;
         animation.classList.add(...classNames);
 
         this._squareBasedAnimationDomNode.appendChild(animation);
@@ -151,8 +151,8 @@ class SquareMatrix extends React.Component {
         key: 'square-matrix-cursor',
         className: 'square-matrix__cursor',
         style: {
-          top: STYLES.SQUARE_HEIGHT * cursorCoordinate[0],
-          left: STYLES.SQUARE_WIDTH * cursorCoordinate[1],
+          top: STYLES.SQUARE_HEIGHT * cursorCoordinate.rowIndex,
+          left: STYLES.SQUARE_WIDTH * cursorCoordinate.columnIndex,
         },
       });
     }
@@ -202,8 +202,8 @@ class SquareMatrix extends React.Component {
       return React.createElement(Unit, {
         key: 'square-matrix-unit-on-square-' + unit.uid,
         iconId: getIconId(unit),
-        top: STYLES.SQUARE_HEIGHT * unit.placement.coordinate[0],
-        left: STYLES.SQUARE_WIDTH * unit.placement.coordinate[1],
+        top: STYLES.SQUARE_HEIGHT * unit.placement.coordinate.rowIndex,
+        left: STYLES.SQUARE_WIDTH * unit.placement.coordinate.columnIndex,
         classNames: [
           isAlly(unit) ? 'unit--ally' : 'unit--enemy',
           'square-matrix__unit-on-square',
@@ -215,8 +215,8 @@ class SquareMatrix extends React.Component {
       return rowSquares.map(square => {
         return React.createElement(Square, {
           key: 'square-matrix-square-' + square.uid,
-          rowIndex: square.coordinate[0],
-          columnIndex: square.coordinate[1],
+          rowIndex: square.coordinate.rowIndex,
+          columnIndex: square.coordinate.columnIndex,
           landformType: square.landformType,
         });
       });

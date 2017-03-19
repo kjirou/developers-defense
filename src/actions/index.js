@@ -9,6 +9,7 @@ const randomWeightedChoice = require('random-weighted-choice');
 const { ACTION_TYPES, BOARD_TYPES, PARAMETERS, STYLES } = require('../immutable/constants');
 const { JOB_IDS } = require('../immutable/jobs');
 const complexApisMethods = require('../state-models/complex-apis');
+const coordinateMethods = require('../state-models/coordinate');
 const locationMethods = require('../state-models/location');
 const placementMethods = require('../state-models/placement');
 const squareMatrixMethods = require('../state-models/square-matrix');
@@ -256,15 +257,21 @@ const initializeApp = ()/*:Function*/ => {
   const allies = unitCollectionMethods.createNewUnitCollectionState().concat([
     Object.assign(unitMethods.createNewAllyState(), {
       jobId: JOB_IDS.FIGHTER,
-      placement: placementMethods.createNewPlacementState(BOARD_TYPES.SORTIE_BOARD, [0, 0]),
+      placement: placementMethods.createNewPlacementState(
+        BOARD_TYPES.SORTIE_BOARD, coordinateMethods.createNewCoordinateState(0, 0)
+      ),
     }),
     Object.assign(unitMethods.createNewAllyState(), {
       jobId: JOB_IDS.HEALER,
-      placement: placementMethods.createNewPlacementState(BOARD_TYPES.SORTIE_BOARD, [0, 1]),
+      placement: placementMethods.createNewPlacementState(
+        BOARD_TYPES.SORTIE_BOARD, coordinateMethods.createNewCoordinateState(0, 1)
+      ),
     }),
     Object.assign(unitMethods.createNewAllyState(), {
       jobId: JOB_IDS.MAGE,
-      placement: placementMethods.createNewPlacementState(BOARD_TYPES.SORTIE_BOARD, [1, 3]),
+      placement: placementMethods.createNewPlacementState(
+        BOARD_TYPES.SORTIE_BOARD, coordinateMethods.createNewCoordinateState(1, 3)
+      ),
     }),
   ]).map(ally => {
     return Object.assign({}, ally, {

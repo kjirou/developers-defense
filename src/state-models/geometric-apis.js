@@ -70,15 +70,15 @@ const locationToRectangle = (
  */
 const coordinateToLocation = (coordinate/*:CoordinateState*/)/*:LocationState*/ => {
   return locationMethods.createNewLocationState(
-    STYLES.SQUARE_HEIGHT * coordinate[0],
-    STYLES.SQUARE_WIDTH * coordinate[1]
+    STYLES.SQUARE_HEIGHT * coordinate.rowIndex,
+    STYLES.SQUARE_WIDTH * coordinate.columnIndex
   );
 };
 
 const coordinateToRectangle = (coordinate/*:CoordinateState*/)/*:RectangleState*/ => {
   return rectangleMethods.createNewRectangleState({
-    x: STYLES.SQUARE_WIDTH * coordinate[1],
-    y: STYLES.SQUARE_HEIGHT * coordinate[0],
+    x: STYLES.SQUARE_WIDTH * coordinate.columnIndex,
+    y: STYLES.SQUARE_HEIGHT * coordinate.rowIndex,
     width: STYLES.SQUARE_WIDTH,
     height: STYLES.SQUARE_HEIGHT,
   });
@@ -121,8 +121,8 @@ const findCoordinatesWhereRectangleOverlaps = (
 )/*:CoordinateState[]*/ => {
   const collidedCoordinates = [];
 
-  for (let rowIndex = 0; rowIndex <= endPointCoordinate[0]; rowIndex += 1) {
-    for (let columnIndex = 0; columnIndex <= endPointCoordinate[1]; columnIndex += 1) {
+  for (let rowIndex = 0; rowIndex <= endPointCoordinate.rowIndex; rowIndex += 1) {
+    for (let columnIndex = 0; columnIndex <= endPointCoordinate.columnIndex; columnIndex += 1) {
       const coordinate = coordinateMethods.createNewCoordinateState(rowIndex, columnIndex);
       if (areBoxesOverlapping(rectangle, coordinateToRectangle(coordinate))) {
         collidedCoordinates.push(coordinate);
@@ -140,9 +140,14 @@ const createReachableRectangles = (
   centerSquareLocation/*:LocationState*/, reach/*:number*/
 )/*:RectangleState[]*/ => {
   return expandReachToRelativeCoordinates(0, reach)
-    .map(relativeCoordinate =>
-      locationMethods.addLocations(centerSquareLocation, coordinateToLocation(relativeCoordinate))
-    )
+    .map(([rowIndexDelta, columnIndexDelta]) => {
+      return locationMethods.addLocations(
+        centerSquareLocation,
+        coordinateToLocation(
+          coordinateMethods.createNewCoordinateState(rowIndexDelta, columnIndexDelta)
+        )
+      );
+    })
     .map(location => locationToRectangle(location))
   ;
 };

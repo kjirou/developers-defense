@@ -5,6 +5,7 @@ const {
   _createInitialState,
   reduceBattleBoard,
 } = require('../../src/reducers/battle-board');
+const { createNewCoordinateState } = require('../../src/state-models/coordinate');
 const { findSquareByCoordinate } = require('../../src/state-models/square-matrix');
 
 
@@ -33,14 +34,26 @@ describe('reducers/battle-board', () => {
     });
 
     it('can extend all squares', () => {
-      assert.strictEqual(findSquareByCoordinate(state.squareMatrix, [0, 0]).landformType, 'NONE');
-      assert.strictEqual(findSquareByCoordinate(state.squareMatrix, [1, 1]).landformType, 'NONE');
+      assert.strictEqual(
+        findSquareByCoordinate(state.squareMatrix, createNewCoordinateState(0, 0)).landformType,
+        'NONE'
+      );
+      assert.strictEqual(
+        findSquareByCoordinate(state.squareMatrix, createNewCoordinateState(1, 1)).landformType,
+        'NONE'
+      );
 
       const extension = _createUpdates({ landformType: LANDFORM_TYPES.ROAD });
       state = reduceBattleBoard(state, { type: ACTION_TYPES.EXTEND_BATTLE_BOARD_SQUARE_MATRIX, extension });
 
-      assert.strictEqual(findSquareByCoordinate(state.squareMatrix, [0, 0]).landformType, 'ROAD');
-      assert.strictEqual(findSquareByCoordinate(state.squareMatrix, [1, 1]).landformType, 'ROAD');
+      assert.strictEqual(
+        findSquareByCoordinate(state.squareMatrix, createNewCoordinateState(0, 0)).landformType,
+        'ROAD'
+      );
+      assert.strictEqual(
+        findSquareByCoordinate(state.squareMatrix, createNewCoordinateState(1, 1)).landformType,
+        'ROAD'
+      );
     });
 
     it('should throw a error if the squares and the extension is not the same size', () => {

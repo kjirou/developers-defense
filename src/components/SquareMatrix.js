@@ -1,3 +1,5 @@
+// @flow
+
 /*::
 import type {
   BulletState,
@@ -74,7 +76,7 @@ class SquareMatrix extends React.Component {
 
   /*::
   static defaultProps: {
-    bullet: $PropertyType<Props, 'bullet'>,
+    bullets: $PropertyType<Props, 'bullets'>,
     cursorCoordinate: $PropertyType<Props, 'cursorCoordinate'>,
     handleTouchStartPad: $PropertyType<Props, 'handleTouchStartPad'>,
     squareBasedAnimations: $PropertyType<Props, 'squareBasedAnimations'>,
@@ -175,11 +177,23 @@ class SquareMatrix extends React.Component {
     });
 
     const unitComponents = units.map(unit => {
+      if (!unit.location) {
+        throw new Error('The unit always has `location`');
+      }
+
+      // TODO: unit.location があるはずなのを flow 上で保障できなかった
+      let top = 0;
+      let left = 0;
+      if (unit.location) {
+        top = unit.location.x;
+        left = unit.location.y;
+      }
+
       return React.createElement(Unit, {
         key: 'square-matrix-unit-' + unit.uid,
         iconId: getIconId(unit),
-        top: unit.location.y,
-        left: unit.location.x,
+        top,
+        left,
         classNames: [
           isAlly(unit) ? 'unit--ally' : 'unit--enemy',
           'square-matrix__unit',
@@ -197,13 +211,25 @@ class SquareMatrix extends React.Component {
       transitionLeaveTimeout: 500,
     }, unitComponents);
 
-    // Do not place in the squares.
+    // TODO: unitComponents と同じルーチンで作れるようにする
     const unitComponentsOnSquares = unitsOnSquares.map(unit => {
+      if (!unit.placement) {
+        throw new Error('The unit always has `placement`');
+      }
+
+      // TODO: unit.placement があるはずなのを flow 上で保障できなかった
+      let top = 0;
+      let left = 0;
+      if (unit.placement) {
+        top = STYLES.SQUARE_HEIGHT * unit.placement.coordinate.rowIndex;
+        left = STYLES.SQUARE_WIDTH * unit.placement.coordinate.columnIndex;
+      }
+
       return React.createElement(Unit, {
         key: 'square-matrix-unit-on-square-' + unit.uid,
         iconId: getIconId(unit),
-        top: STYLES.SQUARE_HEIGHT * unit.placement.coordinate.rowIndex,
-        left: STYLES.SQUARE_WIDTH * unit.placement.coordinate.columnIndex,
+        top,
+        left,
         classNames: [
           isAlly(unit) ? 'unit--ally' : 'unit--enemy',
           'square-matrix__unit-on-square',

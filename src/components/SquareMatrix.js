@@ -185,8 +185,8 @@ class SquareMatrix extends React.Component {
       let top = 0;
       let left = 0;
       if (unit.location) {
-        top = unit.location.x;
-        left = unit.location.y;
+        top = unit.location.y;
+        left = unit.location.x;
       }
 
       return React.createElement(Unit, {

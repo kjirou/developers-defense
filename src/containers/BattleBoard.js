@@ -14,32 +14,28 @@ const SquareMatrix = require('../components/SquareMatrix');
 
 class BattleBoard extends React.Component {
   render() {
-    const handleTouchStartPad = (event, { coordinate }) => {
-      const placement = createNewPlacementState(BOARD_TYPES.BATTLE_BOARD, coordinate);
-      this.props.dispatch(touchSquare(placement));
-    };
+    const squareMatrix = React.createElement(SquareMatrix, {
+      squareMatrix: this.props.squareMatrix,
+      cursorCoordinate: this.props.cursorCoordinate,
+      bullets: this.props.bullets,
+      units: this.props.enemiesInBattle,
+      unitsOnSquares: this.props.unitsOnSquares,
+      unitBasedAnimations: this.props.unitBasedAnimations,
+      unitStateChangeLogs: this.props.unitStateChangeLogs,
+      squareBasedAnimations: this.props.squareBasedAnimations,
+      handleTouchStartPad: this.props.handleTouchStartPad,
+    });
 
-    return <Board
-      rowLength={ PARAMETERS.BATTLE_BOARD_ROW_LENGTH }
-      columnLength={ PARAMETERS.BATTLE_BOARD_COLUMN_LENGTH }
-      additionalClassNames={ ['root__battle-board'] }
-    >
-      <SquareMatrix
-        squareMatrix={ this.props.battleBoard.squareMatrix }
-        cursorCoordinate={ this.props.cursorCoordinate }
-        bullets={ this.props.bullets }
-        units={ this.props.enemiesInBattle }
-        unitsOnSquares={ this.props.unitsOnSquares }
-        unitBasedAnimations={ this.props.unitBasedAnimations }
-        unitStateChangeLogs={ this.props.unitStateChangeLogs }
-        squareBasedAnimations={ this.props.squareBasedAnimations }
-        handleTouchStartPad={ handleTouchStartPad }
-      />
-    </Board>;
+    return React.createElement(Board, {
+      rowLength: PARAMETERS.BATTLE_BOARD_ROW_LENGTH,
+      columnLength: PARAMETERS.BATTLE_BOARD_COLUMN_LENGTH,
+      additionalClassNames: ['root__battle-board'],
+      children: squareMatrix,
+    });
   }
 }
 
-BattleBoard = connect(state => {
+const mapStateToProps = (state) => {
   const cursorCoordinate =
     state.cursor.placement && state.cursor.placement.boardType === BOARD_TYPES.BATTLE_BOARD ?
       state.cursor.placement.coordinate : null;
@@ -87,7 +83,6 @@ BattleBoard = connect(state => {
   ;
 
   return {
-    battleBoard: state.battleBoard,
     bullets: state.bullets,
     cursorCoordinate,
     enemiesInBattle,
@@ -95,8 +90,20 @@ BattleBoard = connect(state => {
     unitBasedAnimations,
     unitStateChangeLogs: state.unitStateChangeLogs,
     squareBasedAnimations,
+    squareMatrix: state.battleBoard.squareMatrix,
   };
-})(BattleBoard);
+};
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    handleTouchStartPad: (event, { coordinate }) => {
+      const placement = createNewPlacementState(BOARD_TYPES.BATTLE_BOARD, coordinate);
+      dispatch(touchSquare(placement));
+    },
+  };
+};
+
+BattleBoard = connect(mapStateToProps, mapDispatchToProps)(BattleBoard);
 
 
 module.exports = BattleBoard;

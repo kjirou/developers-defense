@@ -43,8 +43,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
-    handleTouchStartPad: (event, eventData) => {
-      const placement = createNewPlacementState(BOARD_TYPES.SORTIE_BOARD, eventData.coordinate);
+    handleTouchStartPad: (event, { coordinate }) => {
+      const placement = createNewPlacementState(BOARD_TYPES.SORTIE_BOARD, coordinate);
       dispatch(touchSquare(placement));
     },
   };

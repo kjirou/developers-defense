@@ -37,7 +37,6 @@ const { expandReachToRelativeCoordinates } = require('../lib/core');
 const bulletMethods = require('./bullet');
 const coordinateMethods = require('./coordinate');
 const effectMethods = require('./effect');
-const effectLogMethods = require('./effect-log');
 const geometricApis = require('./geometric-apis');
 const {
   coordinateToLocation,

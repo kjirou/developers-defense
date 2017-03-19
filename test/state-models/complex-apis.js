@@ -9,7 +9,6 @@ const reducer = require('../../src/reducers');
 const boardMethods = require('../../src/state-models/board');
 const coordinateMethods = require('../../src/state-models/coordinate');
 const effectMethods = require('../../src/state-models/effect');
-const effectLogMethods = require('../../src/state-models/effect-log');
 const locationMethods = require('../../src/state-models/location');
 const {
   _applyEffectToUnit,
@@ -31,7 +30,6 @@ const unitMethods = require('../../src/state-models/unit');
 describe('state-models/complex-apis', function() {
   const _coord = coordinateMethods.createNewCoordinateState;
   const _loc = locationMethods.createNewLocationState;
-  const _log = effectLogMethods.createNewEffectLogState;
   const _effect = effectMethods.createNewEffectState;
   const _rect = rectangleMethods.createNewRectangleState;
   const _unit = unitMethods.createNewUnitState;

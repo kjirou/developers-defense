@@ -7,14 +7,9 @@ const { ACTION_TYPES } = require('../immutable/constants');
 
 const createInitialState = () => {
   return {
-    tickId: null,  // null or integer >= 0
+    tickId: null,
     isPaused: false,
   };
-};
-
-
-const alterLimitedValue = (value, delta, min, max) => {
-  return Math.min(max, Math.max(min, value + delta));
 };
 
 

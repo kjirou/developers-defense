@@ -160,3 +160,19 @@ export type BulletState = {
   speed: number,
   effect: EffectState,
 };
+
+export type AppState = {
+  allies: UnitCollectionState,
+  battleBoard: BoardState,
+  bullets: BulletState[],
+  cursor: {
+    placement: PlacementState | null,
+  },
+  enemies: UnitCollectionState,
+  gameStatus: {
+    tickId: number | null,
+    isPaused: boolean,
+  },
+  sortieBoard: BoardState,
+  unitStateChangeLogs: UnitStateChangeLogState[],
+};

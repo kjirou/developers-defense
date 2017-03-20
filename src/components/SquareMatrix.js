@@ -50,7 +50,6 @@ type Props = {
 class SquareMatrix extends React.Component {
   /**
    * @param {SyntheticTouchEvent} event
-   * @return {{location:<State~Location>, coordinate:<State~Coordinate>}}
    */
   static _normalizeTouchPositions(event) {
     const touch = event.changedTouches.item(0);
@@ -59,10 +58,15 @@ class SquareMatrix extends React.Component {
     const touchY = touch.clientY - rect.top;
     const location = createNewLocationState(touchY, touchX);
 
-    return {
+    const result/*:{
+      location: LocationState,
+      coordinate: CoordinateState,
+    }*/ = {
       location,
       coordinate: locationToCoordinate(location),
     };
+
+    return result;
   }
 
   /**

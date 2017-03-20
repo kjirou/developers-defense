@@ -90,8 +90,34 @@ const mapDispatchToBattleBoardProps = (dispatch/*:Dispatch<Function>*/, ownProps
   };
 };
 
+const mapStateToSortieBoardProps = (state/*:AppState*/) => {
+  const cursorCoordinate =
+    state.cursor.placement && state.cursor.placement.boardType === BOARD_TYPES.SORTIE_BOARD ?
+      state.cursor.placement.coordinate : null;
+
+  const unitsOnSquares =
+    state.allies.filter(ally => ally.placement && ally.placement.boardType === state.sortieBoard.boardType);
+
+  return {
+    cursorCoordinate,
+    squareMatrix: state.sortieBoard.squareMatrix,
+    unitsOnSquares,
+  };
+};
+
+const mapDispatchToSortieBoardProps = (dispatch/*:Dispatch<Function>*/, ownProps/*:Object*/) => {
+  return {
+    handleTouchStartPad: (event/*:Object*/, { coordinate }/*:Object*/) => {
+      const placement = createNewPlacementState(BOARD_TYPES.SORTIE_BOARD, coordinate);
+      dispatch(touchSquare(placement));
+    },
+  };
+};
+
 
 module.exports = {
   mapStateToBattleBoardProps,
   mapDispatchToBattleBoardProps,
+  mapStateToSortieBoardProps,
+  mapDispatchToSortieBoardProps
 };

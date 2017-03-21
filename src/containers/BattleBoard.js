@@ -10,15 +10,14 @@ const { mapStateToBattleBoardProps, mapDispatchToBattleBoardProps } = require('.
 class BattleBoard extends React.Component {
   render() {
     const squareMatrix = React.createElement(SquareMatrix, {
-      squareMatrix: this.props.squareMatrix,
       cursorCoordinate: this.props.cursorCoordinate,
       bullets: this.props.bullets,
-      units: this.props.enemiesInBattle,
-      unitsOnSquares: this.props.unitsOnSquares,
+      handleTouchStartPad: this.props.handleTouchStartPad,
+      squareBasedAnimations: this.props.squareBasedAnimations,
+      squareMatrix: this.props.squareMatrix,
       unitBasedAnimations: this.props.unitBasedAnimations,
       unitStateChangeLogs: this.props.unitStateChangeLogs,
-      squareBasedAnimations: this.props.squareBasedAnimations,
-      handleTouchStartPad: this.props.handleTouchStartPad,
+      units: this.props.units,
     });
 
     return React.createElement(Board, {

@@ -10,10 +10,10 @@ const { mapStateToSortieBoardProps, mapDispatchToSortieBoardProps } = require('.
 class SortieBoard extends React.Component {
   render() {
     const squareMatrix = React.createElement(SquareMatrix, {
-      squareMatrix: this.props.squareMatrix,
       cursorCoordinate: this.props.cursorCoordinate,
-      unitsOnSquares: this.props.unitsOnSquares,
       handleTouchStartPad: this.props.handleTouchStartPad,
+      squareMatrix: this.props.squareMatrix,
+      units: this.props.units,
     });
 
     return React.createElement(Board, {

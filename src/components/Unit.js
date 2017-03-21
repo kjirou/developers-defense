@@ -22,7 +22,15 @@ type Props = {
   left: number,
   stateChanges: UnitStateChangeLogState[],
   top: number,
+  zIndex: number,
 }
+
+type DefaultProps = {
+  animations: $PropertyType<Props, 'animations'>,
+  classNames: $PropertyType<Props, 'classNames'>,
+  stateChanges: $PropertyType<Props, 'stateChanges'>,
+  zIndex: $PropertyType<Props, 'zIndex'>,
+};
  */
 
 class Unit extends React.Component {
@@ -79,11 +87,7 @@ class Unit extends React.Component {
   }
 
   /*::
-  static defaultProps: {
-    animations: $PropertyType<Props, 'animations'>,
-    classNames: $PropertyType<Props, 'classNames'>,
-    stateChanges: $PropertyType<Props, 'stateChanges'>,
-  };
+  static defaultProps: DefaultProps;
 
   props: Props;
 
@@ -132,6 +136,7 @@ class Unit extends React.Component {
       style: {
         top: this.props.top,
         left: this.props.left,
+        zIndex: this.props.zIndex,
       },
     };
 
@@ -164,6 +169,7 @@ Unit.defaultProps = {
   classNames: [],
   animations: [],
   stateChanges: [],
+  zIndex: 0,
 };
 
 

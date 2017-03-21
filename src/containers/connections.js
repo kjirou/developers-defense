@@ -29,8 +29,10 @@ const mapStateToBattleBoardProps = (state/*:AppState*/) => {
 
   const enemiesInBattle = state.enemies.filter(enemy => enemy.location);
 
-  const unitsOnSquares =
+  const alliesInBattle =
     state.allies.filter(ally => ally.placement && ally.placement.boardType === state.battleBoard.boardType);
+
+  const units = enemiesInBattle.concat(alliesInBattle);
 
   const unitBasedAnimations = state.bullets
     .filter(bullet => {
@@ -72,12 +74,11 @@ const mapStateToBattleBoardProps = (state/*:AppState*/) => {
   return {
     bullets: state.bullets,
     cursorCoordinate,
-    enemiesInBattle,
-    unitsOnSquares,
     unitBasedAnimations,
     unitStateChangeLogs: state.unitStateChangeLogs,
     squareBasedAnimations,
     squareMatrix: state.battleBoard.squareMatrix,
+    units,
   };
 };
 
@@ -95,13 +96,13 @@ const mapStateToSortieBoardProps = (state/*:AppState*/) => {
     state.cursor.placement && state.cursor.placement.boardType === BOARD_TYPES.SORTIE_BOARD ?
       state.cursor.placement.coordinate : null;
 
-  const unitsOnSquares =
+  const units =
     state.allies.filter(ally => ally.placement && ally.placement.boardType === state.sortieBoard.boardType);
 
   return {
     cursorCoordinate,
     squareMatrix: state.sortieBoard.squareMatrix,
-    unitsOnSquares,
+    units,
   };
 };
 

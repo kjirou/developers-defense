@@ -43,7 +43,6 @@ type Props = {
   }[],
   unitStateChangeLogs: UnitStateChangeLogState[],
   units: UnitState[],
-  unitsOnSquares: UnitState[],
 }
  */
 
@@ -87,7 +86,6 @@ class SquareMatrix extends React.Component {
     unitBasedAnimations: $PropertyType<Props, 'unitBasedAnimations'>,
     unitStateChangeLogs: $PropertyType<Props, 'unitStateChangeLogs'>,
     units: $PropertyType<Props, 'units'>,
-    unitsOnSquares: $PropertyType<Props, 'unitsOnSquares'>,
   };
 
   props: Props;
@@ -136,7 +134,6 @@ class SquareMatrix extends React.Component {
       unitBasedAnimations,
       unitStateChangeLogs,
       units,
-      unitsOnSquares,
     } = this.props;
 
     const props = {
@@ -181,16 +178,20 @@ class SquareMatrix extends React.Component {
     });
 
     const unitComponents = units.map(unit => {
-      if (!unit.location) {
-        throw new Error('The unit always has `location`');
-      }
-
       // TODO: unit.location があるはずなのを flow 上で保障できなかった
       let top = 0;
       let left = 0;
+      let zIndex = 0;
       if (unit.location) {
         top = unit.location.y;
         left = unit.location.x;
+        zIndex = 2;  // TODO: Move to CSS
+      } else if (unit.placement) {
+        top = STYLES.SQUARE_HEIGHT * unit.placement.coordinate.rowIndex;
+        left = STYLES.SQUARE_WIDTH * unit.placement.coordinate.columnIndex;
+        zIndex = 1;  // TODO: Move to CSS
+      } else {
+        throw new Error('The unit always has `location` or `placement`');
       }
 
       return React.createElement(Unit, {
@@ -198,6 +199,7 @@ class SquareMatrix extends React.Component {
         iconId: getIconId(unit),
         top,
         left,
+        zIndex,
         classNames: [
           isAlly(unit) ? 'unit--ally' : 'unit--enemy',
           'square-matrix__unit',
@@ -214,32 +216,6 @@ class SquareMatrix extends React.Component {
       transitionEnter: false,
       transitionLeaveTimeout: 500,
     }, unitComponents);
-
-    // TODO: unitComponents と同じルーチンで作れるようにする
-    const unitComponentsOnSquares = unitsOnSquares.map(unit => {
-      if (!unit.placement) {
-        throw new Error('The unit always has `placement`');
-      }
-
-      // TODO: unit.placement があるはずなのを flow 上で保障できなかった
-      let top = 0;
-      let left = 0;
-      if (unit.placement) {
-        top = STYLES.SQUARE_HEIGHT * unit.placement.coordinate.rowIndex;
-        left = STYLES.SQUARE_WIDTH * unit.placement.coordinate.columnIndex;
-      }
-
-      return React.createElement(Unit, {
-        key: 'square-matrix-unit-on-square-' + unit.uid,
-        iconId: getIconId(unit),
-        top,
-        left,
-        classNames: [
-          isAlly(unit) ? 'unit--ally' : 'unit--enemy',
-          'square-matrix__unit-on-square',
-        ],
-      });
-    });
 
     const serialSquareComponents = squareMatrix.map(rowSquares => {
       return rowSquares.map(square => {
@@ -258,7 +234,6 @@ class SquareMatrix extends React.Component {
       ...bulletComponents,
       squareBasedAnimationContainer,
       unitComponentsTransition,
-      ...unitComponentsOnSquares,
       serialSquareComponents,
     ];
 
@@ -274,7 +249,6 @@ SquareMatrix.defaultProps = {
   unitBasedAnimations: [],
   unitStateChangeLogs: [],
   units: [],
-  unitsOnSquares: [],
 };
 
 

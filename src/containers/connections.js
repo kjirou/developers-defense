@@ -196,6 +196,7 @@ const mapDispatchToSortieBoardProps = (dispatch/*:Dispatch<Function>*/, ownProps
 
 
 module.exports = {
+  _squareMatrixToSerialSquares,
   mapStateToBattleBoardProps,
   mapDispatchToBattleBoardProps,
   mapStateToSortieBoardProps,

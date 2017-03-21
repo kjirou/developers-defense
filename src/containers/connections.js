@@ -11,20 +11,70 @@
 import type { Dispatch } from 'redux';
 
 import type { SquareProps } from '../components/Square';
+import type { UnitAnimationProps, UnitProps } from '../components/Unit';
 import type {
   AppState,
   SquareMatrixState,
+  UnitState,
+  UnitStateChangeLogState,
 } from '../types/states';
  */
 
 const { touchSquare } = require('../actions');
 const { animations } = require('../immutable/animations');
-const { ANIMATION_DESTINATION_TYPES, BOARD_TYPES, PARAMETERS } = require('../immutable/constants');
+const { ANIMATION_DESTINATION_TYPES, BOARD_TYPES, PARAMETERS, STYLES } = require('../immutable/constants');
 const { isArrivedToDestination } = require('../state-models/bullet');
 const { createEffectiveCoordinates } = require('../state-models/effect');
 const { createNewPlacementState } = require('../state-models/placement');
 const { getEndPointCoordinate } = require('../state-models/square-matrix');
+const { getIconId, isAlive, isAlly } = require('../state-models/unit');
 
+
+const _createUnitProps = (
+  unit/*:UnitState*/,
+  animations/*:UnitAnimationProps[]*/,
+  unitStateChangeLogs/*:UnitStateChangeLogState[]*/
+)/*:UnitProps*/ => {
+  let top = 0;
+  let left = 0;
+  const additionalClassNames = [];
+
+  if (unit.location) {
+    top = unit.location.y;
+    left = unit.location.x;
+    additionalClassNames.push('square-matrix__unit--layer-two');
+  } else if (unit.placement) {
+    top = STYLES.SQUARE_HEIGHT * unit.placement.coordinate.rowIndex;
+    left = STYLES.SQUARE_WIDTH * unit.placement.coordinate.columnIndex;
+    additionalClassNames.push('square-matrix__unit--layer-one');
+  } else {
+    throw new Error('The unit always has `location` or `placement`');
+  }
+
+  return {
+    iconId: getIconId(unit),
+    top,
+    left,
+    classNames: [
+      isAlly(unit) ? 'unit--ally' : 'unit--enemy',
+      'square-matrix__unit',
+      ...(isAlive(unit) ? ['square-matrix__unit--is-alive'] : []),
+      ...additionalClassNames,
+    ],
+    animations,
+    stateChanges: unitStateChangeLogs.filter(v => v.unitUid === unit.uid),
+    uid: unit.uid,
+  };
+};
+
+const _createUnitsProps = (state, unitBasedAnimations) => {
+  return [
+    ...state.enemies.filter(enemy => enemy.location),
+    ...state.allies.filter(ally => ally.placement && ally.placement.boardType === state.battleBoard.boardType),
+  ].map(unitState => {
+    return _createUnitProps(unitState, unitBasedAnimations, state.unitStateChangeLogs);
+  });
+};
 
 const _squareMatrixToSerialSquares = (squareMatrix/*:SquareMatrixState*/)/*:SquareProps[]*/ => {
   const serialSquares = [];
@@ -48,13 +98,6 @@ const mapStateToBattleBoardProps = (state/*:AppState*/) => {
     state.cursor.placement && state.cursor.placement.boardType === BOARD_TYPES.BATTLE_BOARD ?
       state.cursor.placement.coordinate : null;
 
-  const enemiesInBattle = state.enemies.filter(enemy => enemy.location);
-
-  const alliesInBattle =
-    state.allies.filter(ally => ally.placement && ally.placement.boardType === state.battleBoard.boardType);
-
-  const units = enemiesInBattle.concat(alliesInBattle);
-
   const unitBasedAnimations = state.bullets
     .filter(bullet => {
       return bullet.effect.animationDestinationType === ANIMATION_DESTINATION_TYPES.UNIT &&
@@ -64,13 +107,26 @@ const mapStateToBattleBoardProps = (state/*:AppState*/) => {
       const animation = animations[bullet.effect.animationId];
 
       return {
-        uid: bullet.effect.uid,
         unitUid: bullet.effect.aimedUnitUid,
-        duration: animation.duration,
-        classNames: animation.getExpressionClassNames(),
+        animation: {
+          classNames: animation.getExpressionClassNames(),
+          duration: animation.duration,
+          uid: bullet.effect.uid,
+        },
       };
     })
   ;
+
+  const units = [
+    ...state.enemies.filter(enemy => enemy.location),
+    ...state.allies.filter(ally => ally.placement && ally.placement.boardType === BOARD_TYPES.BATTLE_BOARD),
+  ].map(unitState => {
+    const animations = unitBasedAnimations
+      .filter(unitBasedAnimation => unitBasedAnimation.unitUid === unitState.uid)
+      .map(unitBasedAnimation => unitBasedAnimation.animation);
+    ;
+    return _createUnitProps(unitState, animations, state.unitStateChangeLogs);
+  });
 
   const squareBasedAnimations = state.bullets
     .filter(bullet => {
@@ -98,8 +154,6 @@ const mapStateToBattleBoardProps = (state/*:AppState*/) => {
     serialSquares: _squareMatrixToSerialSquares(state.battleBoard.squareMatrix),
     squareBasedAnimations,
     squareMatrix: state.battleBoard.squareMatrix,
-    unitBasedAnimations,
-    unitStateChangeLogs: state.unitStateChangeLogs,
     units,
   };
 };
@@ -118,8 +172,10 @@ const mapStateToSortieBoardProps = (state/*:AppState*/) => {
     state.cursor.placement && state.cursor.placement.boardType === BOARD_TYPES.SORTIE_BOARD ?
       state.cursor.placement.coordinate : null;
 
-  const units =
-    state.allies.filter(ally => ally.placement && ally.placement.boardType === state.sortieBoard.boardType);
+  const units = state.allies
+    .filter(ally => ally.placement && ally.placement.boardType === BOARD_TYPES.SORTIE_BOARD)
+    .map(unitState => _createUnitProps(unitState, [], []))
+  ;
 
   return {
     cursorCoordinate,

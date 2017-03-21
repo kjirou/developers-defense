@@ -10,26 +10,44 @@ const { STYLES, UNIT_STATE_CHANGE_LOG_TYPES } = require('../immutable/constants'
 
 
 /*::
+export type UnitAnimationProps = {
+  classNames: string[],
+  duration: number,
+  uid: string,
+};
+
 type Props = {
-  animations: {
-    classNames: string[],
-    duration: number,
-    uid: string,
-    unitUid: string,
-  }[],
+  animations: UnitAnimationProps[],
   classNames: string[],
   iconId: string,
   left: number,
   stateChanges: UnitStateChangeLogState[],
   top: number,
+  uid: string,
 }
 
+export type UnitProps = {
+  animations?: UnitAnimationProps[],
+  classNames?: $PropertyType<Props, 'classNames'>,
+  iconId?: $PropertyType<Props, 'iconId'>,
+  left: $PropertyType<Props, 'left'>,
+  stateChanges?: $PropertyType<Props, 'stateChanges'>,
+  top: $PropertyType<Props, 'top'>,
+  uid: $PropertyType<Props, 'uid'>,
+};
+
 type DefaultProps = {
-  animations: $PropertyType<Props, 'animations'>,
+  animations: UnitAnimationProps[],
   classNames: $PropertyType<Props, 'classNames'>,
   stateChanges: $PropertyType<Props, 'stateChanges'>,
 };
  */
+
+const defaultProps = {
+  classNames: [],
+  animations: [],
+  stateChanges: [],
+};
 
 class Unit extends React.Component {
   static _generateStateChangeEffectData({ type, value }/*:UnitStateChangeLogState*/) {
@@ -162,11 +180,7 @@ class Unit extends React.Component {
   }
 }
 
-Unit.defaultProps = {
-  classNames: [],
-  animations: [],
-  stateChanges: [],
-};
+Unit.defaultProps = defaultProps;
 
 
 module.exports = Unit;

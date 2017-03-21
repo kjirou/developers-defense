@@ -181,15 +181,16 @@ class SquareMatrix extends React.Component {
       // TODO: unit.location があるはずなのを flow 上で保障できなかった
       let top = 0;
       let left = 0;
-      let zIndex = 0;
+      const additionalClassNames = [];
+
       if (unit.location) {
         top = unit.location.y;
         left = unit.location.x;
-        zIndex = 2;  // TODO: Move to CSS
+        additionalClassNames.push('square-matrix__unit--layer-two');
       } else if (unit.placement) {
         top = STYLES.SQUARE_HEIGHT * unit.placement.coordinate.rowIndex;
         left = STYLES.SQUARE_WIDTH * unit.placement.coordinate.columnIndex;
-        zIndex = 1;  // TODO: Move to CSS
+        additionalClassNames.push('square-matrix__unit--layer-one');
       } else {
         throw new Error('The unit always has `location` or `placement`');
       }
@@ -199,11 +200,11 @@ class SquareMatrix extends React.Component {
         iconId: getIconId(unit),
         top,
         left,
-        zIndex,
         classNames: [
           isAlly(unit) ? 'unit--ally' : 'unit--enemy',
           'square-matrix__unit',
           ...(isAlive(unit) ? ['square-matrix__unit--is-alive'] : []),
+          ...additionalClassNames,
         ],
         animations: SquareMatrix._findUnitBasedAnimationsByUnitUid(unitBasedAnimations, unit.uid),
         stateChanges: unitStateChangeLogs.filter(v => v.unitUid === unit.uid),

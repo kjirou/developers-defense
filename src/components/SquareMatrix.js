@@ -9,6 +9,7 @@ import type {
   UnitState,
   UnitStateChangeLogState,
 } from '../types/states';
+import type { SquareProps } from './Square';
  */
 
 const React = require('react');
@@ -28,6 +29,7 @@ type Props = {
   bullets: BulletState[],
   cursorCoordinate: CoordinateState | null,
   handleTouchStartPad: ({ location: LocationState, coordinate: CoordinateState }) => void,
+  serialSquares: SquareProps[],
   squareBasedAnimations: {
     classNames: string[],
     coordinates: CoordinateState[],
@@ -44,6 +46,15 @@ type Props = {
   unitStateChangeLogs: UnitStateChangeLogState[],
   units: UnitState[],
 }
+type DefaultProps = {
+  bullets: $PropertyType<Props, 'bullets'>,
+  cursorCoordinate: $PropertyType<Props, 'cursorCoordinate'>,
+  handleTouchStartPad: $PropertyType<Props, 'handleTouchStartPad'>,
+  squareBasedAnimations: $PropertyType<Props, 'squareBasedAnimations'>,
+  unitBasedAnimations: $PropertyType<Props, 'unitBasedAnimations'>,
+  unitStateChangeLogs: $PropertyType<Props, 'unitStateChangeLogs'>,
+  units: $PropertyType<Props, 'units'>,
+};
  */
 
 class SquareMatrix extends React.Component {
@@ -78,15 +89,7 @@ class SquareMatrix extends React.Component {
   }
 
   /*::
-  static defaultProps: {
-    bullets: $PropertyType<Props, 'bullets'>,
-    cursorCoordinate: $PropertyType<Props, 'cursorCoordinate'>,
-    handleTouchStartPad: $PropertyType<Props, 'handleTouchStartPad'>,
-    squareBasedAnimations: $PropertyType<Props, 'squareBasedAnimations'>,
-    unitBasedAnimations: $PropertyType<Props, 'unitBasedAnimations'>,
-    unitStateChangeLogs: $PropertyType<Props, 'unitStateChangeLogs'>,
-    units: $PropertyType<Props, 'units'>,
-  };
+  static defaultProps: DefaultProps;
 
   props: Props;
 
@@ -218,15 +221,9 @@ class SquareMatrix extends React.Component {
       transitionLeaveTimeout: 500,
     }, unitComponents);
 
-    const serialSquareComponents = squareMatrix.map(rowSquares => {
-      return rowSquares.map(square => {
-        return React.createElement(Square, {
-          key: 'square-matrix-square-' + square.uid,
-          rowIndex: square.coordinate.rowIndex,
-          columnIndex: square.coordinate.columnIndex,
-          landformType: square.landformType,
-        });
-      });
+    const serialSquareComponents = this.props.serialSquares.map(square => {
+      const key = `square-matrix-square-${ square.rowIndex },${ square.columnIndex }`;
+      return React.createElement(Square, Object.assign({}, square, { key }));
     });
 
     const components = [

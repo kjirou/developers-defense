@@ -10,7 +10,11 @@
 /*::
 import type { Dispatch } from 'redux';
 
-import type { AppState } from '../types/states';
+import type { SquareProps } from '../components/Square';
+import type {
+  AppState,
+  SquareMatrixState,
+} from '../types/states';
  */
 
 const { touchSquare } = require('../actions');
@@ -20,6 +24,23 @@ const { isArrivedToDestination } = require('../state-models/bullet');
 const { createEffectiveCoordinates } = require('../state-models/effect');
 const { createNewPlacementState } = require('../state-models/placement');
 const { getEndPointCoordinate } = require('../state-models/square-matrix');
+
+
+const _squareMatrixToSerialSquares = (squareMatrix/*:SquareMatrixState*/)/*:SquareProps[]*/ => {
+  const serialSquares = [];
+
+  squareMatrix.forEach(rowSquares => {
+    rowSquares.forEach(square => {
+      serialSquares.push({
+        rowIndex: square.coordinate.rowIndex,
+        columnIndex: square.coordinate.columnIndex,
+        landformType: square.landformType,
+      });
+    });
+  });
+
+  return serialSquares;
+};
 
 
 const mapStateToBattleBoardProps = (state/*:AppState*/) => {
@@ -74,10 +95,11 @@ const mapStateToBattleBoardProps = (state/*:AppState*/) => {
   return {
     bullets: state.bullets,
     cursorCoordinate,
-    unitBasedAnimations,
-    unitStateChangeLogs: state.unitStateChangeLogs,
+    serialSquares: _squareMatrixToSerialSquares(state.battleBoard.squareMatrix),
     squareBasedAnimations,
     squareMatrix: state.battleBoard.squareMatrix,
+    unitBasedAnimations,
+    unitStateChangeLogs: state.unitStateChangeLogs,
     units,
   };
 };
@@ -101,6 +123,7 @@ const mapStateToSortieBoardProps = (state/*:AppState*/) => {
 
   return {
     cursorCoordinate,
+    serialSquares: _squareMatrixToSerialSquares(state.sortieBoard.squareMatrix),
     squareMatrix: state.sortieBoard.squareMatrix,
     units,
   };

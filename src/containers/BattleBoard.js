@@ -13,6 +13,8 @@ class BattleBoard extends React.Component {
       cursorCoordinate: this.props.cursorCoordinate,
       bullets: this.props.bullets,
       handleTouchStartPad: this.props.handleTouchStartPad,
+      serialSquares: this.props.serialSquares,
+      squareMatrix: this.props.squareMatrix,
       squareBasedAnimations: this.props.squareBasedAnimations,
       squareMatrix: this.props.squareMatrix,
       unitBasedAnimations: this.props.unitBasedAnimations,

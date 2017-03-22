@@ -1,9 +1,15 @@
 // @flow
 
 /**
- * `mapStateToProps` and `mapDispatchToProps` definitions for each container
+ * Perform mapping of state and props.
  *
- * TODO: ここに別ファイルとして定義している理由は、container 対して Flow を適用できなかったからである。
+ * この処理群を特に別ファイルに切り出した理由は、
+ * containers に Flow アノテーションを入れないで state - props をマッピングできるようにしたかったから。
+ *
+ * containers 内でマッピングしようとすると、
+ * connect の declare が複雑で理解できなかったため、落ちた時の解決が困難だった。
+ *
+ * TODO: そもそも型があれば、react-redux 自体が不要にも見える
  */
 
 
@@ -18,7 +24,6 @@ import type {
   SquareMatrixProps,
 } from '../components/SquareMatrix';
 import type { UnitAnimationProps, UnitProps } from '../components/Unit';
-import {} from '../immutable/constants';
 import type {
   AppState,
   BulletState,
@@ -179,21 +184,26 @@ const mapStateToBattleBoardProps = (state/*:AppState*/) => {
     return createUnitProps(unitState, animations, state.unitStateChangeLogs);
   });
 
-  return {
+  const squareMatrix/*:SquareMatrixProps*/ = {
     bullets: state.bullets.map(createBulletProps),
     cursorCoordinate,
     serialSquares: createSerialSquares(state.battleBoard.squareMatrix),
     squareBasedAnimations,
-    squareMatrix: state.battleBoard.squareMatrix,
     units,
+  };
+
+  return {
+    squareMatrix,
   };
 };
 
-const mapDispatchToBattleBoardProps = (dispatch/*:Dispatch<Function>*/, ownProps/*:Object*/) => {
+const mapDispatchToBattleBoardProps = (dispatch/*:Dispatch<Function>*/) => {
   return {
-    handleTouchStartPad: (event/*:Object*/, { coordinate }/*:Object*/) => {
-      const placement = createNewPlacementState(BOARD_TYPES.BATTLE_BOARD, coordinate);
-      dispatch(touchSquare(placement));
+    squareMatrixHandlers: {
+      handleTouchStartPad: (event/*:Object*/, { coordinate }/*:Object*/) => {
+        const placement = createNewPlacementState(BOARD_TYPES.BATTLE_BOARD, coordinate);
+        dispatch(touchSquare(placement));
+      },
     },
   };
 };
@@ -209,18 +219,24 @@ const mapStateToSortieBoardProps = (state/*:AppState*/) => {
     .map(unitState => createUnitProps(unitState, [], []))
   ;
 
-  return {
+  const squareMatrix/*:SquareMatrixProps*/ = {
     cursorCoordinate,
     serialSquares: createSerialSquares(state.sortieBoard.squareMatrix),
     units,
+  };
+
+  return {
+    squareMatrix,
   };
 };
 
 const mapDispatchToSortieBoardProps = (dispatch/*:Dispatch<Function>*/, ownProps/*:Object*/) => {
   return {
-    handleTouchStartPad: (event/*:Object*/, { coordinate }/*:Object*/) => {
-      const placement = createNewPlacementState(BOARD_TYPES.SORTIE_BOARD, coordinate);
-      dispatch(touchSquare(placement));
+    squareMatrixHandlers: {
+      handleTouchStartPad: (event/*:Object*/, { coordinate }/*:Object*/) => {
+        const placement = createNewPlacementState(BOARD_TYPES.SORTIE_BOARD, coordinate);
+        dispatch(touchSquare(placement));
+      },
     },
   };
 };

@@ -9,12 +9,10 @@ const { mapStateToSortieBoardProps, mapDispatchToSortieBoardProps } = require('.
 
 class SortieBoard extends React.Component {
   render() {
-    const squareMatrix = React.createElement(SquareMatrix, {
-      cursorCoordinate: this.props.cursorCoordinate,
-      handleTouchStartPad: this.props.handleTouchStartPad,
-      serialSquares: this.props.serialSquares,
-      units: this.props.units,
-    });
+    const squareMatrix = React.createElement(
+      SquareMatrix,
+      Object.assign({}, this.props.squareMatrix, this.props.squareMatrixHandlers)
+    );
 
     return React.createElement(Board, {
       rowLength: PARAMETERS.SORTIE_BOARD_ROW_LENGTH,

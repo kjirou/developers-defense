@@ -12,13 +12,16 @@ import type { Dispatch } from 'redux';
 
 import type { BulletProps } from '../components/Bullet';
 import type { SquareProps } from '../components/Square';
+import type { SquareMatrixCursorCoordinateProps } from '../components/SquareMatrix';
 import type { UnitAnimationProps, UnitProps } from '../components/Unit';
+import {} from '../immutable/constants';
 import type {
   AppState,
   BulletState,
   SquareMatrixState,
   UnitState,
   UnitStateChangeLogState,
+  PlacementState,
 } from '../types/states';
  */
 
@@ -31,6 +34,15 @@ const { createNewPlacementState } = require('../state-models/placement');
 const { getEndPointCoordinate } = require('../state-models/square-matrix');
 const { getIconId, isAlive, isAlly } = require('../state-models/unit');
 
+
+const createSquareMatrixCursorCoordinateProps = (
+  placement/*:PlacementState*/
+)/*:SquareMatrixCursorCoordinateProps*/ => {
+  return {
+    rowIndex: placement.coordinate.rowIndex,
+    columnIndex: placement.coordinate.columnIndex,
+  };
+};
 
 const createBulletProps = (bullet/*:BulletState*/)/*:BulletProps*/ => {
   return {
@@ -108,9 +120,10 @@ const createSerialSquares = (squareMatrix/*:SquareMatrixState*/)/*:SquareProps[]
 };
 
 const mapStateToBattleBoardProps = (state/*:AppState*/) => {
-  const cursorCoordinate =
-    state.cursor.placement && state.cursor.placement.boardType === BOARD_TYPES.BATTLE_BOARD ?
-      state.cursor.placement.coordinate : null;
+  const cursorCoordinate = (
+    state.cursor.placement &&
+    state.cursor.placement.boardType === BOARD_TYPES.BATTLE_BOARD
+  ) ? createSquareMatrixCursorCoordinateProps(state.cursor.placement) : null;
 
   const unitBasedAnimations = state.bullets
     .filter(bullet => {
@@ -182,9 +195,10 @@ const mapDispatchToBattleBoardProps = (dispatch/*:Dispatch<Function>*/, ownProps
 };
 
 const mapStateToSortieBoardProps = (state/*:AppState*/) => {
-  const cursorCoordinate =
-    state.cursor.placement && state.cursor.placement.boardType === BOARD_TYPES.SORTIE_BOARD ?
-      state.cursor.placement.coordinate : null;
+  const cursorCoordinate = (
+    state.cursor.placement &&
+    state.cursor.placement.boardType === BOARD_TYPES.SORTIE_BOARD
+  ) ? createSquareMatrixCursorCoordinateProps(state.cursor.placement) : null;
 
   const units = state.allies
     .filter(ally => ally.placement && ally.placement.boardType === BOARD_TYPES.SORTIE_BOARD)
@@ -194,7 +208,6 @@ const mapStateToSortieBoardProps = (state/*:AppState*/) => {
   return {
     cursorCoordinate,
     serialSquares: createSerialSquares(state.sortieBoard.squareMatrix),
-    squareMatrix: state.sortieBoard.squareMatrix,
     units,
   };
 };

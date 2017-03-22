@@ -4,7 +4,6 @@
 import type {
   CoordinateState,
   LocationState,
-  SquareMatrixState,
 } from '../types/states';
 import type { BulletProps } from './Bullet';
 import type { SquareProps } from './Square';
@@ -24,9 +23,14 @@ const Unit = require('./Unit');
 
 
 /*::
+export type SquareMatrixCursorCoordinateProps = {
+  rowIndex: number,
+  columnIndex: number,
+};
+
 type Props = {
   bullets: BulletProps[],
-  cursorCoordinate: CoordinateState | null,
+  cursorCoordinate: SquareMatrixCursorCoordinateProps | null,
   handleTouchStartPad: ({ location: LocationState, coordinate: CoordinateState }) => void,
   serialSquares: SquareProps[],
   squareBasedAnimations: {
@@ -35,7 +39,6 @@ type Props = {
     duration: number,
     uid: string,
   }[],
-  squareMatrix: SquareMatrixState,
   units: UnitProps[],
 }
 
@@ -86,10 +89,6 @@ class SquareMatrix extends React.Component {
   _squareBasedAnimationDomNode: HTMLElement;
    */
 
-  constructor(props/*:Props*/) {
-    super(props);
-  }
-
   componentDidUpdate() {
     // Execute square-based animations
     // TODO: Add UI tests
@@ -119,12 +118,7 @@ class SquareMatrix extends React.Component {
   }
 
   render() {
-    const {
-      cursorCoordinate,
-      handleTouchStartPad,
-    } = this.props;
-
-    const props = {
+    const rootProps = {
       className: 'square-matrix',
     };
 
@@ -132,18 +126,18 @@ class SquareMatrix extends React.Component {
       key: 'square-matrix-touchpad',
       className: 'square-matrix__touchpad',
       onTouchStart: (event) => {
-        handleTouchStartPad(event, SquareMatrix._normalizeTouchPositions(event));
+        this.props.handleTouchStartPad(event, SquareMatrix._normalizeTouchPositions(event));
       },
     });
 
     let cursor = null;
-    if (cursorCoordinate) {
+    if (this.props.cursorCoordinate) {
       cursor = React.createElement('div', {
         key: 'square-matrix-cursor',
         className: 'square-matrix__cursor',
         style: {
-          top: STYLES.SQUARE_HEIGHT * cursorCoordinate.rowIndex,
-          left: STYLES.SQUARE_WIDTH * cursorCoordinate.columnIndex,
+          top: STYLES.SQUARE_HEIGHT * this.props.cursorCoordinate.rowIndex,
+          left: STYLES.SQUARE_WIDTH * this.props.cursorCoordinate.columnIndex,
         },
       });
     }
@@ -185,7 +179,7 @@ class SquareMatrix extends React.Component {
       serialSquareComponents,
     ];
 
-    return React.createElement('div', props, ...components);
+    return React.createElement('div', rootProps, ...components);
   }
 }
 

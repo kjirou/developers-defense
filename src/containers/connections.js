@@ -30,7 +30,7 @@ const { getEndPointCoordinate } = require('../state-models/square-matrix');
 const { getIconId, isAlive, isAlly } = require('../state-models/unit');
 
 
-const _createUnitProps = (
+const createUnitProps = (
   unit/*:UnitState*/,
   animations/*:UnitAnimationProps[]*/,
   unitStateChangeLogs/*:UnitStateChangeLogState[]*/
@@ -67,16 +67,7 @@ const _createUnitProps = (
   };
 };
 
-const _createUnitsProps = (state, unitBasedAnimations) => {
-  return [
-    ...state.enemies.filter(enemy => enemy.location),
-    ...state.allies.filter(ally => ally.placement && ally.placement.boardType === state.battleBoard.boardType),
-  ].map(unitState => {
-    return _createUnitProps(unitState, unitBasedAnimations, state.unitStateChangeLogs);
-  });
-};
-
-const _squareMatrixToSerialSquares = (squareMatrix/*:SquareMatrixState*/)/*:SquareProps[]*/ => {
+const squareMatrixToSerialSquares = (squareMatrix/*:SquareMatrixState*/)/*:SquareProps[]*/ => {
   const serialSquares = [];
 
   squareMatrix.forEach(rowSquares => {
@@ -91,7 +82,6 @@ const _squareMatrixToSerialSquares = (squareMatrix/*:SquareMatrixState*/)/*:Squa
 
   return serialSquares;
 };
-
 
 const mapStateToBattleBoardProps = (state/*:AppState*/) => {
   const cursorCoordinate =
@@ -125,7 +115,7 @@ const mapStateToBattleBoardProps = (state/*:AppState*/) => {
       .filter(unitBasedAnimation => unitBasedAnimation.unitUid === unitState.uid)
       .map(unitBasedAnimation => unitBasedAnimation.animation);
     ;
-    return _createUnitProps(unitState, animations, state.unitStateChangeLogs);
+    return createUnitProps(unitState, animations, state.unitStateChangeLogs);
   });
 
   const squareBasedAnimations = state.bullets
@@ -151,7 +141,7 @@ const mapStateToBattleBoardProps = (state/*:AppState*/) => {
   return {
     bullets: state.bullets,
     cursorCoordinate,
-    serialSquares: _squareMatrixToSerialSquares(state.battleBoard.squareMatrix),
+    serialSquares: squareMatrixToSerialSquares(state.battleBoard.squareMatrix),
     squareBasedAnimations,
     squareMatrix: state.battleBoard.squareMatrix,
     units,
@@ -174,12 +164,12 @@ const mapStateToSortieBoardProps = (state/*:AppState*/) => {
 
   const units = state.allies
     .filter(ally => ally.placement && ally.placement.boardType === BOARD_TYPES.SORTIE_BOARD)
-    .map(unitState => _createUnitProps(unitState, [], []))
+    .map(unitState => createUnitProps(unitState, [], []))
   ;
 
   return {
     cursorCoordinate,
-    serialSquares: _squareMatrixToSerialSquares(state.sortieBoard.squareMatrix),
+    serialSquares: squareMatrixToSerialSquares(state.sortieBoard.squareMatrix),
     squareMatrix: state.sortieBoard.squareMatrix,
     units,
   };
@@ -196,7 +186,7 @@ const mapDispatchToSortieBoardProps = (dispatch/*:Dispatch<Function>*/, ownProps
 
 
 module.exports = {
-  _squareMatrixToSerialSquares,
+  _squareMatrixToSerialSquares: squareMatrixToSerialSquares,
   mapStateToBattleBoardProps,
   mapDispatchToBattleBoardProps,
   mapStateToSortieBoardProps,

@@ -51,6 +51,17 @@ const createUnitProps = (
     throw new Error('The unit always has `location` or `placement`');
   }
 
+  const stateChanges = unitStateChangeLogs
+    .filter(v => v.unitUid === unit.uid)
+    .map(v => {
+      return {
+        uid: v.uid,
+        type: v.type,
+        value: v.value,
+      };
+    })
+  ;
+
   return {
     iconId: getIconId(unit),
     top,
@@ -62,7 +73,7 @@ const createUnitProps = (
       ...additionalClassNames,
     ],
     animations,
-    stateChanges: unitStateChangeLogs.filter(v => v.unitUid === unit.uid),
+    stateChanges,
     uid: unit.uid,
   };
 };

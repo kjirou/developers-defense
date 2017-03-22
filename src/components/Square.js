@@ -14,7 +14,9 @@ type Props = {
   rowIndex: number,
   columnIndex: number,
   landformType: LandformType,
-}
+};
+
+export type SquareProps = Props;
  */
 
 const Square = ({ rowIndex, columnIndex, landformType }/*:Props*/) => {
@@ -41,10 +43,6 @@ const Square = ({ rowIndex, columnIndex, landformType }/*:Props*/) => {
     className: classNames.join(' '),
     style: styles,
   });
-};
-
-Square.defaultProps = {
-  landformType: null,
 };
 
 

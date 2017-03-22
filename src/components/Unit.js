@@ -1,6 +1,7 @@
 // @flow
 
 /*::
+import type { UnitStateChangeType } from '../immutable/constants';
 import type { UnitStateChangeLogState } from '../types/states';
  */
 
@@ -10,23 +11,53 @@ const { STYLES, UNIT_STATE_CHANGE_LOG_TYPES } = require('../immutable/constants'
 
 
 /*::
+export type UnitAnimationProps = {
+  classNames: string[],
+  duration: number,
+  uid: string,
+};
+
+export type UnitStateChangeProps = {
+  type: UnitStateChangeType,
+  uid: string,
+  value: $PropertyType<UnitStateChangeLogState, 'value'>,
+};
+
 type Props = {
-  animations: {
-    classNames: string[],
-    duration: number,
-    uid: string,
-    unitUid: string,
-  }[],
+  animations: UnitAnimationProps[],
   classNames: string[],
   iconId: string,
   left: number,
-  stateChanges: UnitStateChangeLogState[],
+  stateChanges: UnitStateChangeProps[],
   top: number,
+  uid: string,
 }
+
+export type UnitProps = {
+  animations?: UnitAnimationProps[],
+  classNames?: $PropertyType<Props, 'classNames'>,
+  iconId?: $PropertyType<Props, 'iconId'>,
+  left: $PropertyType<Props, 'left'>,
+  stateChanges?: $PropertyType<Props, 'stateChanges'>,
+  top: $PropertyType<Props, 'top'>,
+  uid: $PropertyType<Props, 'uid'>,
+};
+
+type DefaultProps = {
+  animations: UnitAnimationProps[],
+  classNames: $PropertyType<Props, 'classNames'>,
+  stateChanges: $PropertyType<Props, 'stateChanges'>,
+};
  */
 
+const defaultProps = {
+  classNames: [],
+  animations: [],
+  stateChanges: [],
+};
+
 class Unit extends React.Component {
-  static _generateStateChangeEffectData({ type, value }/*:UnitStateChangeLogState*/) {
+  static _generateStateChangeEffectData({ type, value }/*:UnitStateChangeProps*/) {
     let text = '';
     const additionalClassNames = [];
 
@@ -50,22 +81,22 @@ class Unit extends React.Component {
   }
 
   static _animateStateChangeEffects(
-    unitStateChangeLogs/*:UnitStateChangeLogState[]*/,
-    containerDomNode/*:Object*/,
+    stateChanges/*:UnitStateChangeProps[]*/,
+    containerDomNode/*:HTMLElement*/,
     effectDuration/*:number*/,
     intervalOfContinuousCreation/*:number*/
   ) {
-    unitStateChangeLogs.forEach((unitStateChangeLog, stateChangeIndex) => {
+    stateChanges.forEach((stateChange, stateChangeIndex) => {
       const uidAttrName = 'data-uid';
 
-      if (containerDomNode.querySelector(`[${ uidAttrName }="${ unitStateChangeLog.uid }"]`)) {
+      if (containerDomNode.querySelector(`[${ uidAttrName }="${ stateChange.uid }"]`)) {
         return;
       }
 
-      const { text, additionalClassNames } = Unit._generateStateChangeEffectData(unitStateChangeLog);
+      const { text, additionalClassNames } = Unit._generateStateChangeEffectData(stateChange);
 
       const effectNode = document.createElement('div');
-      effectNode.setAttribute(uidAttrName, unitStateChangeLog.uid);
+      effectNode.setAttribute(uidAttrName, stateChange.uid);
       effectNode.classList.add('unit-state-change-effect', ...additionalClassNames);
       effectNode.textContent = text;
 
@@ -79,21 +110,13 @@ class Unit extends React.Component {
   }
 
   /*::
-  static defaultProps: {
-    animations: $PropertyType<Props, 'animations'>,
-    classNames: $PropertyType<Props, 'classNames'>,
-    stateChanges: $PropertyType<Props, 'stateChanges'>,
-  };
+  static defaultProps: DefaultProps;
 
   props: Props;
 
-  _stateChangeEffectContainerDomNode: HTMLElement;
   _animationContainerDomNode: HTMLElement;
+  _stateChangeEffectContainerDomNode: HTMLElement;
    */
-
-  constructor(props/*:Props*/) {
-    super(props);
-  }
 
   componentDidUpdate() {
     // Execute animations
@@ -160,11 +183,7 @@ class Unit extends React.Component {
   }
 }
 
-Unit.defaultProps = {
-  classNames: [],
-  animations: [],
-  stateChanges: [],
-};
+Unit.defaultProps = defaultProps;
 
 
 module.exports = Unit;

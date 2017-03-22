@@ -128,11 +128,11 @@
 
 .square-matrix
   $z-index-touchpad: 9999
-  $z-index-cursor: 5
-  $z-index-bullet: 4
-  $z-index-square-based-animation-container: 3
-  $z-index-unit: 2
-  $z-index-unit-on-square: 1
+  $z-index-cursor: 300
+  $z-index-bullet: 200
+  $z-index-square-based-animation-container: 100
+  $z-index-unit-layer-2: 2
+  $z-index-unit-layer-1: 1
   position: relative;
   width: 100%
   height: 100%
@@ -158,12 +158,12 @@
     z-index: $z-index-square-based-animation-container
   &__unit
     position: absolute;
-    z-index: $z-index-unit
+  &__unit--layer-two
+    z-index: $z-index-unit-layer-2
+  &__unit--layer-one
+    z-index: $z-index-unit-layer-1
   &__unit--is-alive
     transition: top $tick-interval * 4 + ms ease, left $tick-interval * 4 + ms ease
-  &__unit-on-square
-    position: absolute;
-    z-index: $z-index-unit-on-square
 
 .bullet
   width: 8px

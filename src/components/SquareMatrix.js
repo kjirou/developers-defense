@@ -2,13 +2,12 @@
 
 /*::
 import type {
-  BulletState,
   CoordinateState,
   LocationState,
-  SquareMatrixState,
-  UnitState,
-  UnitStateChangeLogState,
 } from '../types/states';
+import type { BulletProps } from './Bullet';
+import type { SquareProps } from './Square';
+import type { UnitProps } from './Unit';
  */
 
 const React = require('react');
@@ -24,33 +23,56 @@ const Unit = require('./Unit');
 
 
 /*::
+export type SquareMatrixCursorCoordinateProps = {
+  rowIndex: number,
+  columnIndex: number,
+};
+
+export type SquareMatrixSquareBasedAnimationProps = {
+  classNames: string[],
+  coordinates: CoordinateState[],
+  duration: number,
+  uid: string,
+};
+
 type Props = {
-  bullets: BulletState[],
-  cursorCoordinate: CoordinateState | null,
+  bullets: BulletProps[],
+  cursorCoordinate: SquareMatrixCursorCoordinateProps | null,
   handleTouchStartPad: ({ location: LocationState, coordinate: CoordinateState }) => void,
-  squareBasedAnimations: {
-    classNames: string[],
-    coordinates: CoordinateState[],
-    duration: number,
-    uid: string,
-  }[],
-  squareMatrix: SquareMatrixState,
-  unitBasedAnimations: {
-    classNames: string[],
-    duration: number,
-    uid: string,
-    unitUid: string,
-  }[],
-  unitStateChangeLogs: UnitStateChangeLogState[],
-  units: UnitState[],
-  unitsOnSquares: UnitState[],
+  serialSquares: SquareProps[],
+  squareBasedAnimations: SquareMatrixSquareBasedAnimationProps[],
+  units: UnitProps[],
 }
+
+type DefaultProps = {
+  bullets: $PropertyType<Props, 'bullets'>,
+  cursorCoordinate: $PropertyType<Props, 'cursorCoordinate'>,
+  handleTouchStartPad: $PropertyType<Props, 'handleTouchStartPad'>,
+  squareBasedAnimations: $PropertyType<Props, 'squareBasedAnimations'>,
+  units: $PropertyType<Props, 'units'>,
+};
+
+export type SquareMatrixProps = {
+  bullets?: $PropertyType<Props, 'bullets'>,
+  cursorCoordinate?: $PropertyType<Props, 'cursorCoordinate'>,
+  handleTouchStartPad?: $PropertyType<Props, 'handleTouchStartPad'>,
+  serialSquares: $PropertyType<Props, 'serialSquares'>,
+  squareBasedAnimations?: $PropertyType<Props, 'squareBasedAnimations'>,
+  units?: $PropertyType<Props, 'units'>,
+};
  */
+
+const defaultProps = {
+  bullets: [],
+  cursorCoordinate: null,
+  handleTouchStartPad: () => {},
+  squareBasedAnimations: [],
+  units: [],
+};
 
 class SquareMatrix extends React.Component {
   /**
    * @param {SyntheticTouchEvent} event
-   * @return {{location:<State~Location>, coordinate:<State~Coordinate>}}
    */
   static _normalizeTouchPositions(event) {
     const touch = event.changedTouches.item(0);
@@ -59,41 +81,24 @@ class SquareMatrix extends React.Component {
     const touchY = touch.clientY - rect.top;
     const location = createNewLocationState(touchY, touchX);
 
-    return {
+    const result/*:{
+      location: LocationState,
+      coordinate: CoordinateState,
+    }*/ = {
       location,
       coordinate: locationToCoordinate(location),
     };
-  }
 
-  /**
-   * @param {Object[]} unitBasedAnimations
-   * @param {string} unitUid
-   * @return {Object[]}
-   */
-  static _findUnitBasedAnimationsByUnitUid(unitBasedAnimations, unitUid) {
-    return unitBasedAnimations.filter(unitBasedAnimation => unitBasedAnimation.unitUid == unitUid);
+    return result;
   }
 
   /*::
-  static defaultProps: {
-    bullets: $PropertyType<Props, 'bullets'>,
-    cursorCoordinate: $PropertyType<Props, 'cursorCoordinate'>,
-    handleTouchStartPad: $PropertyType<Props, 'handleTouchStartPad'>,
-    squareBasedAnimations: $PropertyType<Props, 'squareBasedAnimations'>,
-    unitBasedAnimations: $PropertyType<Props, 'unitBasedAnimations'>,
-    unitStateChangeLogs: $PropertyType<Props, 'unitStateChangeLogs'>,
-    units: $PropertyType<Props, 'units'>,
-    unitsOnSquares: $PropertyType<Props, 'unitsOnSquares'>,
-  };
+  static defaultProps: DefaultProps;
 
   props: Props;
 
   _squareBasedAnimationDomNode: HTMLElement;
    */
-
-  constructor(props/*:Props*/) {
-    super(props);
-  }
 
   componentDidUpdate() {
     // Execute square-based animations
@@ -124,18 +129,7 @@ class SquareMatrix extends React.Component {
   }
 
   render() {
-    const {
-      bullets,
-      cursorCoordinate,
-      handleTouchStartPad,
-      squareMatrix,
-      unitBasedAnimations,
-      unitStateChangeLogs,
-      units,
-      unitsOnSquares,
-    } = this.props;
-
-    const props = {
+    const rootProps = {
       className: 'square-matrix',
     };
 
@@ -143,31 +137,25 @@ class SquareMatrix extends React.Component {
       key: 'square-matrix-touchpad',
       className: 'square-matrix__touchpad',
       onTouchStart: (event) => {
-        handleTouchStartPad(event, SquareMatrix._normalizeTouchPositions(event));
+        this.props.handleTouchStartPad(event, SquareMatrix._normalizeTouchPositions(event));
       },
     });
 
     let cursor = null;
-    if (cursorCoordinate) {
+    if (this.props.cursorCoordinate) {
       cursor = React.createElement('div', {
         key: 'square-matrix-cursor',
         className: 'square-matrix__cursor',
         style: {
-          top: STYLES.SQUARE_HEIGHT * cursorCoordinate.rowIndex,
-          left: STYLES.SQUARE_WIDTH * cursorCoordinate.columnIndex,
+          top: STYLES.SQUARE_HEIGHT * this.props.cursorCoordinate.rowIndex,
+          left: STYLES.SQUARE_WIDTH * this.props.cursorCoordinate.columnIndex,
         },
       });
     }
 
-    const bulletComponents = bullets.map(bullet => {
-      return React.createElement(Bullet, {
-        key: 'square-matrix-bullet-' + bullet.uid,
-        top: bullet.location.y,
-        left: bullet.location.x,
-        classNames: [
-          'square-matrix__bullet',
-        ],
-      });
+    const bulletComponents = this.props.bullets.map(bullet => {
+      const key = 'square-matrix-bullet-' + bullet.uid;
+      return React.createElement(Bullet, Object.assign({}, bullet, { key }));
     });
 
     const squareBasedAnimationContainer = React.createElement('div', {
@@ -176,32 +164,9 @@ class SquareMatrix extends React.Component {
       ref: (node) => { this._squareBasedAnimationDomNode = node },
     });
 
-    const unitComponents = units.map(unit => {
-      if (!unit.location) {
-        throw new Error('The unit always has `location`');
-      }
-
-      // TODO: unit.location があるはずなのを flow 上で保障できなかった
-      let top = 0;
-      let left = 0;
-      if (unit.location) {
-        top = unit.location.y;
-        left = unit.location.x;
-      }
-
-      return React.createElement(Unit, {
-        key: 'square-matrix-unit-' + unit.uid,
-        iconId: getIconId(unit),
-        top,
-        left,
-        classNames: [
-          isAlly(unit) ? 'unit--ally' : 'unit--enemy',
-          'square-matrix__unit',
-          ...(isAlive(unit) ? ['square-matrix__unit--is-alive'] : []),
-        ],
-        animations: SquareMatrix._findUnitBasedAnimationsByUnitUid(unitBasedAnimations, unit.uid),
-        stateChanges: unitStateChangeLogs.filter(v => v.unitUid === unit.uid),
-      });
+    const unitComponents = this.props.units.map(unit => {
+      const key = 'square-matrix-unit-' + unit.uid;
+      return React.createElement(Unit, Object.assign({}, unit, { key }));
     });
 
     const unitComponentsTransition = React.createElement(ReactCSSTransitionGroup, {
@@ -211,41 +176,9 @@ class SquareMatrix extends React.Component {
       transitionLeaveTimeout: 500,
     }, unitComponents);
 
-    // TODO: unitComponents と同じルーチンで作れるようにする
-    const unitComponentsOnSquares = unitsOnSquares.map(unit => {
-      if (!unit.placement) {
-        throw new Error('The unit always has `placement`');
-      }
-
-      // TODO: unit.placement があるはずなのを flow 上で保障できなかった
-      let top = 0;
-      let left = 0;
-      if (unit.placement) {
-        top = STYLES.SQUARE_HEIGHT * unit.placement.coordinate.rowIndex;
-        left = STYLES.SQUARE_WIDTH * unit.placement.coordinate.columnIndex;
-      }
-
-      return React.createElement(Unit, {
-        key: 'square-matrix-unit-on-square-' + unit.uid,
-        iconId: getIconId(unit),
-        top,
-        left,
-        classNames: [
-          isAlly(unit) ? 'unit--ally' : 'unit--enemy',
-          'square-matrix__unit-on-square',
-        ],
-      });
-    });
-
-    const serialSquareComponents = squareMatrix.map(rowSquares => {
-      return rowSquares.map(square => {
-        return React.createElement(Square, {
-          key: 'square-matrix-square-' + square.uid,
-          rowIndex: square.coordinate.rowIndex,
-          columnIndex: square.coordinate.columnIndex,
-          landformType: square.landformType,
-        });
-      });
+    const serialSquareComponents = this.props.serialSquares.map(square => {
+      const key = `square-matrix-square-${ square.rowIndex },${ square.columnIndex }`;
+      return React.createElement(Square, Object.assign({}, square, { key }));
     });
 
     const components = [
@@ -254,24 +187,14 @@ class SquareMatrix extends React.Component {
       ...bulletComponents,
       squareBasedAnimationContainer,
       unitComponentsTransition,
-      ...unitComponentsOnSquares,
       serialSquareComponents,
     ];
 
-    return React.createElement('div', props, ...components);
+    return React.createElement('div', rootProps, ...components);
   }
 }
 
-SquareMatrix.defaultProps = {
-  bullets: [],
-  cursorCoordinate: null,
-  handleTouchStartPad: () => {},
-  squareBasedAnimations: [],
-  unitBasedAnimations: [],
-  unitStateChangeLogs: [],
-  units: [],
-  unitsOnSquares: [],
-};
+SquareMatrix.defaultProps = defaultProps;
 
 
 module.exports = SquareMatrix;

@@ -26,6 +26,7 @@ export type AnimationImmutableObject = {
     style: string,
   },
   duration: number,
+  getExpressionClassNames: () => string[],
 };
  */
 
@@ -63,11 +64,11 @@ const expressionDefaults = {
 };
 
 const baseAnimation = {
-  _getAnimationDurationClassName()/*:string*/ {
+  _getAnimationDurationClassName() {
     return `animation-duration-${ this.duration }ms`;
   },
 
-  getExpressionClassNames()/*:string[]*/ {
+  getExpressionClassNames() {
     return [
       ...this.expression.classNames,
       this._getAnimationDurationClassName(),

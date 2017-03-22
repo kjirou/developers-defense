@@ -10,10 +10,12 @@
 /*::
 import type { Dispatch } from 'redux';
 
+import type { BulletProps } from '../components/Bullet';
 import type { SquareProps } from '../components/Square';
 import type { UnitAnimationProps, UnitProps } from '../components/Unit';
 import type {
   AppState,
+  BulletState,
   SquareMatrixState,
   UnitState,
   UnitStateChangeLogState,
@@ -29,6 +31,17 @@ const { createNewPlacementState } = require('../state-models/placement');
 const { getEndPointCoordinate } = require('../state-models/square-matrix');
 const { getIconId, isAlive, isAlly } = require('../state-models/unit');
 
+
+const createBulletProps = (bullet/*:BulletState*/)/*:BulletProps*/ => {
+  return {
+    uid: bullet.uid,
+    top: bullet.location.y,
+    left: bullet.location.x,
+    classNames: [
+      'square-matrix__bullet',
+    ],
+  };
+};
 
 const createUnitProps = (
   unit/*:UnitState*/,
@@ -78,7 +91,7 @@ const createUnitProps = (
   };
 };
 
-const squareMatrixToSerialSquares = (squareMatrix/*:SquareMatrixState*/)/*:SquareProps[]*/ => {
+const createSerialSquares = (squareMatrix/*:SquareMatrixState*/)/*:SquareProps[]*/ => {
   const serialSquares = [];
 
   squareMatrix.forEach(rowSquares => {
@@ -138,17 +151,6 @@ const mapStateToBattleBoardProps = (state/*:AppState*/) => {
     })
   ;
 
-  const bullets = state.bullets.map(bullet => {
-    return {
-      uid: bullet.uid,
-      top: bullet.location.y,
-      left: bullet.location.x,
-      classNames: [
-        'square-matrix__bullet',
-      ],
-    };
-  });
-
   const units = [
     ...state.enemies.filter(enemy => enemy.location),
     ...state.allies.filter(ally => ally.placement && ally.placement.boardType === BOARD_TYPES.BATTLE_BOARD),
@@ -161,9 +163,9 @@ const mapStateToBattleBoardProps = (state/*:AppState*/) => {
   });
 
   return {
-    bullets,
+    bullets: state.bullets.map(createBulletProps),
     cursorCoordinate,
-    serialSquares: squareMatrixToSerialSquares(state.battleBoard.squareMatrix),
+    serialSquares: createSerialSquares(state.battleBoard.squareMatrix),
     squareBasedAnimations,
     squareMatrix: state.battleBoard.squareMatrix,
     units,
@@ -191,7 +193,7 @@ const mapStateToSortieBoardProps = (state/*:AppState*/) => {
 
   return {
     cursorCoordinate,
-    serialSquares: squareMatrixToSerialSquares(state.sortieBoard.squareMatrix),
+    serialSquares: createSerialSquares(state.sortieBoard.squareMatrix),
     squareMatrix: state.sortieBoard.squareMatrix,
     units,
   };
@@ -208,7 +210,7 @@ const mapDispatchToSortieBoardProps = (dispatch/*:Dispatch<Function>*/, ownProps
 
 
 module.exports = {
-  _squareMatrixToSerialSquares: squareMatrixToSerialSquares,
+  _createSerialSquares: createSerialSquares,
   mapStateToBattleBoardProps,
   mapDispatchToBattleBoardProps,
   mapStateToSortieBoardProps,

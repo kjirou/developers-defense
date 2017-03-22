@@ -6,7 +6,7 @@ const sinon = require('sinon');
 
 const Square = require('../../src/components/Square');
 const SquareMatrix = require('../../src/components/SquareMatrix');
-const { _squareMatrixToSerialSquares } = require('../../src/containers/connections');
+const { _createSerialSquares } = require('../../src/containers/connections');
 const { createNewSquareMatrixState } = require('../../src/state-models/square-matrix');
 
 
@@ -27,7 +27,7 @@ describe('components/SquareMatrix', () => {
     it('can create element', () => {
       const squareMatrix = _matrix(2, 3);
       const wrapper = mount(React.createElement(SquareMatrix, {
-        serialSquares: _squareMatrixToSerialSquares(squareMatrix),
+        serialSquares: _createSerialSquares(squareMatrix),
         squareMatrix,
       }));
       assert.strictEqual(wrapper.find(Square).length, 6);
@@ -58,7 +58,7 @@ describe('components/SquareMatrix', () => {
 
       const wrapper = mount(React.createElement(SquareMatrix, {
         handleTouchStartPad,
-        serialSquares: _squareMatrixToSerialSquares(squareMatrix),
+        serialSquares: _createSerialSquares(squareMatrix),
         squareMatrix,
       }));
       const touchpadWrapper = wrapper.find('.square-matrix__touchpad');

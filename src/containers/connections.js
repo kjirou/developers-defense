@@ -12,7 +12,11 @@ import type { Dispatch } from 'redux';
 
 import type { BulletProps } from '../components/Bullet';
 import type { SquareProps } from '../components/Square';
-import type { SquareMatrixCursorCoordinateProps } from '../components/SquareMatrix';
+import type {
+  SquareMatrixCursorCoordinateProps,
+  SquareMatrixSquareBasedAnimationProps,
+  SquareMatrixProps,
+} from '../components/SquareMatrix';
 import type { UnitAnimationProps, UnitProps } from '../components/Unit';
 import {} from '../immutable/constants';
 import type {
@@ -144,7 +148,7 @@ const mapStateToBattleBoardProps = (state/*:AppState*/) => {
     })
   ;
 
-  const squareBasedAnimations = state.bullets
+  const squareBasedAnimations/*:SquareMatrixSquareBasedAnimationProps[]*/ = state.bullets
     .filter(bullet => {
       return bullet.effect.animationDestinationType === ANIMATION_DESTINATION_TYPES.SQUARE &&
         isArrivedToDestination(bullet);

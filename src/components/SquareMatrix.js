@@ -28,17 +28,19 @@ export type SquareMatrixCursorCoordinateProps = {
   columnIndex: number,
 };
 
+export type SquareMatrixSquareBasedAnimationProps = {
+  classNames: string[],
+  coordinates: CoordinateState[],
+  duration: number,
+  uid: string,
+};
+
 type Props = {
   bullets: BulletProps[],
   cursorCoordinate: SquareMatrixCursorCoordinateProps | null,
   handleTouchStartPad: ({ location: LocationState, coordinate: CoordinateState }) => void,
   serialSquares: SquareProps[],
-  squareBasedAnimations: {
-    classNames: string[],
-    coordinates: CoordinateState[],
-    duration: number,
-    uid: string,
-  }[],
+  squareBasedAnimations: SquareMatrixSquareBasedAnimationProps[],
   units: UnitProps[],
 }
 
@@ -48,6 +50,15 @@ type DefaultProps = {
   handleTouchStartPad: $PropertyType<Props, 'handleTouchStartPad'>,
   squareBasedAnimations: $PropertyType<Props, 'squareBasedAnimations'>,
   units: $PropertyType<Props, 'units'>,
+};
+
+export type SquareMatrixProps = {
+  bullets?: $PropertyType<Props, 'bullets'>,
+  cursorCoordinate?: $PropertyType<Props, 'cursorCoordinate'>,
+  handleTouchStartPad?: $PropertyType<Props, 'handleTouchStartPad'>,
+  serialSquares: $PropertyType<Props, 'serialSquares'>,
+  squareBasedAnimations?: $PropertyType<Props, 'squareBasedAnimations'>,
+  units?: $PropertyType<Props, 'units'>,
 };
  */
 

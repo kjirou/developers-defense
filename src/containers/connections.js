@@ -118,17 +118,6 @@ const mapStateToBattleBoardProps = (state/*:AppState*/) => {
     })
   ;
 
-  const units = [
-    ...state.enemies.filter(enemy => enemy.location),
-    ...state.allies.filter(ally => ally.placement && ally.placement.boardType === BOARD_TYPES.BATTLE_BOARD),
-  ].map(unitState => {
-    const animations = unitBasedAnimations
-      .filter(unitBasedAnimation => unitBasedAnimation.unitUid === unitState.uid)
-      .map(unitBasedAnimation => unitBasedAnimation.animation);
-    ;
-    return createUnitProps(unitState, animations, state.unitStateChangeLogs);
-  });
-
   const squareBasedAnimations = state.bullets
     .filter(bullet => {
       return bullet.effect.animationDestinationType === ANIMATION_DESTINATION_TYPES.SQUARE &&
@@ -149,8 +138,30 @@ const mapStateToBattleBoardProps = (state/*:AppState*/) => {
     })
   ;
 
+  const bullets = state.bullets.map(bullet => {
+    return {
+      uid: bullet.uid,
+      top: bullet.location.y,
+      left: bullet.location.x,
+      classNames: [
+        'square-matrix__bullet',
+      ],
+    };
+  });
+
+  const units = [
+    ...state.enemies.filter(enemy => enemy.location),
+    ...state.allies.filter(ally => ally.placement && ally.placement.boardType === BOARD_TYPES.BATTLE_BOARD),
+  ].map(unitState => {
+    const animations = unitBasedAnimations
+      .filter(unitBasedAnimation => unitBasedAnimation.unitUid === unitState.uid)
+      .map(unitBasedAnimation => unitBasedAnimation.animation);
+    ;
+    return createUnitProps(unitState, animations, state.unitStateChangeLogs);
+  });
+
   return {
-    bullets: state.bullets,
+    bullets,
     cursorCoordinate,
     serialSquares: squareMatrixToSerialSquares(state.battleBoard.squareMatrix),
     squareBasedAnimations,

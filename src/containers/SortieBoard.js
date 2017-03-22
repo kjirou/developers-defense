@@ -13,7 +13,6 @@ class SortieBoard extends React.Component {
       cursorCoordinate: this.props.cursorCoordinate,
       handleTouchStartPad: this.props.handleTouchStartPad,
       serialSquares: this.props.serialSquares,
-      squareMatrix: this.props.squareMatrix,
       units: this.props.units,
     });
 

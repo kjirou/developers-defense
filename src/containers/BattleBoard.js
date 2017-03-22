@@ -14,10 +14,7 @@ class BattleBoard extends React.Component {
       bullets: this.props.bullets,
       handleTouchStartPad: this.props.handleTouchStartPad,
       serialSquares: this.props.serialSquares,
-      squareMatrix: this.props.squareMatrix,
       squareBasedAnimations: this.props.squareBasedAnimations,
-      squareMatrix: this.props.squareMatrix,
-      unitBasedAnimations: this.props.unitBasedAnimations,
       unitStateChangeLogs: this.props.unitStateChangeLogs,
       units: this.props.units,
     });

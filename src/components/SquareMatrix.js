@@ -2,11 +2,11 @@
 
 /*::
 import type {
-  BulletState,
   CoordinateState,
   LocationState,
   SquareMatrixState,
 } from '../types/states';
+import type { BulletProps } from './Bullet';
 import type { SquareProps } from './Square';
 import type { UnitProps } from './Unit';
  */
@@ -25,7 +25,7 @@ const Unit = require('./Unit');
 
 /*::
 type Props = {
-  bullets: BulletState[],
+  bullets: BulletProps[],
   cursorCoordinate: CoordinateState | null,
   handleTouchStartPad: ({ location: LocationState, coordinate: CoordinateState }) => void,
   serialSquares: SquareProps[],
@@ -120,10 +120,8 @@ class SquareMatrix extends React.Component {
 
   render() {
     const {
-      bullets,
       cursorCoordinate,
       handleTouchStartPad,
-      squareMatrix,
     } = this.props;
 
     const props = {
@@ -150,15 +148,9 @@ class SquareMatrix extends React.Component {
       });
     }
 
-    const bulletComponents = bullets.map(bullet => {
-      return React.createElement(Bullet, {
-        key: 'square-matrix-bullet-' + bullet.uid,
-        top: bullet.location.y,
-        left: bullet.location.x,
-        classNames: [
-          'square-matrix__bullet',
-        ],
-      });
+    const bulletComponents = this.props.bullets.map(bullet => {
+      const key = 'square-matrix-bullet-' + bullet.uid;
+      return React.createElement(Bullet, Object.assign({}, bullet, { key }));
     });
 
     const squareBasedAnimationContainer = React.createElement('div', {

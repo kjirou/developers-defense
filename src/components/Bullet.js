@@ -7,11 +7,27 @@ const { PARAMETERS } = require('../immutable/constants');
 
 /*::
 type Props = {
-  top: number,
-  left: number,
   classNames: string[],
-}
+  left: number,
+  top: number,
+  uid: string,
+};
+
+type DefaultProps = {
+  classNames: $PropertyType<Props, 'classNames'>,
+};
+
+export type BulletProps = {
+  classNames?: $PropertyType<Props, 'classNames'>,
+  left: $PropertyType<Props, 'left'>,
+  top: $PropertyType<Props, 'top'>,
+  uid: $PropertyType<Props, 'uid'>,
+};
  */
+
+const defaultProps/*:DefaultProps*/ = {
+  classNames: [],
+};
 
 const Bullet = ({ classNames, top, left }/*:Props*/) => {
   // TODO: The movement of the last one turn is slow
@@ -31,9 +47,7 @@ const Bullet = ({ classNames, top, left }/*:Props*/) => {
   });
 };
 
-Bullet.defaultProps = {
-  classNames: [],
-};
+Bullet.defaultProps = defaultProps;
 
 
 module.exports = Bullet;

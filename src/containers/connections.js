@@ -1,15 +1,7 @@
 // @flow
 
 /**
- * Perform mapping of state and props.
- *
- * この処理群を特に別ファイルに切り出した理由は、
- * containers に Flow アノテーションを入れないで state - props をマッピングできるようにしたかったから。
- *
- * containers 内でマッピングしようとすると、
- * connect の declare が複雑で理解できなかったため、落ちた時の解決が困難だった。
- *
- * TODO: そもそも型があれば、react-redux 自体が不要にも見える
+ * Map Redux's state to React's props
  */
 
 
@@ -17,6 +9,7 @@
 import type { Dispatch } from 'redux';
 
 import type { BulletProps } from '../components/Bullet';
+import type { RootProps } from '../components/Root';
 import type { SquareProps } from '../components/Square';
 import type {
   SquareMatrixCursorCoordinateProps,
@@ -24,6 +17,7 @@ import type {
   SquareMatrixProps,
 } from '../components/SquareMatrix';
 import type { UnitAnimationProps, UnitProps } from '../components/Unit';
+import type { GameProgressType } from '../immutable/constants';
 import type {
   AppState,
   BulletState,
@@ -34,9 +28,19 @@ import type {
 } from '../types/states';
  */
 
-const { touchSquare } = require('../actions');
+const {
+  extendGameStatus,
+  startGame,
+  touchSquare,
+} = require('../actions');
 const { animations } = require('../immutable/animations');
-const { ANIMATION_DESTINATION_TYPES, BOARD_TYPES, PARAMETERS, STYLES } = require('../immutable/constants');
+const {
+  ANIMATION_DESTINATION_TYPES,
+  BOARD_TYPES,
+  GAME_PROGRESS_TYPES,
+  PARAMETERS,
+  STYLES,
+} = require('../immutable/constants');
 const { isArrivedToDestination } = require('../state-models/bullet');
 const { createEffectiveCoordinates } = require('../state-models/effect');
 const { createNewPlacementState } = require('../state-models/placement');
@@ -128,7 +132,17 @@ const createSerialSquares = (squareMatrix/*:SquareMatrixState*/)/*:SquareProps[]
   return serialSquares;
 };
 
-const mapStateToBattleBoardProps = (state/*:AppState*/) => {
+const createBattleBoardProps = () => {
+  return {
+    rowLength: PARAMETERS.BATTLE_BOARD_ROW_LENGTH,
+    columnLength: PARAMETERS.BATTLE_BOARD_COLUMN_LENGTH,
+    additionalClassNames: ['root__battle-board'],
+  };
+};
+
+const createBattleBoardSquareMatrixProps = (
+  state/*:AppState*/, dispatch/*:Dispatch<Function>*/
+)/*:SquareMatrixProps*/ => {
   const cursorCoordinate = (
     state.cursor.placement &&
     state.cursor.placement.boardType === BOARD_TYPES.BATTLE_BOARD
@@ -184,31 +198,30 @@ const mapStateToBattleBoardProps = (state/*:AppState*/) => {
     return createUnitProps(unitState, animations, state.unitStateChangeLogs);
   });
 
-  const squareMatrix/*:SquareMatrixProps*/ = {
+  return {
     bullets: state.bullets.map(createBulletProps),
     cursorCoordinate,
     serialSquares: createSerialSquares(state.battleBoard.squareMatrix),
     squareBasedAnimations,
     units,
-  };
-
-  return {
-    squareMatrix,
-  };
-};
-
-const mapDispatchToBattleBoardProps = (dispatch/*:Dispatch<Function>*/) => {
-  return {
-    squareMatrixHandlers: {
-      handleTouchStartPad: (event/*:Object*/, { coordinate }/*:Object*/) => {
-        const placement = createNewPlacementState(BOARD_TYPES.BATTLE_BOARD, coordinate);
-        dispatch(touchSquare(placement));
-      },
+    handleTouchStartPad: (event/*:Object*/, { coordinate }/*:Object*/) => {
+      const placement = createNewPlacementState(BOARD_TYPES.BATTLE_BOARD, coordinate);
+      dispatch(touchSquare(placement));
     },
   };
 };
 
-const mapStateToSortieBoardProps = (state/*:AppState*/) => {
+const createSortieBoardProps = () => {
+  return {
+    rowLength: PARAMETERS.SORTIE_BOARD_ROW_LENGTH,
+    columnLength: PARAMETERS.SORTIE_BOARD_COLUMN_LENGTH,
+    additionalClassNames: ['root__recruitment-board'],
+  };
+};
+
+const createSortieBoardSquareMatrixProps = (
+  state/*:AppState*/, dispatch/*:Dispatch<Function>*/
+)/*:SquareMatrixProps*/ => {
   const cursorCoordinate = (
     state.cursor.placement &&
     state.cursor.placement.boardType === BOARD_TYPES.SORTIE_BOARD
@@ -219,33 +232,59 @@ const mapStateToSortieBoardProps = (state/*:AppState*/) => {
     .map(unitState => createUnitProps(unitState, [], []))
   ;
 
-  const squareMatrix/*:SquareMatrixProps*/ = {
+  return {
     cursorCoordinate,
     serialSquares: createSerialSquares(state.sortieBoard.squareMatrix),
     units,
-  };
-
-  return {
-    squareMatrix,
+    handleTouchStartPad: (event/*:Object*/, { coordinate }/*:Object*/) => {
+      const placement = createNewPlacementState(BOARD_TYPES.SORTIE_BOARD, coordinate);
+      dispatch(touchSquare(placement));
+    },
   };
 };
 
-const mapDispatchToSortieBoardProps = (dispatch/*:Dispatch<Function>*/, ownProps/*:Object*/) => {
+const createStatusBarProps = (state/*:AppState*/) => {
   return {
-    squareMatrixHandlers: {
-      handleTouchStartPad: (event/*:Object*/, { coordinate }/*:Object*/) => {
-        const placement = createNewPlacementState(BOARD_TYPES.SORTIE_BOARD, coordinate);
-        dispatch(touchSquare(placement));
-      },
+    gameTime: state.gameStatus.tickId === null ?
+      0 : Math.floor(state.gameStatus.tickId / PARAMETERS.TICKS_PER_SECOND),
+  };
+};
+
+const createDebugButtonsProps = (state/*:AppState*/, dispatch/*:Dispatch<Function>*/) => {
+  let gameProgressType;
+  if (state.gameStatus.tickId === null) {
+    gameProgressType = GAME_PROGRESS_TYPES.NOT_STARTED;
+  } else {
+    gameProgressType = state.gameStatus.isPaused ? GAME_PROGRESS_TYPES.PAUSED : GAME_PROGRESS_TYPES.STARTED;
+  }
+
+  return {
+    gameProgressType,
+    handlePauseGameButtonTouchStart: () => {
+      dispatch(extendGameStatus({ isPaused: true }));
     },
+    handleResumeGameButtonTouchStart: () => {
+      dispatch(extendGameStatus({ isPaused: false }));
+    },
+    handleStartGameButtonTouchStart: () => {
+      dispatch(startGame());
+    },
+  };
+};
+
+const createRootProps = (state/*:AppState*/, dispatch/*:Dispatch<Function>*/)/*:RootProps*/ => {
+  return {
+    battleBoard: createBattleBoardProps(),
+    battleBoardSquareMatrix: createBattleBoardSquareMatrixProps(state, dispatch),
+    debugButtons: createDebugButtonsProps(state, dispatch),
+    sortieBoard: createSortieBoardProps(),
+    sortieBoardSquareMatrix: createSortieBoardSquareMatrixProps(state, dispatch),
+    statusBar: createStatusBarProps(state),
   };
 };
 
 
 module.exports = {
   _createSerialSquares: createSerialSquares,
-  mapStateToBattleBoardProps,
-  mapDispatchToBattleBoardProps,
-  mapStateToSortieBoardProps,
-  mapDispatchToSortieBoardProps
+  createRootProps,
 };

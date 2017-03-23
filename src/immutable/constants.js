@@ -66,6 +66,13 @@ const FRIENDSHIP_TYPES = {
 };
 /*::export type FriendshipType = $Keys<typeof FRIENDSHIP_TYPES>; */
 
+const GAME_PROGRESS_TYPES = {
+  PAUSED: 'PAUSED',
+  NOT_STARTED: 'NOT_STARTED',
+  STARTED: 'STARTED',
+};
+/*::export type GameProgressType = $Keys<typeof GAME_PROGRESS_TYPES>; */
+
 const LANDFORM_TYPES = {
   CASTLE: 'CASTLE',
   DESERT: 'DESERT',
@@ -127,6 +134,7 @@ module.exports = {
   EFFECT_DIRECTIONS,
   FACTION_TYPES,
   FRIENDSHIP_TYPES,
+  GAME_PROGRESS_TYPES,
   LANDFORM_TYPES,
   STYLES,
   UNIT_STATE_CHANGE_LOG_TYPES,

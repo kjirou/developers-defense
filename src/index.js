@@ -12,15 +12,6 @@ const jobs =  require('./immutable/jobs');
 const { configureStore } =  require('./store');
 
 
-/**
- * @namespace Immutable
- */
-
-/**
- * @namespace State
- */
-
-
 window.document.addEventListener('DOMContentLoaded', () => {
   const store = configureStore();
 

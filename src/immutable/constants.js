@@ -1,7 +1,4 @@
 // @flow
-const keymirror = require('keymirror');
-
-
 const ACT_AIM_RANGE_TYPES = {
   CONE: 'CONE',
   LINE: 'LINE',
@@ -19,18 +16,19 @@ const ACT_EFFECT_RANGE_TYPES = {
 };
 /*::export type ActEffectRangeType = $Keys<typeof ACT_EFFECT_RANGE_TYPES>; */
 
-const ACTION_TYPES = keymirror({
-  CLEAR_CURSOR: null,
-  EXTEND_BATTLE_BOARD_SQUARE_MATRIX: null,
-  EXTEND_GAME_STATUS: null,
-  NOOP: null,
-  MOVE_CURSOR: null,
-  TICK: null,
-  UPDATE_ALLIES: null,
-  UPDATE_ALLY: null,
-  UPDATE_BULLETS: null,
-  UPDATE_ENEMIES: null,
-});
+const ACTION_TYPES = {
+  CLEAR_CURSOR: 'CLEAR_CURSOR',
+  EXTEND_BATTLE_BOARD_SQUARE_MATRIX: 'EXTEND_BATTLE_BOARD_SQUARE_MATRIX',
+  EXTEND_GAME_STATUS: 'EXTEND_GAME_STATUS',
+  NOOP: 'NOOP',
+  MOVE_CURSOR: 'MOVE_CURSOR',
+  TICK: 'TICK',
+  UPDATE_ALLIES: 'UPDATE_ALLIES',
+  UPDATE_ALLY: 'UPDATE_ALLY',
+  UPDATE_BULLETS: 'UPDATE_BULLETS',
+  UPDATE_ENEMIES: 'UPDATE_ENEMIES',
+};
+/*::export type ActionType = $Keys<typeof ACTION_TYPES>; */
 
 const ANIMATION_DESTINATION_TYPES = {
   NONE: 'NONE',

@@ -2,7 +2,8 @@
 
 /*::
 import type { BoardProps } from '../components/Board';
-import type { SquareMatrixProps } from '../components/SquareMatrixProps';
+import type { DebugButtonsProps } from '../components/DebugButtons';
+import type { SquareMatrixProps } from '../components/SquareMatrix';
 import type { StatusBarProps } from '../components/StatusBar';
  */
 
@@ -19,6 +20,7 @@ const StatusBar = require('./StatusBar');
 type Props = {
   battleBoard: BoardProps,
   battleBoardSquareMatrix: SquareMatrixProps,
+  debugButtons: DebugButtonsProps,
   sortieBoard: BoardProps,
   sortieBoardSquareMatrix: SquareMatrixProps,
   statusBar: StatusBarProps,

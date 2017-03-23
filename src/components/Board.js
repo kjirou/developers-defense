@@ -18,14 +18,14 @@ type Props = {
 };
 
 type DefaultProps = {
-  additionalClassNames?: $PropertyType(Props, 'additionalClassNames'),
+  additionalClassNames?: $PropertyType<Props, 'additionalClassNames'>,
 };
 
-export BoardProps = {
+export type BoardProps = {
   ...DefaultProps,
-  children: $PropertyType(Props, 'children'),
-  columnLength: $PropertyType(Props, 'columnLength'),
-  rowLength: $PropertyType(Props, 'rowLength'),
+  children?: $PropertyType<Props, 'children'>,
+  columnLength: $PropertyType<Props, 'columnLength'>,
+  rowLength: $PropertyType<Props, 'rowLength'>,
 };
  */
 

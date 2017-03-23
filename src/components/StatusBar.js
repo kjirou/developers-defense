@@ -9,7 +9,7 @@ type Props = {
   gameTime: number,
 };
 
-export StatusBarProps = Props;
+export type StatusBarProps = Props;
  */
 
 const StatusBar = ({ gameTime }/*:Props*/) => {

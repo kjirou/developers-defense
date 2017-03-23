@@ -1,6 +1,8 @@
 // @flow
 
 /*::
+import type { ActionType } from '../immutable/constants';
+
 import type { PlacementState } from '../types/states';
  */
 
@@ -15,6 +17,13 @@ const placementMethods = require('../state-models/placement');
 const squareMatrixMethods = require('../state-models/square-matrix');
 const unitMethods = require('../state-models/unit');
 const unitCollectionMethods = require('../state-models/unit-collection');
+
+
+/*::
+export type Action = {
+  type: ActionType,
+};
+ */
 
 
 const _createRandomDummyEnemy = () => {

@@ -8,6 +8,7 @@
 /*::
 import type { Dispatch } from 'redux';
 
+import type { Action } from '../actions';
 import type { BulletProps } from '../components/Bullet';
 import type { RootProps } from '../components/Root';
 import type { SquareProps } from '../components/Square';
@@ -141,7 +142,7 @@ const createBattleBoardProps = () => {
 };
 
 const createBattleBoardSquareMatrixProps = (
-  state/*:AppState*/, dispatch/*:Dispatch<Function>*/
+  state/*:AppState*/, dispatch/*:Dispatch<Action>*/
 )/*:SquareMatrixProps*/ => {
   const cursorCoordinate = (
     state.cursor.placement &&
@@ -204,7 +205,8 @@ const createBattleBoardSquareMatrixProps = (
     serialSquares: createSerialSquares(state.battleBoard.squareMatrix),
     squareBasedAnimations,
     units,
-    handleTouchStartPad: (event/*:Object*/, { coordinate }/*:Object*/) => {
+    handleTouchStartPad: (event, { coordinate }) => {
+      console.log(event);
       const placement = createNewPlacementState(BOARD_TYPES.BATTLE_BOARD, coordinate);
       dispatch(touchSquare(placement));
     },
@@ -220,7 +222,7 @@ const createSortieBoardProps = () => {
 };
 
 const createSortieBoardSquareMatrixProps = (
-  state/*:AppState*/, dispatch/*:Dispatch<Function>*/
+  state/*:AppState*/, dispatch/*:Dispatch<Action>*/
 )/*:SquareMatrixProps*/ => {
   const cursorCoordinate = (
     state.cursor.placement &&
@@ -250,7 +252,7 @@ const createStatusBarProps = (state/*:AppState*/) => {
   };
 };
 
-const createDebugButtonsProps = (state/*:AppState*/, dispatch/*:Dispatch<Function>*/) => {
+const createDebugButtonsProps = (state/*:AppState*/, dispatch/*:Dispatch<Action>*/) => {
   let gameProgressType;
   if (state.gameStatus.tickId === null) {
     gameProgressType = GAME_PROGRESS_TYPES.NOT_STARTED;
@@ -272,7 +274,7 @@ const createDebugButtonsProps = (state/*:AppState*/, dispatch/*:Dispatch<Functio
   };
 };
 
-const createRootProps = (state/*:AppState*/, dispatch/*:Dispatch<Function>*/)/*:RootProps*/ => {
+const createRootProps = (state/*:AppState*/, dispatch/*:Dispatch<Action>*/)/*:RootProps*/ => {
   return {
     battleBoard: createBattleBoardProps(),
     battleBoardSquareMatrix: createBattleBoardSquareMatrixProps(state, dispatch),

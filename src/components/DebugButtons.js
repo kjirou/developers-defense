@@ -25,7 +25,7 @@ const DebugButtons = ({
   handlePauseGameButtonTouchStart,
   handleResumeGameButtonTouchStart,
   handleStartGameButtonTouchStart,
-}) => {
+}/*:Props*/) => {
   const button = {
     [GAME_PROGRESS_TYPES.NOT_STARTED]: () => {
       return <div onTouchStart={ handleStartGameButtonTouchStart }>[ Start ]</div>;

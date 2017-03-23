@@ -38,7 +38,7 @@ export type SquareMatrixSquareBasedAnimationProps = {
 type Props = {
   bullets: BulletProps[],
   cursorCoordinate: SquareMatrixCursorCoordinateProps | null,
-  handleTouchStartPad: ({ location: LocationState, coordinate: CoordinateState }) => void,
+  handleTouchStartPad: (SyntheticTouchEvent, { location: LocationState, coordinate: CoordinateState }) => void,
   serialSquares: SquareProps[],
   squareBasedAnimations: SquareMatrixSquareBasedAnimationProps[],
   units: UnitProps[],
@@ -53,12 +53,8 @@ type DefaultProps = {
 };
 
 export type SquareMatrixProps = {
-  bullets?: $PropertyType<Props, 'bullets'>,
-  cursorCoordinate?: $PropertyType<Props, 'cursorCoordinate'>,
-  handleTouchStartPad?: $PropertyType<Props, 'handleTouchStartPad'>,
+  ...DefaultProps,
   serialSquares: $PropertyType<Props, 'serialSquares'>,
-  squareBasedAnimations?: $PropertyType<Props, 'squareBasedAnimations'>,
-  units?: $PropertyType<Props, 'units'>,
 };
  */
 

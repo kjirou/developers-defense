@@ -16,7 +16,22 @@ type Props = {
   columnLength: number,
   rowLength: number,
 };
+
+type DefaultProps = {
+  additionalClassNames?: $PropertyType<Props, 'additionalClassNames'>,
+};
+
+export type BoardProps = {
+  ...DefaultProps,
+  children?: $PropertyType<Props, 'children'>,
+  columnLength: $PropertyType<Props, 'columnLength'>,
+  rowLength: $PropertyType<Props, 'rowLength'>,
+};
  */
+
+const defaultProps = {
+  additionalClassNames: [],
+};
 
 const Board = ({ children, rowLength, columnLength, additionalClassNames }/*:Props*/) => {
   const styles = {
@@ -32,11 +47,7 @@ const Board = ({ children, rowLength, columnLength, additionalClassNames }/*:Pro
   }, children);
 };
 
-Object.assign(Board, {
-  defaultProps: {
-    additionalClassNames: [],
-  },
-});
+Board.defaultProps = defaultProps;
 
 
 module.exports = Board;

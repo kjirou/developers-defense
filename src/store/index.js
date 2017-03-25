@@ -1,3 +1,5 @@
+// @flow
+
 const { createStore, applyMiddleware } = require('redux');
 const thunkMiddleware = require('redux-thunk').default;
 

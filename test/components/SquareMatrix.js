@@ -1,4 +1,4 @@
-const { mount, shallow } = require('enzyme');
+const { mount } = require('enzyme');
 const jsdom = require('jsdom').jsdom;
 const assert = require('power-assert');
 const React = require('react');

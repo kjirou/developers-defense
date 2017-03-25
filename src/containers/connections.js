@@ -206,7 +206,6 @@ const createBattleBoardSquareMatrixProps = (
     squareBasedAnimations,
     units,
     handleTouchStartPad: (event, { coordinate }) => {
-      console.log(event);
       const placement = createNewPlacementState(BOARD_TYPES.BATTLE_BOARD, coordinate);
       dispatch(touchSquare(placement));
     },
@@ -238,7 +237,7 @@ const createSortieBoardSquareMatrixProps = (
     cursorCoordinate,
     serialSquares: createSerialSquares(state.sortieBoard.squareMatrix),
     units,
-    handleTouchStartPad: (event/*:Object*/, { coordinate }/*:Object*/) => {
+    handleTouchStartPad: (event, { coordinate }) => {
       const placement = createNewPlacementState(BOARD_TYPES.SORTIE_BOARD, coordinate);
       dispatch(touchSquare(placement));
     },

@@ -4,7 +4,7 @@
 
 Under development..
 
-![](/docs/demo-20170319.gif)
+![](/docs/demo-20170325.gif)
 
 
 ## Development

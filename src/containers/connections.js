@@ -9,9 +9,12 @@
 import type { Dispatch } from 'redux';
 
 import type { Action } from '../actions';
+import type { BoardProps } from '../components/Board';
 import type { BulletProps } from '../components/Bullet';
+import type { DebugButtonsProps } from '../components/DebugButtons';
 import type { RootProps } from '../components/Root';
 import type { SquareProps } from '../components/Square';
+import type { StatusBarProps } from '../components/StatusBar';
 import type {
   SquareMatrixCursorCoordinateProps,
   SquareMatrixSquareBasedAnimationProps,
@@ -133,7 +136,7 @@ const createSerialSquares = (squareMatrix/*:SquareMatrixState*/)/*:SquareProps[]
   return serialSquares;
 };
 
-const createBattleBoardProps = () => {
+const createBattleBoardProps = ()/*:BoardProps*/ => {
   return {
     rowLength: PARAMETERS.BATTLE_BOARD_ROW_LENGTH,
     columnLength: PARAMETERS.BATTLE_BOARD_COLUMN_LENGTH,
@@ -212,7 +215,7 @@ const createBattleBoardSquareMatrixProps = (
   };
 };
 
-const createSortieBoardProps = () => {
+const createSortieBoardProps = ()/*:BoardProps*/ => {
   return {
     rowLength: PARAMETERS.SORTIE_BOARD_ROW_LENGTH,
     columnLength: PARAMETERS.SORTIE_BOARD_COLUMN_LENGTH,
@@ -244,14 +247,14 @@ const createSortieBoardSquareMatrixProps = (
   };
 };
 
-const createStatusBarProps = (state/*:AppState*/) => {
+const createStatusBarProps = (state/*:AppState*/)/*:StatusBarProps*/ => {
   return {
     gameTime: state.gameStatus.tickId === null ?
       0 : Math.floor(state.gameStatus.tickId / PARAMETERS.TICKS_PER_SECOND),
   };
 };
 
-const createDebugButtonsProps = (state/*:AppState*/, dispatch/*:Dispatch<Action>*/) => {
+const createDebugButtonsProps = (state/*:AppState*/, dispatch/*:Dispatch<Action>*/)/*:DebugButtonsProps*/ => {
   let gameProgressType;
   if (state.gameStatus.tickId === null) {
     gameProgressType = GAME_PROGRESS_TYPES.NOT_STARTED;

@@ -120,7 +120,7 @@ const createUnitProps = (
   };
 };
 
-const createSerialSquares = (squareMatrix/*:SquareMatrixState*/)/*:SquareProps[]*/ => {
+const createSerialSquarePropsList = (squareMatrix/*:SquareMatrixState*/)/*:SquareProps[]*/ => {
   const serialSquares = [];
 
   squareMatrix.forEach(rowSquares => {
@@ -205,7 +205,7 @@ const createBattleBoardSquareMatrixProps = (
   return {
     bullets: state.bullets.map(createBulletProps),
     cursorCoordinate,
-    serialSquares: createSerialSquares(state.battleBoard.squareMatrix),
+    serialSquares: createSerialSquarePropsList(state.battleBoard.squareMatrix),
     squareBasedAnimations,
     units,
     handleTouchStartPad: (event, { coordinate }) => {
@@ -238,7 +238,7 @@ const createSortieBoardSquareMatrixProps = (
 
   return {
     cursorCoordinate,
-    serialSquares: createSerialSquares(state.sortieBoard.squareMatrix),
+    serialSquares: createSerialSquarePropsList(state.sortieBoard.squareMatrix),
     units,
     handleTouchStartPad: (event, { coordinate }) => {
       const placement = createNewPlacementState(BOARD_TYPES.SORTIE_BOARD, coordinate);
@@ -289,6 +289,6 @@ const createRootProps = (state/*:AppState*/, dispatch/*:Dispatch<Action>*/)/*:Ro
 
 
 module.exports = {
-  _createSerialSquares: createSerialSquares,
+  _createSerialSquarePropsList: createSerialSquarePropsList,
   createRootProps,
 };

@@ -59,11 +59,6 @@ const createNewEnemyState = ()/*:UnitState*/ => {
 //          Place methods into the `complex-apis` if necessary.
 //
 
-// DEPRECATED:
-const isAlly = (unit/*:UnitState*/)/*:boolean*/ => {
-  return unit.factionType === FACTION_TYPES.ALLY;
-};
-
 const getJob = (unit/*:UnitState*/) => {
   return jobs[unit.jobId];
 };
@@ -227,7 +222,6 @@ module.exports = {
   determineFriendship,
   isActable,
   isAlive,
-  isAlly,
   isDead,
   isFullHitPoints,
   getAct,

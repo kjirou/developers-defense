@@ -41,6 +41,7 @@ const { animations } = require('../immutable/animations');
 const {
   ANIMATION_DESTINATION_TYPES,
   BOARD_TYPES,
+  FACTION_TYPES,
   GAME_PROGRESS_TYPES,
   PARAMETERS,
   STYLES,
@@ -107,7 +108,7 @@ const createUnitProps = (
   return {
     animations,
     classNames: [
-      unitMethods.isAlly(unit) ? 'unit--ally' : 'unit--enemy',
+      unit.factionType === FACTION_TYPES.ALLY ? 'unit--ally' : 'unit--enemy',
       'square-matrix__unit',
       ...(unitMethods.isAlive(unit) ? ['square-matrix__unit--is-alive'] : []),
       ...additionalClassNames,

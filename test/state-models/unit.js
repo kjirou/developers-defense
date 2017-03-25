@@ -14,16 +14,17 @@ const {
   createNewUnitState,
   determineFriendship,
   getMaxHitPoints,
+  getHitPointsRate,
   isAlive,
   isDead,
   isFullHitPoints,
 } = require('../../src/state-models/unit');
 
 
-describe('state-models/unit', () => {
+describe('state-models/unit', function() {
   let unit;
 
-  beforeEach(() => {
+  beforeEach(function() {
     unit = createNewUnitState();
   });
 
@@ -116,12 +117,28 @@ describe('state-models/unit', () => {
     });
   });
 
-  describe('parameters', () => {
-    it('getMaxHitPoints', () => {
+  describe('parameters', function() {
+    it('getMaxHitPoints', function() {
       assert(getMaxHitPoints(unit) > 0);
 
       unit.fixedMaxHitPoints = 5;
       assert.strictEqual(getMaxHitPoints(unit), 5);
+    });
+
+    it('getHitPointsRate', function() {
+      unit.fixedMaxHitPoints = 10;
+
+      unit.hitPoints = 10;
+      assert.strictEqual(getHitPointsRate(unit), 1.0);
+
+      unit.hitPoints = 11;
+      assert.strictEqual(getHitPointsRate(unit), 1.0);
+
+      unit.hitPoints = 0;
+      assert.strictEqual(getHitPointsRate(unit), 0.0);
+
+      unit.hitPoints = -1;
+      assert.strictEqual(getHitPointsRate(unit), 0.0);
     });
 
     it('calculateHealing', () => {

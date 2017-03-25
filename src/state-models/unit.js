@@ -88,6 +88,10 @@ const getMaxHitPoints = (unit/*:UnitState*/)/*:number*/ => {
   return unit.fixedMaxHitPoints || 10;
 };
 
+const getHitPointsRate = (unit/*:UnitState*/)/*:number*/ => {
+  return clamp(unit.hitPoints / getMaxHitPoints(unit), 0, 1.0);
+};
+
 const calculateUpdateHitPoints = (unit/*:UnitState*/, nextHp/*:number*/)/*:number*/ => {
   return clamp(nextHp, 0, getMaxHitPoints(unit));
 };
@@ -227,6 +231,7 @@ module.exports = {
   isDead,
   isFullHitPoints,
   getAct,
+  getHitPointsRate,
   getIconId,
   getMaxHitPoints,
 };

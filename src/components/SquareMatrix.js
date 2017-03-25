@@ -5,6 +5,7 @@ import type {
   CoordinateState,
   LocationState,
 } from '../types/states';
+import type { ModifiedSyntheticTouchEvent } from '../types/workaround';
 import type { BulletProps } from './Bullet';
 import type { SquareProps } from './Square';
 import type { UnitProps } from './Unit';
@@ -38,7 +39,7 @@ export type SquareMatrixSquareBasedAnimationProps = {
 type Props = {
   bullets: BulletProps[],
   cursorCoordinate: SquareMatrixCursorCoordinateProps | null,
-  handleTouchStartPad: (SyntheticTouchEvent, { location: LocationState, coordinate: CoordinateState }) => void,
+  handleTouchStartPad: (ModifiedSyntheticTouchEvent, { location: LocationState, coordinate: CoordinateState }) => void,
   serialSquares: SquareProps[],
   squareBasedAnimations: SquareMatrixSquareBasedAnimationProps[],
   units: UnitProps[],
@@ -67,10 +68,7 @@ const defaultProps = {
 };
 
 class SquareMatrix extends React.Component {
-  /**
-   * @param {SyntheticTouchEvent} event
-   */
-  static _normalizeTouchPositions(event) {
+  static _normalizeTouchPositions(event/*:ModifiedSyntheticTouchEvent*/) {
     const touch = event.changedTouches.item(0);
     const rect = event.target.getBoundingClientRect();
     const touchX = touch.clientX - rect.left;

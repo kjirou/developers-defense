@@ -49,7 +49,7 @@ const { isArrivedToDestination } = require('../state-models/bullet');
 const { createEffectiveCoordinates } = require('../state-models/effect');
 const { createNewPlacementState } = require('../state-models/placement');
 const { getEndPointCoordinate } = require('../state-models/square-matrix');
-const { getIconId, isAlive, isAlly } = require('../state-models/unit');
+const unitMethods = require('../state-models/unit');
 
 
 const createSquareMatrixCursorCoordinateProps = (
@@ -105,17 +105,18 @@ const createUnitProps = (
   ;
 
   return {
-    iconId: getIconId(unit),
-    top,
-    left,
+    animations,
     classNames: [
-      isAlly(unit) ? 'unit--ally' : 'unit--enemy',
+      unitMethods.isAlly(unit) ? 'unit--ally' : 'unit--enemy',
       'square-matrix__unit',
-      ...(isAlive(unit) ? ['square-matrix__unit--is-alive'] : []),
+      ...(unitMethods.isAlive(unit) ? ['square-matrix__unit--is-alive'] : []),
       ...additionalClassNames,
     ],
-    animations,
+    iconId: unitMethods.getIconId(unit),
+    hitPointsRate: unitMethods.getHitPointsRate(unit),
+    left,
     stateChanges,
+    top,
     uid: unit.uid,
   };
 };

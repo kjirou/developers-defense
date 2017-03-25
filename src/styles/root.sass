@@ -4,15 +4,20 @@
     position: absolute
 
 .unit
-  $z-index-effect-container: 2
-  $z-index-animation-container: 1
+  $z-index-effect-container: 200
+  $z-index-animation-container: 100
+  $z-index-hit-points-gauge: 1
   $z-index-icon: 0
   width: $square-width
   height: $square-height
   &.unit--ally
     color: blue
+    .unit__hit-points-gauge .gauge__scale
+      background-color: blue
   &.unit--enemy
     color: red
+    .unit__hit-points-gauge .gauge__scale
+      background-color: red
   &__state-change-effect-container
     position: absolute
     width: 100%
@@ -23,6 +28,11 @@
     width: 100%
     height: 100%
     z-index: $z-index-animation-container
+  &__hit-points-gauge
+    bottom: 4px
+    left: 8px
+    z-index: $z-index-hit-points-gauge
+    background-color: #ffffff
   &__icon
     position: absolute
     display: block

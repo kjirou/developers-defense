@@ -32,11 +32,7 @@ import type {
 } from '../types/states';
  */
 
-const {
-  extendGameStatus,
-  startGame,
-  touchSquare,
-} = require('../actions');
+const actions = require('../actions');
 const { animations } = require('../immutable/animations');
 const {
   ANIMATION_DESTINATION_TYPES,
@@ -46,10 +42,10 @@ const {
   PARAMETERS,
   STYLES,
 } = require('../immutable/constants');
-const { isArrivedToDestination } = require('../state-models/bullet');
-const { createEffectiveCoordinates } = require('../state-models/effect');
-const { createNewPlacementState } = require('../state-models/placement');
-const { getEndPointCoordinate } = require('../state-models/square-matrix');
+const bulletMethods = require('../state-models/bullet');
+const effectMethods = require('../state-models/effect');
+const placementMethods = require('../state-models/placement');
+const squareMatrixMethods = require('../state-models/square-matrix');
 const unitMethods = require('../state-models/unit');
 
 
@@ -157,7 +153,7 @@ const createBattleBoardSquareMatrixProps = (
   const unitBasedAnimations = state.bullets
     .filter(bullet => {
       return bullet.effect.animationDestinationType === ANIMATION_DESTINATION_TYPES.UNIT &&
-        isArrivedToDestination(bullet);
+        bulletMethods.isArrivedToDestination(bullet);
     })
     .map(bullet => {
       const animation = animations[bullet.effect.animationId];
@@ -176,16 +172,16 @@ const createBattleBoardSquareMatrixProps = (
   const squareBasedAnimations/*:SquareMatrixSquareBasedAnimationProps[]*/ = state.bullets
     .filter(bullet => {
       return bullet.effect.animationDestinationType === ANIMATION_DESTINATION_TYPES.SQUARE &&
-        isArrivedToDestination(bullet);
+        bulletMethods.isArrivedToDestination(bullet);
     })
     .map(bullet => {
       const animation = animations[bullet.effect.animationId];
 
       return {
         uid: bullet.effect.uid,
-        coordinates: createEffectiveCoordinates(
+        coordinates: effectMethods.createEffectiveCoordinates(
           bullet.effect,
-          getEndPointCoordinate(state.battleBoard.squareMatrix)
+          squareMatrixMethods.getEndPointCoordinate(state.battleBoard.squareMatrix)
         ),
         duration: animation.duration,
         classNames: animation.getExpressionClassNames(),
@@ -211,8 +207,8 @@ const createBattleBoardSquareMatrixProps = (
     squareBasedAnimations,
     units,
     handleTouchStartPad: (event, { coordinate }) => {
-      const placement = createNewPlacementState(BOARD_TYPES.BATTLE_BOARD, coordinate);
-      dispatch(touchSquare(placement));
+      const placement = placementMethods.createNewPlacementState(BOARD_TYPES.BATTLE_BOARD, coordinate);
+      dispatch(actions.touchSquare(placement));
     },
   };
 };
@@ -243,8 +239,8 @@ const createSortieBoardSquareMatrixProps = (
     serialSquares: createSerialSquarePropsList(state.sortieBoard.squareMatrix),
     units,
     handleTouchStartPad: (event, { coordinate }) => {
-      const placement = createNewPlacementState(BOARD_TYPES.SORTIE_BOARD, coordinate);
-      dispatch(touchSquare(placement));
+      const placement = placementMethods.createNewPlacementState(BOARD_TYPES.SORTIE_BOARD, coordinate);
+      dispatch(actions.touchSquare(placement));
     },
   };
 };
@@ -267,13 +263,13 @@ const createDebugButtonsProps = (state/*:AppState*/, dispatch/*:Dispatch<Action>
   return {
     gameProgressType,
     handlePauseGameButtonTouchStart: () => {
-      dispatch(extendGameStatus({ isPaused: true }));
+      dispatch(actions.extendGameStatus({ isPaused: true }));
     },
     handleResumeGameButtonTouchStart: () => {
-      dispatch(extendGameStatus({ isPaused: false }));
+      dispatch(actions.extendGameStatus({ isPaused: false }));
     },
     handleStartGameButtonTouchStart: () => {
-      dispatch(startGame());
+      dispatch(actions.startGame());
     },
   };
 };

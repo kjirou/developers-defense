@@ -9,9 +9,12 @@
 import type { Dispatch } from 'redux';
 
 import type { Action } from '../actions';
+import type { BoardProps } from '../components/Board';
 import type { BulletProps } from '../components/Bullet';
+import type { DebugButtonsProps } from '../components/DebugButtons';
 import type { RootProps } from '../components/Root';
 import type { SquareProps } from '../components/Square';
+import type { StatusBarProps } from '../components/StatusBar';
 import type {
   SquareMatrixCursorCoordinateProps,
   SquareMatrixSquareBasedAnimationProps,
@@ -38,6 +41,7 @@ const { animations } = require('../immutable/animations');
 const {
   ANIMATION_DESTINATION_TYPES,
   BOARD_TYPES,
+  FACTION_TYPES,
   GAME_PROGRESS_TYPES,
   PARAMETERS,
   STYLES,
@@ -46,7 +50,7 @@ const { isArrivedToDestination } = require('../state-models/bullet');
 const { createEffectiveCoordinates } = require('../state-models/effect');
 const { createNewPlacementState } = require('../state-models/placement');
 const { getEndPointCoordinate } = require('../state-models/square-matrix');
-const { getIconId, isAlive, isAlly } = require('../state-models/unit');
+const unitMethods = require('../state-models/unit');
 
 
 const createSquareMatrixCursorCoordinateProps = (
@@ -102,22 +106,23 @@ const createUnitProps = (
   ;
 
   return {
-    iconId: getIconId(unit),
-    top,
-    left,
+    animations,
     classNames: [
-      isAlly(unit) ? 'unit--ally' : 'unit--enemy',
+      unit.factionType === FACTION_TYPES.ALLY ? 'unit--ally' : 'unit--enemy',
       'square-matrix__unit',
-      ...(isAlive(unit) ? ['square-matrix__unit--is-alive'] : []),
+      ...(unitMethods.isAlive(unit) ? ['square-matrix__unit--is-alive'] : []),
       ...additionalClassNames,
     ],
-    animations,
+    iconId: unitMethods.getIconId(unit),
+    hitPointsRate: unitMethods.getHitPointsRate(unit),
+    left,
     stateChanges,
+    top,
     uid: unit.uid,
   };
 };
 
-const createSerialSquares = (squareMatrix/*:SquareMatrixState*/)/*:SquareProps[]*/ => {
+const createSerialSquarePropsList = (squareMatrix/*:SquareMatrixState*/)/*:SquareProps[]*/ => {
   const serialSquares = [];
 
   squareMatrix.forEach(rowSquares => {
@@ -133,7 +138,7 @@ const createSerialSquares = (squareMatrix/*:SquareMatrixState*/)/*:SquareProps[]
   return serialSquares;
 };
 
-const createBattleBoardProps = () => {
+const createBattleBoardProps = ()/*:BoardProps*/ => {
   return {
     rowLength: PARAMETERS.BATTLE_BOARD_ROW_LENGTH,
     columnLength: PARAMETERS.BATTLE_BOARD_COLUMN_LENGTH,
@@ -202,7 +207,7 @@ const createBattleBoardSquareMatrixProps = (
   return {
     bullets: state.bullets.map(createBulletProps),
     cursorCoordinate,
-    serialSquares: createSerialSquares(state.battleBoard.squareMatrix),
+    serialSquares: createSerialSquarePropsList(state.battleBoard.squareMatrix),
     squareBasedAnimations,
     units,
     handleTouchStartPad: (event, { coordinate }) => {
@@ -212,7 +217,7 @@ const createBattleBoardSquareMatrixProps = (
   };
 };
 
-const createSortieBoardProps = () => {
+const createSortieBoardProps = ()/*:BoardProps*/ => {
   return {
     rowLength: PARAMETERS.SORTIE_BOARD_ROW_LENGTH,
     columnLength: PARAMETERS.SORTIE_BOARD_COLUMN_LENGTH,
@@ -235,7 +240,7 @@ const createSortieBoardSquareMatrixProps = (
 
   return {
     cursorCoordinate,
-    serialSquares: createSerialSquares(state.sortieBoard.squareMatrix),
+    serialSquares: createSerialSquarePropsList(state.sortieBoard.squareMatrix),
     units,
     handleTouchStartPad: (event, { coordinate }) => {
       const placement = createNewPlacementState(BOARD_TYPES.SORTIE_BOARD, coordinate);
@@ -244,14 +249,14 @@ const createSortieBoardSquareMatrixProps = (
   };
 };
 
-const createStatusBarProps = (state/*:AppState*/) => {
+const createStatusBarProps = (state/*:AppState*/)/*:StatusBarProps*/ => {
   return {
     gameTime: state.gameStatus.tickId === null ?
       0 : Math.floor(state.gameStatus.tickId / PARAMETERS.TICKS_PER_SECOND),
   };
 };
 
-const createDebugButtonsProps = (state/*:AppState*/, dispatch/*:Dispatch<Action>*/) => {
+const createDebugButtonsProps = (state/*:AppState*/, dispatch/*:Dispatch<Action>*/)/*:DebugButtonsProps*/ => {
   let gameProgressType;
   if (state.gameStatus.tickId === null) {
     gameProgressType = GAME_PROGRESS_TYPES.NOT_STARTED;
@@ -286,6 +291,6 @@ const createRootProps = (state/*:AppState*/, dispatch/*:Dispatch<Action>*/)/*:Ro
 
 
 module.exports = {
-  _createSerialSquares: createSerialSquares,
+  _createSerialSquarePropsList: createSerialSquarePropsList,
   createRootProps,
 };

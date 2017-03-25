@@ -59,11 +59,6 @@ const createNewEnemyState = ()/*:UnitState*/ => {
 //          Place methods into the `complex-apis` if necessary.
 //
 
-// DEPRECATED:
-const isAlly = (unit/*:UnitState*/)/*:boolean*/ => {
-  return unit.factionType === FACTION_TYPES.ALLY;
-};
-
 const getJob = (unit/*:UnitState*/) => {
   return jobs[unit.jobId];
 };
@@ -86,6 +81,10 @@ const getIconId = (unit/*:UnitState*/)/*:string*/ => {
 const getMaxHitPoints = (unit/*:UnitState*/)/*:number*/ => {
   // TODO
   return unit.fixedMaxHitPoints || 10;
+};
+
+const getHitPointsRate = (unit/*:UnitState*/)/*:number*/ => {
+  return clamp(unit.hitPoints / getMaxHitPoints(unit), 0, 1.0);
 };
 
 const calculateUpdateHitPoints = (unit/*:UnitState*/, nextHp/*:number*/)/*:number*/ => {
@@ -223,10 +222,10 @@ module.exports = {
   determineFriendship,
   isActable,
   isAlive,
-  isAlly,
   isDead,
   isFullHitPoints,
   getAct,
+  getHitPointsRate,
   getIconId,
   getMaxHitPoints,
 };

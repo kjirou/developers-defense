@@ -1,78 +1,23 @@
-/**
- * Root
- */
-
-// Generate classes such as ".animation-duration-100ms"
-&
-  $duration: 0ms
-  @while $duration <= $animation-duration-max
-    .animation-duration-#{$duration}
-      animation-duration: $duration
-    $duration: $duration + 50ms
-
-
-.square_based_animation
-  position: absolute;
-  width: $square-width
-  height: $square-height
-  opacity: 0.0
-
-  &.square_based_animation--shock-blue
-    background-color: blue
-    animation-name: square_based_animation--shock
-  &.square_based_animation--shock-red
-    background-color: red
-    animation-name: square_based_animation--shock
-
-  @keyframes square_based_animation--shock
-    0%
-      opacity: 0.0
-    30%
-      opacity: 0.5
-    100%
-      opacity: 0.0
-
-
-.react-transition-dead-unit-leave
-  opacity: 1
-.react-transition-dead-unit-leave-active
-  opacity: 0.01
-  transition: opacity 500ms ease-in
-
-
-.unit-state-change-effect
-  $unit-state-change-effect-height: 16px
+.gauge
   position: absolute
-  height: $unit-state-change-effect-height
-  width: $square-width
-  line-height: $unit-state-change-effect-height
-  font-size: 16px
-  text-align: center
-  @keyframes unit-state-change-effect
-    0%
-      transform: translateY(20px)
-    100%
-      transform: translateY(0px)
-  animation-name: unit-state-change-effect
-  animation-duration: $unit-state-change-effect-duration + ms
-  &.unit-state-change-effect--damage-points
-    color: red
-    @include text-bordering(white, 1px)
-  &.unit-state-change-effect--healing-points
-    color: lime
-    @include text-bordering(white, 1px)
-
+  &__scale
+    position: absolute
 
 .unit
-  $z-index-effect-container: 2
-  $z-index-animation-container: 1
+  $z-index-effect-container: 200
+  $z-index-animation-container: 100
+  $z-index-hit-points-gauge: 1
   $z-index-icon: 0
   width: $square-width
   height: $square-height
   &.unit--ally
     color: blue
+    .unit__hit-points-gauge .gauge__scale
+      background-color: blue
   &.unit--enemy
     color: red
+    .unit__hit-points-gauge .gauge__scale
+      background-color: red
   &__state-change-effect-container
     position: absolute
     width: 100%
@@ -83,6 +28,11 @@
     width: 100%
     height: 100%
     z-index: $z-index-animation-container
+  &__hit-points-gauge
+    bottom: 4px
+    left: 8px
+    z-index: $z-index-hit-points-gauge
+    background-color: #ffffff
   &__icon
     position: absolute
     display: block

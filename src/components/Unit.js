@@ -8,6 +8,7 @@ import type { UnitStateChangeLogState } from '../types/states';
 const React = require('react');
 
 const { STYLES, UNIT_STATE_CHANGE_LOG_TYPES } = require('../immutable/constants');
+const Gauge = require('./Gauge');
 
 
 /*::
@@ -27,6 +28,7 @@ type Props = {
   animations: UnitAnimationProps[],
   classNames: string[],
   iconId: string,
+  hitPointsRate: number,
   left: number,
   stateChanges: UnitStateChangeProps[],
   top: number,
@@ -37,6 +39,7 @@ export type UnitProps = {
   animations?: UnitAnimationProps[],
   classNames?: $PropertyType<Props, 'classNames'>,
   iconId?: $PropertyType<Props, 'iconId'>,
+  hitPointsRate: $PropertyType<Props, 'hitPointsRate'>,
   left: $PropertyType<Props, 'left'>,
   stateChanges?: $PropertyType<Props, 'stateChanges'>,
   top: $PropertyType<Props, 'top'>,
@@ -150,7 +153,7 @@ class Unit extends React.Component {
   }
 
   render() {
-    const props = {
+    const myProps = {
       className: ['unit'].concat(this.props.classNames).join(' '),
       style: {
         top: this.props.top,
@@ -174,12 +177,32 @@ class Unit extends React.Component {
       },
     });
 
+    let gauge = null;
+    if (0.0 < this.props.hitPointsRate && this.props.hitPointsRate < 1.0) {
+      gauge = React.createElement(Gauge, {
+        key: 'hit-points-gauge',
+        frameWidth: 1,
+        width: 32,
+        height: 6,
+        rate: this.props.hitPointsRate,
+        classNames: ['unit__hit-points-gauge'],
+      });
+    }
+
     const icon = React.createElement('i', {
       key: 'icon',
       className: ['ra', this.props.iconId, 'ra-2x', 'unit__icon'].join(' '),
     });
 
-    return React.createElement('div', props, stateChangeEffectContainer, animationContainer, icon);
+    const components = [];
+    components.push(stateChangeEffectContainer);
+    components.push(animationContainer);
+    if (gauge) {
+      components.push(gauge);
+    }
+    components.push(icon);
+
+    return React.createElement('div', myProps, ...components);
   }
 }
 

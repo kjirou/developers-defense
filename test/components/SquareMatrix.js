@@ -1,4 +1,4 @@
-const { mount, shallow } = require('enzyme');
+const { mount } = require('enzyme');
 const jsdom = require('jsdom').jsdom;
 const assert = require('power-assert');
 const React = require('react');
@@ -6,7 +6,7 @@ const sinon = require('sinon');
 
 const Square = require('../../src/components/Square');
 const SquareMatrix = require('../../src/components/SquareMatrix');
-const { _createSerialSquares } = require('../../src/containers/connections');
+const { _createSerialSquarePropsList } = require('../../src/containers/connections');
 const { createNewSquareMatrixState } = require('../../src/state-models/square-matrix');
 
 
@@ -27,7 +27,7 @@ describe('components/SquareMatrix', () => {
     it('can create element', () => {
       const squareMatrix = _matrix(2, 3);
       const wrapper = mount(React.createElement(SquareMatrix, {
-        serialSquares: _createSerialSquares(squareMatrix),
+        serialSquares: _createSerialSquarePropsList(squareMatrix),
         squareMatrix,
       }));
       assert.strictEqual(wrapper.find(Square).length, 6);
@@ -58,7 +58,7 @@ describe('components/SquareMatrix', () => {
 
       const wrapper = mount(React.createElement(SquareMatrix, {
         handleTouchStartPad,
-        serialSquares: _createSerialSquares(squareMatrix),
+        serialSquares: _createSerialSquarePropsList(squareMatrix),
         squareMatrix,
       }));
       const touchpadWrapper = wrapper.find('.square-matrix__touchpad');

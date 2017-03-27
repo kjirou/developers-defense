@@ -18,9 +18,21 @@ const findUnitsByPlacement = (
   return unitCollection.filter(unit => unit.placement && areSamePlacements(unit.placement, placement));
 };
 
+const findUnitByPlacement = (
+  unitCollection/*:UnitCollectionState*/, placement/*:PlacementState*/
+)/*:UnitState | null*/ => {
+  for (let index = 0; index < unitCollection.length; index += 1) {
+    const unit = unitCollection[index];
+    if (unit.placement && areSamePlacements(unit.placement, placement)) {
+      return unit;
+    }
+  }
+  return null;
+};
+
 const findUnitByUid = (
   unitCollection/*:UnitCollectionState*/, uid/*:string*/
-)/*:UnitState|null*/ => {
+)/*:UnitState | null*/ => {
   for (let index = 0; index < unitCollection.length; index += 1) {
     const unit = unitCollection[index];
     if (unit.uid === uid) return unit;
@@ -32,5 +44,6 @@ const findUnitByUid = (
 module.exports = {
   createNewUnitCollectionState,
   findUnitByUid,
+  findUnitByPlacement,
   findUnitsByPlacement,
 };

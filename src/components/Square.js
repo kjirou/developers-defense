@@ -16,8 +16,20 @@ type Props = {
   landformType: LandformType,
 };
 
-export type SquareProps = Props;
+type DefaultProps = {
+  landformType?: $PropertyType<Props, 'landformType'>,
+};
+
+export type SquareProps = {
+  ...DefaultProps,
+  rowIndex: $PropertyType<Props, 'rowIndex'>,
+  columnIndex: $PropertyType<Props, 'columnIndex'>,
+};
  */
+
+const defaultProps/*:DefaultProps*/ = {
+  landformType: LANDFORM_TYPES.NONE,
+};
 
 const Square = ({ rowIndex, columnIndex, landformType }/*:Props*/) => {
   const styles = {
@@ -44,6 +56,8 @@ const Square = ({ rowIndex, columnIndex, landformType }/*:Props*/) => {
     style: styles,
   });
 };
+
+Square.defaultProps = defaultProps;
 
 
 module.exports = Square;

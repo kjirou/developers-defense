@@ -12,7 +12,7 @@ const createNewUnitCollectionState = ()/*:UnitCollectionState*/ => {
 };
 
 
-const findUnitsByPlacement = (
+const filterByPlacement = (
   unitCollection/*:UnitCollectionState*/, placement/*:PlacementState*/
 )/*:UnitCollectionState*/ => {
   return unitCollection.filter(unit => unit.placement && areSamePlacements(unit.placement, placement));
@@ -43,7 +43,7 @@ const findUnitByUid = (
 
 module.exports = {
   createNewUnitCollectionState,
+  filterByPlacement,
   findUnitByUid,
   findUnitByPlacement,
-  findUnitsByPlacement,
 };

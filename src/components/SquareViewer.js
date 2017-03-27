@@ -13,6 +13,8 @@
 
 const React = require('react');
 
+const SquareMatrix = require('./SquareMatrix');
+
 const h = React.createElement;
 
 
@@ -28,7 +30,20 @@ const SquareViewer = ({}/*:Props*/) => {
     className: 'root__square-viewer',
   };
 
-  return h('div', myProps);
+  const singleSquareMatrix = h(SquareMatrix, {
+    key: 'single-square-matrix',
+    serialSquares: [
+      {
+        rowIndex: 0,
+        columnIndex: 0,
+      },
+    ],
+  });
+
+  const components = [];
+  components.push(singleSquareMatrix);
+
+  return h('div', myProps, ...components);
 };
 
 

@@ -93,6 +93,22 @@ class SquareMatrix extends React.Component {
   _squareBasedAnimationDomNode: HTMLElement;
    */
 
+  _getSize() {
+    const lastSquare = this.props.serialSquares[this.props.serialSquares.length - 1];
+
+    if (lastSquare) {
+      return {
+        width: STYLES.SQUARE_WIDTH * (lastSquare.columnIndex + 1),
+        height: STYLES.SQUARE_HEIGHT * (lastSquare.rowIndex + 1),
+      };
+    } else {
+      return {
+        width: 0,
+        height: 0,
+      };
+    }
+  }
+
   componentDidUpdate() {
     // Execute square-based animations
     // TODO: Add UI tests
@@ -122,8 +138,9 @@ class SquareMatrix extends React.Component {
   }
 
   render() {
-    const rootProps = {
+    const myProps = {
       className: 'square-matrix',
+      style: this._getSize(),
     };
 
     const touchpad = React.createElement('div', {
@@ -183,7 +200,7 @@ class SquareMatrix extends React.Component {
       serialSquareComponents,
     ];
 
-    return React.createElement('div', rootProps, ...components);
+    return React.createElement('div', myProps, ...components);
   }
 }
 

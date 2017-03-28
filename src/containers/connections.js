@@ -14,6 +14,7 @@ import type { BulletProps } from '../components/Bullet';
 import type { DebugButtonsProps } from '../components/DebugButtons';
 import type { RootProps } from '../components/Root';
 import type { SquareProps } from '../components/Square';
+import type { SquareViewerProps } from '../components/SquareViewer';
 import type { StatusBarProps } from '../components/StatusBar';
 import type {
   SquareMatrixCursorCoordinateProps,
@@ -46,6 +47,7 @@ const bulletMethods = require('../state-models/bullet');
 const effectMethods = require('../state-models/effect');
 const placementMethods = require('../state-models/placement');
 const squareMatrixMethods = require('../state-models/square-matrix');
+const unitCollectionMethods = require('../state-models/unit-collection');
 const unitMethods = require('../state-models/unit');
 
 
@@ -252,6 +254,25 @@ const createStatusBarProps = (state/*:AppState*/)/*:StatusBarProps*/ => {
   };
 };
 
+const createSquareViewerProps = (state/*:AppState*/)/*:SquareViewerProps*/ => {
+  const selectedAlly = state.cursor.placement
+    ? unitCollectionMethods.findUnitByPlacement(state.allies, state.cursor.placement)
+    : null;
+
+  let unit = null;
+  if (selectedAlly) {
+    unit = Object.assign({}, createUnitProps(selectedAlly, [], []), {
+      // TODO: 正しい位置を上書きして最左上になるようにしているが雑
+      top: 0,
+      left: 0,
+    });
+  }
+
+  return {
+    unit,
+  };
+};
+
 const createDebugButtonsProps = (state/*:AppState*/, dispatch/*:Dispatch<Action>*/)/*:DebugButtonsProps*/ => {
   let gameProgressType;
   if (state.gameStatus.tickId === null) {
@@ -281,6 +302,7 @@ const createRootProps = (state/*:AppState*/, dispatch/*:Dispatch<Action>*/)/*:Ro
     debugButtons: createDebugButtonsProps(state, dispatch),
     sortieBoard: createSortieBoardProps(),
     sortieBoardSquareMatrix: createSortieBoardSquareMatrixProps(state, dispatch),
+    squareViewer: createSquareViewerProps(state),
     statusBar: createStatusBarProps(state),
   };
 };

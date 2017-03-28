@@ -11,6 +11,10 @@
  */
 
 
+/*::
+import type { UnitProps } from './Unit';
+ */
+
 const React = require('react');
 
 const SquareMatrix = require('./SquareMatrix');
@@ -20,12 +24,23 @@ const h = React.createElement;
 
 /*::
 type Props = {
+  unit: UnitProps | null,
 };
 
-export type SquareViewerProps = Props;
+type DefaultProps = {
+  unit?: $PropertyType<Props, 'unit'>,
+};
+
+export type SquareViewerProps = {
+  ...DefaultProps,
+};
  */
 
-const SquareViewer = ({}/*:Props*/) => {
+const defaultProps/*:DefaultProps*/ = {
+  unit: null,
+};
+
+const SquareViewer = ({ unit }/*:Props*/) => {
   const myProps = {
     className: 'root__square-viewer',
   };
@@ -38,6 +53,7 @@ const SquareViewer = ({}/*:Props*/) => {
         columnIndex: 0,
       },
     ],
+    units: unit ? [unit] : [],
   });
 
   const components = [];
@@ -45,6 +61,8 @@ const SquareViewer = ({}/*:Props*/) => {
 
   return h('div', myProps, ...components);
 };
+
+SquareViewer.defaultProps = defaultProps;
 
 
 module.exports = SquareViewer;

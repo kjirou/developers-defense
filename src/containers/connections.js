@@ -40,6 +40,7 @@ const {
   BOARD_TYPES,
   FACTION_TYPES,
   GAME_PROGRESS_TYPES,
+  LANDFORM_TYPES,
   PARAMETERS,
   STYLES,
 } = require('../immutable/constants');
@@ -255,9 +256,25 @@ const createStatusBarProps = (state/*:AppState*/)/*:StatusBarProps*/ => {
 };
 
 const createSquareViewerProps = (state/*:AppState*/)/*:SquareViewerProps*/ => {
-  const selectedAlly = state.cursor.placement
-    ? unitCollectionMethods.findUnitByPlacement(state.allies, state.cursor.placement)
-    : null;
+  let selectedAlly = null;
+  let selectedBoard = null;
+  let selectedSquare = null;
+
+  // TODO: A workaround for Flow error of "Property not found in possibly null value"
+  const placement = state.cursor.placement;
+
+  if (placement) {
+    selectedAlly = unitCollectionMethods.findUnitByPlacement(state.allies, placement);
+
+    selectedBoard = placement.boardType === BOARD_TYPES.BATTLE_BOARD
+      ? state.battleBoard
+      : state.sortieBoard;
+
+    selectedSquare = squareMatrixMethods.findSquareByCoordinate(
+      selectedBoard.squareMatrix,
+      placement.coordinate
+    );
+  }
 
   let unit = null;
   if (selectedAlly) {
@@ -270,6 +287,7 @@ const createSquareViewerProps = (state/*:AppState*/)/*:SquareViewerProps*/ => {
 
   return {
     unit,
+    landformType: selectedSquare ? selectedSquare.landformType : LANDFORM_TYPES.NONE,
   };
 };
 

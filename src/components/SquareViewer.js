@@ -12,6 +12,7 @@
 
 
 /*::
+import type { LandformType } from '../immutable/constants';
 import type { UnitProps } from './Unit';
  */
 
@@ -24,10 +25,12 @@ const h = React.createElement;
 
 /*::
 type Props = {
+  landformType: LandformType,
   unit: UnitProps | null,
 };
 
 type DefaultProps = {
+  landformType?: $PropertyType<Props, 'landformType'>,
   unit?: $PropertyType<Props, 'unit'>,
 };
 
@@ -40,7 +43,7 @@ const defaultProps/*:DefaultProps*/ = {
   unit: null,
 };
 
-const SquareViewer = ({ unit }/*:Props*/) => {
+const SquareViewer = ({ landformType, unit }/*:Props*/) => {
   const myProps = {
     className: 'root__square-viewer',
   };
@@ -51,6 +54,7 @@ const SquareViewer = ({ unit }/*:Props*/) => {
       {
         rowIndex: 0,
         columnIndex: 0,
+        landformType,
       },
     ],
     units: unit ? [unit] : [],

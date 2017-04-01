@@ -14,6 +14,7 @@ import type { BulletProps } from '../components/Bullet';
 import type { DebugButtonsProps } from '../components/DebugButtons';
 import type { RootProps } from '../components/Root';
 import type { SquareProps } from '../components/Square';
+import type { SquareViewerProps } from '../components/SquareViewer';
 import type { StatusBarProps } from '../components/StatusBar';
 import type {
   SquareMatrixCursorCoordinateProps,
@@ -39,6 +40,7 @@ const {
   BOARD_TYPES,
   FACTION_TYPES,
   GAME_PROGRESS_TYPES,
+  LANDFORM_TYPES,
   PARAMETERS,
   STYLES,
 } = require('../immutable/constants');
@@ -46,6 +48,7 @@ const bulletMethods = require('../state-models/bullet');
 const effectMethods = require('../state-models/effect');
 const placementMethods = require('../state-models/placement');
 const squareMatrixMethods = require('../state-models/square-matrix');
+const unitCollectionMethods = require('../state-models/unit-collection');
 const unitMethods = require('../state-models/unit');
 
 
@@ -252,6 +255,42 @@ const createStatusBarProps = (state/*:AppState*/)/*:StatusBarProps*/ => {
   };
 };
 
+const createSquareViewerProps = (state/*:AppState*/)/*:SquareViewerProps*/ => {
+  let selectedAlly = null;
+  let selectedBoard = null;
+  let selectedSquare = null;
+
+  // TODO: A workaround for Flow error of "Property not found in possibly null value"
+  const placement = state.cursor.placement;
+
+  if (placement) {
+    selectedAlly = unitCollectionMethods.findUnitByPlacement(state.allies, placement);
+
+    selectedBoard = placement.boardType === BOARD_TYPES.BATTLE_BOARD
+      ? state.battleBoard
+      : state.sortieBoard;
+
+    selectedSquare = squareMatrixMethods.findSquareByCoordinate(
+      selectedBoard.squareMatrix,
+      placement.coordinate
+    );
+  }
+
+  let unit = null;
+  if (selectedAlly) {
+    unit = Object.assign({}, createUnitProps(selectedAlly, [], []), {
+      // TODO: 正しい位置を上書きして最左上になるようにしているが雑
+      top: 0,
+      left: 0,
+    });
+  }
+
+  return {
+    unit,
+    landformType: selectedSquare ? selectedSquare.landformType : LANDFORM_TYPES.NONE,
+  };
+};
+
 const createDebugButtonsProps = (state/*:AppState*/, dispatch/*:Dispatch<Action>*/)/*:DebugButtonsProps*/ => {
   let gameProgressType;
   if (state.gameStatus.tickId === null) {
@@ -281,6 +320,7 @@ const createRootProps = (state/*:AppState*/, dispatch/*:Dispatch<Action>*/)/*:Ro
     debugButtons: createDebugButtonsProps(state, dispatch),
     sortieBoard: createSortieBoardProps(),
     sortieBoardSquareMatrix: createSortieBoardSquareMatrixProps(state, dispatch),
+    squareViewer: createSquareViewerProps(state),
     statusBar: createStatusBarProps(state),
   };
 };

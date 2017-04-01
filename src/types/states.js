@@ -24,7 +24,7 @@ import type {
 export type LocationState = {
   x: number,
   y: number,
-}
+};
 
 //
 // A position in a SquareMatrixState from the top/left

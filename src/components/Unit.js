@@ -35,21 +35,19 @@ type Props = {
   uid: string,
 }
 
-export type UnitProps = {
-  animations?: UnitAnimationProps[],
-  classNames?: $PropertyType<Props, 'classNames'>,
-  iconId?: $PropertyType<Props, 'iconId'>,
-  hitPointsRate: $PropertyType<Props, 'hitPointsRate'>,
-  left: $PropertyType<Props, 'left'>,
-  stateChanges?: $PropertyType<Props, 'stateChanges'>,
-  top: $PropertyType<Props, 'top'>,
-  uid: $PropertyType<Props, 'uid'>,
-};
-
 type DefaultProps = {
   animations: UnitAnimationProps[],
   classNames: $PropertyType<Props, 'classNames'>,
   stateChanges: $PropertyType<Props, 'stateChanges'>,
+};
+
+export type UnitProps = {
+  ...DefaultProps,
+  iconId: $PropertyType<Props, 'iconId'>,
+  hitPointsRate: $PropertyType<Props, 'hitPointsRate'>,
+  left: $PropertyType<Props, 'left'>,
+  top: $PropertyType<Props, 'top'>,
+  uid: $PropertyType<Props, 'uid'>,
 };
  */
 

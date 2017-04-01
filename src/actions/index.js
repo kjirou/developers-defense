@@ -123,12 +123,12 @@ const touchSquare = (newPlacement/*:PlacementState*/)/*:Function*/ => {
       currentSquare =
         complexApisMethods.findOneSquareFromBoardsByPlacement(currentPlacement, sortieBoard, battleBoard);
       currentCursorHittingAlly =
-        unitCollectionMethods.findUnitsByPlacement(allies, currentPlacement)[0] || null;
+        unitCollectionMethods.findUnitByPlacement(allies, currentPlacement);
     }
 
     const newSquare =
       complexApisMethods.findOneSquareFromBoardsByPlacement(newPlacement, sortieBoard, battleBoard);
-    const newCursorHittingAlly = unitCollectionMethods.findUnitsByPlacement(allies, newPlacement)[0] || null;
+    const newCursorHittingAlly = unitCollectionMethods.findUnitByPlacement(allies, newPlacement);
 
     // TODO: Probably, it becomes very verbose...
 

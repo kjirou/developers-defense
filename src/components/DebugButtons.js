@@ -38,7 +38,7 @@ const DebugButtons = ({
     },
   }[gameProgressType]();
 
-  return <div className="root__debug-buttons" style={ { margin: '10px 20px' } }>
+  return <div className="root__debug-buttons" style={ { margin: '4px 20px' } }>
     { button }
   </div>;
 };

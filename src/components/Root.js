@@ -4,6 +4,7 @@
 import type { BoardProps } from '../components/Board';
 import type { DebugButtonsProps } from '../components/DebugButtons';
 import type { SquareMatrixProps } from '../components/SquareMatrix';
+import type { SquareViewerProps } from '../components/SquareViewer';
 import type { StatusBarProps } from '../components/StatusBar';
  */
 
@@ -13,18 +14,20 @@ const React = require('react');
 const DebugButtons = require('./DebugButtons');
 const Board = require('./Board');
 const SquareMatrix = require('./SquareMatrix');
+const SquareViewer = require('./SquareViewer');
 const StatusBar = require('./StatusBar');
 
 
 /*::
-type Props = {
+type Props = {|
   battleBoard: BoardProps,
   battleBoardSquareMatrix: SquareMatrixProps,
   debugButtons: DebugButtonsProps,
   sortieBoard: BoardProps,
   sortieBoardSquareMatrix: SquareMatrixProps,
+  squareViewer: SquareViewerProps,
   statusBar: StatusBarProps,
-};
+|};
 
 export type RootProps = Props;
  */
@@ -63,6 +66,13 @@ const Root = (props/*:Props*/) => {
     })
   );
 
+  const squareViewer = React.createElement(
+    SquareViewer,
+    Object.assign({}, props.squareViewer, {
+      key: 'square-viewer',
+    })
+  );
+
   const sortieBoard = React.createElement(
     Board,
     Object.assign({}, props.sortieBoard, {
@@ -83,6 +93,7 @@ const Root = (props/*:Props*/) => {
     myProps,
     statusBar,
     battleBoard,
+    squareViewer,
     sortieBoard,
     debugButtons
   );

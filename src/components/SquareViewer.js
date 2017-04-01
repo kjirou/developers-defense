@@ -60,8 +60,30 @@ const SquareViewer = ({ landformType, unit }/*:Props*/) => {
     units: unit ? [unit] : [],
   });
 
+  const parametersAndStatus = h('div', {
+    key: 'parameters-and-status',
+    className: 'root__square-viewer__parameters-and-status',
+  });
+
+  const skillButtons = [0, 1, 2].map(skillIndex => {
+    return h('div', {
+      key: 'skill-' + skillIndex,
+      className: 'root__square-viewer__skill-buttons-container__button',
+      style: {
+        left: 48 * skillIndex,
+      },
+    });
+  });
+
+  const skillButtonsContainer = h('div', {
+    key: 'skill-buttons-container',
+    className: 'root__square-viewer__skill-buttons-container',
+  }, skillButtons);
+
   const components = [];
   components.push(singleSquareMatrix);
+  components.push(parametersAndStatus);
+  components.push(skillButtonsContainer);
 
   return h('div', myProps, ...components);
 };

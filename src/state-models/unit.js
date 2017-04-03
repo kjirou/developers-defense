@@ -28,6 +28,7 @@ const createNewUnitState = ()/*:UnitState*/ => {
     fixedMaxHitPoints: null,
     movingSpeed: 5,
     movePoints: 0,
+    maxMovePoints: PARAMETERS.NECESSARY_MOVE_POINTS,
     actionPoints: 0,
     maxActionPoints: 20,  // TODO: Temporary setting
     actionPointsRecovery: 1,  // TODO: Temporary setting
@@ -137,6 +138,14 @@ const calculateMovableDistance = (unit/*:UnitState*/)/*:number*/ => {
   return Math.floor(unit.movePoints / PARAMETERS.NECESSARY_MOVE_POINTS);
 };
 
+const calculateMovePointsRecovery = (unit/*:UnitState*/)/*:number*/ => {
+  return clamp(unit.movePoints + unit.movingSpeed, 0, unit.maxMovePoints);
+};
+
+const calculateMovePointsConsumptionDirectly = (movePoints/*:number*/)/*:number*/ => {
+  return Math.max(movePoints - PARAMETERS.NECESSARY_MOVE_POINTS, 0);
+};
+
 /**
  * Calculate the movement results for next one tick
  */
@@ -154,19 +163,20 @@ const calculateMovementResults = (unit/*:UnitState*/) => {
     };
   }
 
+  const currentUnitLocation = unit.location;
   const currentDestination = unit.destinations[unit.destinationIndex];
 
   let newMovePoints = unit.movePoints;
   let newLocation;
 
-  if (unit.location) {
-    newMovePoints += unit.movingSpeed;
+  if (currentUnitLocation) {
+    newMovePoints = calculateMovePointsRecovery(unit);
 
     if (newMovePoints >= PARAMETERS.NECESSARY_MOVE_POINTS) {
-      newMovePoints -= PARAMETERS.NECESSARY_MOVE_POINTS;
-      newLocation = performPseudoVectorAddition(unit.location, currentDestination, PARAMETERS.SQUARE_SIDE_LENGTH);
+      newMovePoints = calculateMovePointsConsumptionDirectly(newMovePoints);
+      newLocation = performPseudoVectorAddition(currentUnitLocation, currentDestination, PARAMETERS.SQUARE_SIDE_LENGTH);
     } else {
-      newLocation = unit.location;
+      newLocation = currentUnitLocation;
     }
   // This case is the first movement.
   // That means the unit is placed on the board.
@@ -215,6 +225,7 @@ module.exports = {
   calculateActionPointsConsumption,
   calculateActionPointsRecovery,
   calculateMovableDistance,
+  calculateMovePointsRecovery,
   calculateMovementResults,
   calculateDamage,
   calculateDamageByRate,

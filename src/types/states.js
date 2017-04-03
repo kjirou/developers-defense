@@ -90,6 +90,8 @@ export type UnitState = {
   // 1 square can be moved by consuming 100 MP
   movePoints: number,
   // A integer >= 0
+  maxMovePoints: number,
+  // A integer >= 0
   actionPoints: number,
   // A integer >= 0
   actionPointsRecovery: number,

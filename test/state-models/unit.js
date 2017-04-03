@@ -29,8 +29,8 @@ describe('state-models/unit', function() {
     unit = createNewUnitState();
   });
 
-  describe('calculateMovementResults', () => {
-    it('should throw a error if destinations does not exist', () => {
+  describe('calculateMovementResults', function() {
+    it('should throw a error if destinations does not exist', function() {
       unit.destinations = [];
 
       assert.throws(() => {
@@ -38,13 +38,14 @@ describe('state-models/unit', function() {
       }, /not move/);
     });
 
-    it('can walk destinations', () => {
+    it('can walk destinations', function() {
       unit.destinations = [
         locationMethods.createNewLocationState(1, 2),
         locationMethods.createNewLocationState(2, 2),
         locationMethods.createNewLocationState(2, 3),
       ];
       unit.movingSpeed = 51;
+      unit.maxMovePoints = 999;
 
       assert.strictEqual(unit.location, null);
       assert.strictEqual(unit.destinationIndex, 0);

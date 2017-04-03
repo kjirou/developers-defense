@@ -26,9 +26,9 @@ const createNewUnitState = ()/*:UnitState*/ => {
     jobId: JOB_IDS.NONE,
     hitPoints: parameters.maxHitPoints.min,
     fixedMaxHitPoints: null,
-    movingSpeed: 5,
     movePoints: 0,
     maxMovePoints: PARAMETERS.NECESSARY_MOVE_POINTS,
+    movePointsRecovery: 5,
     actionPoints: 0,
     maxActionPoints: 20,  // TODO: Temporary setting
     actionPointsRecovery: 1,  // TODO: Temporary setting
@@ -139,7 +139,7 @@ const calculateMovableDistance = (unit/*:UnitState*/)/*:number*/ => {
 };
 
 const calculateMovePointsRecovery = (unit/*:UnitState*/)/*:number*/ => {
-  return clamp(unit.movePoints + unit.movingSpeed, 0, unit.maxMovePoints);
+  return clamp(unit.movePoints + unit.movePointsRecovery, 0, unit.maxMovePoints);
 };
 
 const calculateMovePointsConsumptionDirectly = (movePoints/*:number*/)/*:number*/ => {

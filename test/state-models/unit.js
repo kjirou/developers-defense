@@ -44,7 +44,7 @@ describe('state-models/unit', function() {
         locationMethods.createNewLocationState(2, 2),
         locationMethods.createNewLocationState(2, 3),
       ];
-      unit.movingSpeed = 51;
+      unit.movePointsRecovery = 51;
       unit.maxMovePoints = 999;
 
       assert.strictEqual(unit.location, null);

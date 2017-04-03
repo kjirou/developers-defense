@@ -119,19 +119,23 @@ const calculateDamageByRate = (unit/*:UnitState*/, rate/*:number*/) => {
 
 const isFullHitPoints = (unit/*:UnitState*/)/*:boolean*/ => {
   return unit.hitPoints === getMaxHitPoints(unit);
-}
+};
 
 const isDead = (unit/*:UnitState*/)/*:boolean*/ => {
   return unit.hitPoints === 0;
-}
+};
 
 const isAlive = (unit/*:UnitState*/)/*:boolean*/ => {
   return !isDead(unit);
-}
+};
 
 const isActable = (unit/*:UnitState*/)/*:boolean*/ => {
   return isAlive(unit);
-}
+};
+
+const calculateMovableDistance = (unit/*:UnitState*/)/*:number*/ => {
+  return Math.floor(unit.movePoints / PARAMETERS.NECESSARY_MOVE_POINTS);
+};
 
 /**
  * Calculate the movement results for next one tick
@@ -210,6 +214,7 @@ module.exports = {
   areActionPointsEnough,
   calculateActionPointsConsumption,
   calculateActionPointsRecovery,
+  calculateMovableDistance,
   calculateMovementResults,
   calculateDamage,
   calculateDamageByRate,

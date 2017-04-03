@@ -8,6 +8,7 @@ const {
   calculateDamageByRate,
   calculateHealing,
   calculateHealingByRate,
+  calculateMovableDistance,
   calculateMovementResults,
   createNewAllyState,
   createNewEnemyState,
@@ -279,6 +280,20 @@ describe('state-models/unit', function() {
       unit.hitPoints = 1;
       assert.strictEqual(isDead(unit), false);
       assert.strictEqual(isAlive(unit), true);
+    });
+
+    it('calculateMovableDistance', function() {
+      unit.movePoints = 0;
+      assert.strictEqual(calculateMovableDistance(unit), 0);
+
+      unit.movePoints = 99;
+      assert.strictEqual(calculateMovableDistance(unit), 0);
+
+      unit.movePoints = 100;
+      assert.strictEqual(calculateMovableDistance(unit), 1);
+
+      unit.movePoints = 101;
+      assert.strictEqual(calculateMovableDistance(unit), 1);
     });
   });
 });

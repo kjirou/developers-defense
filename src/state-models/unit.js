@@ -149,7 +149,7 @@ const calculateMovePointsConsumptionDirectly = (movePoints/*:number*/)/*:number*
 /**
  * Calculate the movement results for next one tick
  */
-const calculateEnemyMoveResults = (unit/*:UnitState*/) => {
+const calculateEnemyMovementResults = (unit/*:UnitState*/) => {
   if (unit.destinations.length === 0) {
     throw new Error(`This unit should not move`);
   }
@@ -226,7 +226,7 @@ module.exports = {
   calculateActionPointsRecovery,
   calculateDamage,
   calculateDamageByRate,
-  calculateEnemyMoveResults,
+  calculateEnemyMovementResults,
   calculateHealing,
   calculateHealingByRate,
   calculateMovableDistance,

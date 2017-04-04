@@ -28,7 +28,7 @@ const createNewUnitState = ()/*:UnitState*/ => {
     fixedMaxHitPoints: null,
     movePoints: 0,
     maxMovePoints: PARAMETERS.NECESSARY_MOVE_POINTS,
-    movePointsRecovery: 5,
+    movePointsRecovery: 1,
     actionPoints: 0,
     maxActionPoints: 20,  // TODO: Temporary setting
     actionPointsRecovery: 1,  // TODO: Temporary setting
@@ -149,7 +149,7 @@ const calculateMovePointsConsumptionDirectly = (movePoints/*:number*/)/*:number*
 /**
  * Calculate the movement results for next one tick
  */
-const calculateMovementResults = (unit/*:UnitState*/) => {
+const calculateEnemyMoveResults = (unit/*:UnitState*/) => {
   if (unit.destinations.length === 0) {
     throw new Error(`This unit should not move`);
   }
@@ -170,7 +170,7 @@ const calculateMovementResults = (unit/*:UnitState*/) => {
   let newLocation;
 
   if (currentUnitLocation) {
-    newMovePoints = calculateMovePointsRecovery(unit);
+    newMovePoints += unit.movePointsRecovery * PARAMETERS.ENEMY_MOVE_SPEED_RATE;
 
     if (newMovePoints >= PARAMETERS.NECESSARY_MOVE_POINTS) {
       newMovePoints = 0;
@@ -224,13 +224,13 @@ module.exports = {
   areActionPointsEnough,
   calculateActionPointsConsumption,
   calculateActionPointsRecovery,
-  calculateMovableDistance,
-  calculateMovePointsRecovery,
-  calculateMovementResults,
   calculateDamage,
   calculateDamageByRate,
+  calculateEnemyMoveResults,
   calculateHealing,
   calculateHealingByRate,
+  calculateMovableDistance,
+  calculateMovePointsRecovery,
   canDoAct,
   createNewAllyState,
   createNewEnemyState,

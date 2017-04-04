@@ -104,7 +104,7 @@ export type UnitState = {
   /**
    * 1 tick 毎に回復する MP
    * float
-   * 敵の場合は 5 倍になる
+   * 敵の場合は ENEMY_MOVE_SPEED_RATE 倍になる
    */
   movePointsRecovery: number,
 

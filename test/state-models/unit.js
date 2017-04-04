@@ -6,10 +6,10 @@ const {
   calculateActionPointsRecovery,
   calculateDamage,
   calculateDamageByRate,
+  calculateEnemyMoveResults,
   calculateHealing,
   calculateHealingByRate,
   calculateMovableDistance,
-  calculateMovementResults,
   createNewAllyState,
   createNewEnemyState,
   createNewUnitState,
@@ -29,12 +29,12 @@ describe('state-models/unit', function() {
     unit = createNewUnitState();
   });
 
-  describe('calculateMovementResults', function() {
+  describe('calculateEnemyMoveResults', function() {
     it('should throw a error if destinations does not exist', function() {
       unit.destinations = [];
 
       assert.throws(() => {
-        calculateMovementResults(unit);
+        calculateEnemyMoveResults(unit);
       }, /not move/);
     });
 
@@ -44,37 +44,37 @@ describe('state-models/unit', function() {
         locationMethods.createNewLocationState(2, 2),
         locationMethods.createNewLocationState(2, 3),
       ];
-      unit.movePointsRecovery = 51;
+      unit.movePointsRecovery = 10;
 
       assert.strictEqual(unit.location, null);
       assert.strictEqual(unit.destinationIndex, 0);
 
-      Object.assign(unit, calculateMovementResults(unit));
+      Object.assign(unit, calculateEnemyMoveResults(unit));
       assert.deepStrictEqual(unit.location, locationMethods.createNewLocationState(1, 2));
       assert.strictEqual(unit.movePoints, 0);
       assert.strictEqual(unit.destinationIndex, 1);
 
-      Object.assign(unit, calculateMovementResults(unit));
+      Object.assign(unit, calculateEnemyMoveResults(unit));
       assert.deepStrictEqual(unit.location, locationMethods.createNewLocationState(1, 2));
-      assert.strictEqual(unit.movePoints, 51);
+      assert.strictEqual(unit.movePoints, 50);
       assert.strictEqual(unit.destinationIndex, 1);
 
-      Object.assign(unit, calculateMovementResults(unit));
+      Object.assign(unit, calculateEnemyMoveResults(unit));
       assert.deepStrictEqual(unit.location, locationMethods.createNewLocationState(2, 2));
       assert.strictEqual(unit.movePoints, 0);
       assert.strictEqual(unit.destinationIndex, 2);
 
-      Object.assign(unit, calculateMovementResults(unit));
+      Object.assign(unit, calculateEnemyMoveResults(unit));
       assert.deepStrictEqual(unit.location, locationMethods.createNewLocationState(2, 2));
-      assert.strictEqual(unit.movePoints, 51);
+      assert.strictEqual(unit.movePoints, 50);
       assert.strictEqual(unit.destinationIndex, 2);
 
-      Object.assign(unit, calculateMovementResults(unit));
+      Object.assign(unit, calculateEnemyMoveResults(unit));
       assert.deepStrictEqual(unit.location, locationMethods.createNewLocationState(2, 3));
       assert.strictEqual(unit.movePoints, 0);
       assert.strictEqual(unit.destinationIndex, 3);
 
-      Object.assign(unit, calculateMovementResults(unit));
+      Object.assign(unit, calculateEnemyMoveResults(unit));
       assert.deepStrictEqual(unit.location, locationMethods.createNewLocationState(2, 3));
       assert.strictEqual(unit.movePoints, 0);
       assert.strictEqual(unit.destinationIndex, 3);

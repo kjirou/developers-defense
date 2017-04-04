@@ -45,7 +45,6 @@ describe('state-models/unit', function() {
         locationMethods.createNewLocationState(2, 3),
       ];
       unit.movePointsRecovery = 51;
-      unit.maxMovePoints = 999;
 
       assert.strictEqual(unit.location, null);
       assert.strictEqual(unit.destinationIndex, 0);
@@ -62,17 +61,17 @@ describe('state-models/unit', function() {
 
       Object.assign(unit, calculateMovementResults(unit));
       assert.deepStrictEqual(unit.location, locationMethods.createNewLocationState(2, 2));
-      assert.strictEqual(unit.movePoints, 2);
+      assert.strictEqual(unit.movePoints, 0);
       assert.strictEqual(unit.destinationIndex, 2);
 
       Object.assign(unit, calculateMovementResults(unit));
       assert.deepStrictEqual(unit.location, locationMethods.createNewLocationState(2, 2));
-      assert.strictEqual(unit.movePoints, 53);
+      assert.strictEqual(unit.movePoints, 51);
       assert.strictEqual(unit.destinationIndex, 2);
 
       Object.assign(unit, calculateMovementResults(unit));
       assert.deepStrictEqual(unit.location, locationMethods.createNewLocationState(2, 3));
-      assert.strictEqual(unit.movePoints, 4);
+      assert.strictEqual(unit.movePoints, 0);
       assert.strictEqual(unit.destinationIndex, 3);
 
       Object.assign(unit, calculateMovementResults(unit));

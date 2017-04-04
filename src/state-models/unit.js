@@ -173,7 +173,7 @@ const calculateMovementResults = (unit/*:UnitState*/) => {
     newMovePoints = calculateMovePointsRecovery(unit);
 
     if (newMovePoints >= PARAMETERS.NECESSARY_MOVE_POINTS) {
-      newMovePoints = calculateMovePointsConsumptionDirectly(newMovePoints);
+      newMovePoints = 0;
       newLocation = performPseudoVectorAddition(currentUnitLocation, currentDestination, PARAMETERS.SQUARE_SIDE_LENGTH);
     } else {
       newLocation = currentUnitLocation;

@@ -446,6 +446,13 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }/*:Obj
     });
   });
 
+  // Ally's MP recovery
+  newAllies = newAllies.map(ally => {
+    return Object.assign({}, ally, {
+      movePoints: unitMethods.calculateMovePointsRecovery(ally),
+    });
+  });
+
   // Ally's act
   newAllies = newAllies.map(ally => {
     const newAlly = Object.assign({}, ally);

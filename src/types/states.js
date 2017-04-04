@@ -84,13 +84,30 @@ export type UnitState = {
   hitPoints: number,
   // A integer >= 0
   fixedMaxHitPoints: number | null,
-  // Abbreviated name is "MP".
-  // 1 square can be moved by consuming 100 MP
+
+  /**
+   * 累積している移動ポイント
+   * float >= 0
+   * NECESSARY_MOVE_POINTS 分の MP 消費して 1 マス移動が出来る
+   * 省略名 "MP"
+   */
   movePoints: number,
-  // A integer >= 0
+
+  /**
+   * 累積可能な移動ポイントの最大値
+   * integer >= 0
+   * 一度に移動できる距離を示す値でもある
+   * 敵の場合は一歩ごとに MP が 0 になるので、この値は参照されない
+   */
   maxMovePoints: number,
-  // 1 = Increase 1MP/1tick
+
+  /**
+   * 1 tick 毎に回復する MP
+   * float
+   * 敵の場合は 5 倍になる
+   */
   movePointsRecovery: number,
+
   // A integer >= 0
   actionPoints: number,
   // A integer >= 0

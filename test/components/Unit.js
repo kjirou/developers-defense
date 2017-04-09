@@ -67,7 +67,7 @@ describe('components/Unit', function() {
       }, 0)
     });
 
-    it('can prevent duplication of rendering with `uid`', function() {
+    it('can prevent duplication of rendering with `uid`', function(done) {
       const animationPropsList = [
         {
           uid: 'a',

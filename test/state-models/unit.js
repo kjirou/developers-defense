@@ -6,9 +6,10 @@ const {
   calculateActionPointsRecovery,
   calculateDamage,
   calculateDamageByRate,
+  calculateEnemyMovementResults,
   calculateHealing,
   calculateHealingByRate,
-  calculateMovementResults,
+  calculateMovableDistance,
   createNewAllyState,
   createNewEnemyState,
   createNewUnitState,
@@ -28,52 +29,52 @@ describe('state-models/unit', function() {
     unit = createNewUnitState();
   });
 
-  describe('calculateMovementResults', () => {
-    it('should throw a error if destinations does not exist', () => {
+  describe('calculateEnemyMovementResults', function() {
+    it('should throw a error if destinations does not exist', function() {
       unit.destinations = [];
 
       assert.throws(() => {
-        calculateMovementResults(unit);
+        calculateEnemyMovementResults(unit);
       }, /not move/);
     });
 
-    it('can walk destinations', () => {
+    it('can walk destinations', function() {
       unit.destinations = [
         locationMethods.createNewLocationState(1, 2),
         locationMethods.createNewLocationState(2, 2),
         locationMethods.createNewLocationState(2, 3),
       ];
-      unit.movingSpeed = 51;
+      unit.movePointsRecovery = 17;
 
       assert.strictEqual(unit.location, null);
       assert.strictEqual(unit.destinationIndex, 0);
 
-      Object.assign(unit, calculateMovementResults(unit));
+      Object.assign(unit, calculateEnemyMovementResults(unit));
       assert.deepStrictEqual(unit.location, locationMethods.createNewLocationState(1, 2));
       assert.strictEqual(unit.movePoints, 0);
       assert.strictEqual(unit.destinationIndex, 1);
 
-      Object.assign(unit, calculateMovementResults(unit));
+      Object.assign(unit, calculateEnemyMovementResults(unit));
       assert.deepStrictEqual(unit.location, locationMethods.createNewLocationState(1, 2));
       assert.strictEqual(unit.movePoints, 51);
       assert.strictEqual(unit.destinationIndex, 1);
 
-      Object.assign(unit, calculateMovementResults(unit));
+      Object.assign(unit, calculateEnemyMovementResults(unit));
       assert.deepStrictEqual(unit.location, locationMethods.createNewLocationState(2, 2));
-      assert.strictEqual(unit.movePoints, 2);
+      assert.strictEqual(unit.movePoints, 0);
       assert.strictEqual(unit.destinationIndex, 2);
 
-      Object.assign(unit, calculateMovementResults(unit));
+      Object.assign(unit, calculateEnemyMovementResults(unit));
       assert.deepStrictEqual(unit.location, locationMethods.createNewLocationState(2, 2));
-      assert.strictEqual(unit.movePoints, 53);
+      assert.strictEqual(unit.movePoints, 51);
       assert.strictEqual(unit.destinationIndex, 2);
 
-      Object.assign(unit, calculateMovementResults(unit));
+      Object.assign(unit, calculateEnemyMovementResults(unit));
       assert.deepStrictEqual(unit.location, locationMethods.createNewLocationState(2, 3));
-      assert.strictEqual(unit.movePoints, 4);
+      assert.strictEqual(unit.movePoints, 0);
       assert.strictEqual(unit.destinationIndex, 3);
 
-      Object.assign(unit, calculateMovementResults(unit));
+      Object.assign(unit, calculateEnemyMovementResults(unit));
       assert.deepStrictEqual(unit.location, locationMethods.createNewLocationState(2, 3));
       assert.strictEqual(unit.movePoints, 0);
       assert.strictEqual(unit.destinationIndex, 3);
@@ -279,6 +280,20 @@ describe('state-models/unit', function() {
       unit.hitPoints = 1;
       assert.strictEqual(isDead(unit), false);
       assert.strictEqual(isAlive(unit), true);
+    });
+
+    it('calculateMovableDistance', function() {
+      unit.movePoints = 0;
+      assert.strictEqual(calculateMovableDistance(unit), 0);
+
+      unit.movePoints = 99;
+      assert.strictEqual(calculateMovableDistance(unit), 0);
+
+      unit.movePoints = 100;
+      assert.strictEqual(calculateMovableDistance(unit), 1);
+
+      unit.movePoints = 101;
+      assert.strictEqual(calculateMovableDistance(unit), 1);
     });
   });
 });

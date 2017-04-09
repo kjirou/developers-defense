@@ -10,6 +10,8 @@ const React = require('react');
 const { STYLES, UNIT_STATE_CHANGE_LOG_TYPES } = require('../immutable/constants');
 const Gauge = require('./Gauge');
 
+const h = React.createElement;
+
 
 /*::
 export type UnitAnimationProps = {
@@ -38,6 +40,7 @@ type Props = {
 type DefaultProps = {
   animations: UnitAnimationProps[],
   classNames: $PropertyType<Props, 'classNames'>,
+  movableDistance: number | null,
   stateChanges: $PropertyType<Props, 'stateChanges'>,
 };
 
@@ -52,12 +55,32 @@ export type UnitProps = {
  */
 
 const defaultProps = {
-  classNames: [],
   animations: [],
+  classNames: [],
+  movableDistance: null,
   stateChanges: [],
 };
 
 class Unit extends React.Component {
+  static _runAnimations(animations/*:UnitAnimationProps[]*/, containerDomNode/*:HTMLElement*/) {
+    animations.forEach(({ uid, duration, classNames }) => {
+      const uidAttrName = 'data-uid';
+
+      if (containerDomNode.querySelector(`[${ uidAttrName }="${ uid }"]`)) {
+        return;
+      }
+
+      const animatedNode = document.createElement('div');
+      animatedNode.setAttribute(uidAttrName, uid);
+      animatedNode.classList.add(...classNames);
+
+      containerDomNode.appendChild(animatedNode);
+      setTimeout(() => {
+        containerDomNode.removeChild(animatedNode);
+      }, duration);
+    });
+  }
+
   static _generateStateChangeEffectData({ type, value }/*:UnitStateChangeProps*/) {
     let text = '';
     const additionalClassNames = [];
@@ -120,27 +143,7 @@ class Unit extends React.Component {
    */
 
   componentDidUpdate() {
-    // Execute animations
-    // TODO: Add UI tests
-    this.props.animations.forEach(({ uid, duration, classNames }) => {
-      const uidAttrName = 'data-uid';
-
-      // If the DOM element remains, the animation is deemed to have been executed.
-      if (this._animationContainerDomNode.querySelector(`[${ uidAttrName }="${ uid }"]`)) {
-        return;
-      }
-
-      const animatedNode = document.createElement('div');
-      animatedNode.setAttribute(uidAttrName, uid);
-      animatedNode.classList.add(...classNames);
-
-      this._animationContainerDomNode.appendChild(animatedNode);
-      setTimeout(() => {
-        if (this._animationContainerDomNode) {
-          this._animationContainerDomNode.removeChild(animatedNode);
-        }
-      }, duration);
-    });
+    Unit._runAnimations(this.props.animations, this._animationContainerDomNode);
 
     Unit._animateStateChangeEffects(
       this.props.stateChanges,
@@ -175,6 +178,15 @@ class Unit extends React.Component {
       },
     });
 
+    let movableDistance = null;
+    if (this.props.movableDistance !== null) {
+      movableDistance = h('div', {
+        key: 'movable-distance',
+        className: 'unit__movable-distance',
+      }, this.props.movableDistance);
+    }
+
+    // TODO: `gauge` -> `hitPointsGauge`
     let gauge = null;
     if (0.0 < this.props.hitPointsRate && this.props.hitPointsRate < 1.0) {
       gauge = React.createElement(Gauge, {
@@ -197,6 +209,9 @@ class Unit extends React.Component {
     components.push(animationContainer);
     if (gauge) {
       components.push(gauge);
+    }
+    if (movableDistance) {
+      components.push(movableDistance);
     }
     components.push(icon);
 

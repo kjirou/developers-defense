@@ -26,8 +26,9 @@ const createNewUnitState = ()/*:UnitState*/ => {
     jobId: JOB_IDS.NONE,
     hitPoints: parameters.maxHitPoints.min,
     fixedMaxHitPoints: null,
-    movingSpeed: 5,
     movePoints: 0,
+    maxMovePoints: PARAMETERS.NECESSARY_MOVE_POINTS * 5,
+    movePointsRecovery: 1,
     actionPoints: 0,
     maxActionPoints: 20,  // TODO: Temporary setting
     actionPointsRecovery: 1,  // TODO: Temporary setting
@@ -119,24 +120,36 @@ const calculateDamageByRate = (unit/*:UnitState*/, rate/*:number*/) => {
 
 const isFullHitPoints = (unit/*:UnitState*/)/*:boolean*/ => {
   return unit.hitPoints === getMaxHitPoints(unit);
-}
+};
 
 const isDead = (unit/*:UnitState*/)/*:boolean*/ => {
   return unit.hitPoints === 0;
-}
+};
 
 const isAlive = (unit/*:UnitState*/)/*:boolean*/ => {
   return !isDead(unit);
-}
+};
 
 const isActable = (unit/*:UnitState*/)/*:boolean*/ => {
   return isAlive(unit);
-}
+};
+
+const calculateMovableDistance = (unit/*:UnitState*/)/*:number*/ => {
+  return Math.floor(unit.movePoints / PARAMETERS.NECESSARY_MOVE_POINTS);
+};
+
+const calculateMovePointsRecovery = (unit/*:UnitState*/)/*:number*/ => {
+  return clamp(unit.movePoints + unit.movePointsRecovery, 0, unit.maxMovePoints);
+};
+
+const calculateMovePointsConsumptionDirectly = (movePoints/*:number*/)/*:number*/ => {
+  return Math.max(movePoints - PARAMETERS.NECESSARY_MOVE_POINTS, 0);
+};
 
 /**
  * Calculate the movement results for next one tick
  */
-const calculateMovementResults = (unit/*:UnitState*/) => {
+const calculateEnemyMovementResults = (unit/*:UnitState*/) => {
   if (unit.destinations.length === 0) {
     throw new Error(`This unit should not move`);
   }
@@ -150,19 +163,20 @@ const calculateMovementResults = (unit/*:UnitState*/) => {
     };
   }
 
+  const currentUnitLocation = unit.location;
   const currentDestination = unit.destinations[unit.destinationIndex];
 
   let newMovePoints = unit.movePoints;
   let newLocation;
 
-  if (unit.location) {
-    newMovePoints += unit.movingSpeed;
+  if (currentUnitLocation) {
+    newMovePoints += unit.movePointsRecovery * PARAMETERS.ENEMY_MOVE_SPEED_RATE;
 
     if (newMovePoints >= PARAMETERS.NECESSARY_MOVE_POINTS) {
-      newMovePoints -= PARAMETERS.NECESSARY_MOVE_POINTS;
-      newLocation = performPseudoVectorAddition(unit.location, currentDestination, PARAMETERS.SQUARE_SIDE_LENGTH);
+      newMovePoints = 0;
+      newLocation = performPseudoVectorAddition(currentUnitLocation, currentDestination, PARAMETERS.SQUARE_SIDE_LENGTH);
     } else {
-      newLocation = unit.location;
+      newLocation = currentUnitLocation;
     }
   // This case is the first movement.
   // That means the unit is placed on the board.
@@ -210,11 +224,13 @@ module.exports = {
   areActionPointsEnough,
   calculateActionPointsConsumption,
   calculateActionPointsRecovery,
-  calculateMovementResults,
   calculateDamage,
   calculateDamageByRate,
+  calculateEnemyMovementResults,
   calculateHealing,
   calculateHealingByRate,
+  calculateMovableDistance,
+  calculateMovePointsRecovery,
   canDoAct,
   createNewAllyState,
   createNewEnemyState,

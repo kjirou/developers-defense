@@ -95,7 +95,7 @@ const choiceClosestCoordinateUnderTargetedUnit = (
 
   // Since enemies can only move up / down / left / right,
   //   it should not be more than 2 coordinates.
-  // Ref) calculateMovementResults
+  // Ref) calculateEnemyMovementResults
   if (candidates.length !== 1 && candidates.length !== 2) {
     throw new Error('Enemy position is wrong');
   }
@@ -437,12 +437,19 @@ const computeTick = ({ allies, enemies, bullets, battleBoard, gameStatus }/*:Obj
 
   // Enemy's movement
   alivedEnemies = alivedEnemies.map(enemy => {
-    const { movePoints, location, destinationIndex } = unitMethods.calculateMovementResults(enemy);
+    const { movePoints, location, destinationIndex } = unitMethods.calculateEnemyMovementResults(enemy);
 
     return Object.assign({}, enemy, {
       movePoints,
       location,
       destinationIndex,
+    });
+  });
+
+  // Ally's MP recovery
+  newAllies = newAllies.map(ally => {
+    return Object.assign({}, ally, {
+      movePoints: unitMethods.calculateMovePointsRecovery(ally),
     });
   });
 

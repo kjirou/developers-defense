@@ -285,6 +285,7 @@ const initializeApp = ()/*:Function*/ => {
   ]).map(ally => {
     return Object.assign({}, ally, {
       hitPoints: unitMethods.getMaxHitPoints(ally),
+      movePoints: ally.maxMovePoints, // TODO
     });
   });
 

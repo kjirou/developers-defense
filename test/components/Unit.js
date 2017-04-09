@@ -19,6 +19,75 @@ describe('components/Unit', function() {
     delete global.document;
   });
 
+  describe('_runAnimations', function() {
+    beforeEach(function() {
+      this.containerDomNode = document.createElement('div');
+    });
+
+    it('should create an element into the container from one animation props', function(done) {
+      const animationPropsList = [
+        {
+          uid: 'a',
+          classNames: ['foo'],
+          duration: 10,
+        },
+      ];
+      Unit._runAnimations(animationPropsList, this.containerDomNode);
+
+      setTimeout(() => {
+        const animatedNodes = this.containerDomNode.querySelectorAll('.foo');
+
+        assert.strictEqual(animatedNodes.length, 1);
+
+        done();
+      }, 0)
+    });
+
+    it('should create elements into the container from two animation props list', function(done) {
+      const animationPropsList = [
+        {
+          uid: 'a',
+          classNames: ['foo'],
+          duration: 10,
+        },
+        {
+          uid: 'b',
+          classNames: ['foo'],
+          duration: 10,
+        },
+      ];
+      Unit._runAnimations(animationPropsList, this.containerDomNode);
+
+      setTimeout(() => {
+        const animatedNodes = this.containerDomNode.querySelectorAll('.foo');
+
+        assert.strictEqual(animatedNodes.length, 2);
+
+        done();
+      }, 0)
+    });
+
+    it('can prevent duplication of rendering with `uid`', function(done) {
+      const animationPropsList = [
+        {
+          uid: 'a',
+          classNames: ['foo'],
+          duration: 10,
+        },
+      ];
+      Unit._runAnimations(animationPropsList, this.containerDomNode);
+      Unit._runAnimations(animationPropsList, this.containerDomNode);
+
+      setTimeout(() => {
+        const animatedNodes = this.containerDomNode.querySelectorAll('.foo');
+
+        assert.strictEqual(animatedNodes.length, 1);
+
+        done();
+      }, 0)
+    });
+  });
+
   describe('_animateStateChangeEffects', function() {
     beforeEach(function() {
       this.containerDomNode = document.createElement('div');

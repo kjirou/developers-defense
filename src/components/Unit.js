@@ -62,6 +62,25 @@ const defaultProps = {
 };
 
 class Unit extends React.Component {
+  static _runAnimations(animations/*:UnitAnimationProps[]*/, containerDomNode/*:HTMLElement*/) {
+    animations.forEach(({ uid, duration, classNames }) => {
+      const uidAttrName = 'data-uid';
+
+      if (containerDomNode.querySelector(`[${ uidAttrName }="${ uid }"]`)) {
+        return;
+      }
+
+      const animatedNode = document.createElement('div');
+      animatedNode.setAttribute(uidAttrName, uid);
+      animatedNode.classList.add(...classNames);
+
+      containerDomNode.appendChild(animatedNode);
+      setTimeout(() => {
+        containerDomNode.removeChild(animatedNode);
+      }, duration);
+    });
+  }
+
   static _generateStateChangeEffectData({ type, value }/*:UnitStateChangeProps*/) {
     let text = '';
     const additionalClassNames = [];
@@ -124,27 +143,7 @@ class Unit extends React.Component {
    */
 
   componentDidUpdate() {
-    // Execute animations
-    // TODO: Add UI tests
-    this.props.animations.forEach(({ uid, duration, classNames }) => {
-      const uidAttrName = 'data-uid';
-
-      // If the DOM element remains, the animation is deemed to have been executed.
-      if (this._animationContainerDomNode.querySelector(`[${ uidAttrName }="${ uid }"]`)) {
-        return;
-      }
-
-      const animatedNode = document.createElement('div');
-      animatedNode.setAttribute(uidAttrName, uid);
-      animatedNode.classList.add(...classNames);
-
-      this._animationContainerDomNode.appendChild(animatedNode);
-      setTimeout(() => {
-        if (this._animationContainerDomNode) {
-          this._animationContainerDomNode.removeChild(animatedNode);
-        }
-      }, duration);
-    });
+    Unit._runAnimations(this.props.animations, this._animationContainerDomNode);
 
     Unit._animateStateChangeEffects(
       this.props.stateChanges,

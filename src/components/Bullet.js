@@ -2,7 +2,7 @@
 
 const React = require('react');
 
-const { PARAMETERS } = require('../immutable/constants');
+const { PARAMETERS } = require('../constants');
 
 
 /*::

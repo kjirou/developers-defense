@@ -2,7 +2,7 @@
 
 const { createReducer } = require('redux-create-reducer');
 
-const { ACTION_TYPES } = require('../immutable/constants');
+const { ACTION_TYPES } = require('../constants');
 
 
 const createInitialState = () => {

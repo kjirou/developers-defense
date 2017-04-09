@@ -1,6 +1,6 @@
 const assert = require('power-assert');
 
-const { BOARD_TYPES } = require('../../src/immutable/constants');
+const { BOARD_TYPES } = require('../../src/constants');
 const { createNewCoordinateState } = require('../../src/state-models/coordinate');
 const { createNewPlacementState } = require('../../src/state-models/placement');
 const { createNewUnitState } = require('../../src/state-models/unit');

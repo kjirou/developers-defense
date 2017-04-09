@@ -6,7 +6,7 @@ import type { Children } from 'react';
 
 const React = require('react');
 
-const { STYLES } = require('../immutable/constants');
+const { STYLES } = require('../constants');
 
 
 /*::

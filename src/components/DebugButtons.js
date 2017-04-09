@@ -1,12 +1,12 @@
 // @flow
 
 /*::
-import type { GameProgressType } from '../immutable/constants';
+import type { GameProgressType } from '../constants';
  */
 
 const React = require('react');
 
-const { GAME_PROGRESS_TYPES } = require('../immutable/constants');
+const { GAME_PROGRESS_TYPES } = require('../constants');
 
 
 /*::

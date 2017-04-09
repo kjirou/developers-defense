@@ -1,6 +1,6 @@
 const assert = require('power-assert');
 
-const { FACTION_TYPES } = require('../../src/immutable/constants');
+const { FACTION_TYPES } = require('../../src/constants');
 const locationMethods = require('../../src/state-models/location');
 const {
   calculateActionPointsRecovery,

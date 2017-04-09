@@ -1,6 +1,6 @@
 const assert = require('power-assert');
 
-const { BOARD_TYPES } = require('../../src/immutable/constants');
+const { BOARD_TYPES } = require('../../src/constants');
 const { cloneViaJson } = require('../../src/lib/core');
 const {
   createNewPlacementState,

@@ -1,13 +1,13 @@
 // @flow
 
 /*::
-import type { UnitStateChangeType } from '../immutable/constants';
+import type { UnitStateChangeType } from '../constants';
 import type { UnitStateChangeLogState } from '../types/states';
  */
 
 const React = require('react');
 
-const { STYLES, UNIT_STATE_CHANGE_LOG_TYPES } = require('../immutable/constants');
+const { STYLES, UNIT_STATE_CHANGE_LOG_TYPES } = require('../constants');
 const Gauge = require('./Gauge');
 
 const h = React.createElement;

@@ -1,13 +1,13 @@
 // @flow
 
 /*::
-import type { AnimationDestinationType } from './constants';
+import type { AnimationDestinationType } from '../constants';
  */
 
 const keyBy = require('lodash.keyby');
 const keymirror = require('keymirror');
 
-const { STYLES } = require('./constants');
+const { STYLES } = require('../constants');
 
 
 // TODO: 敵味方/攻撃回復補助でベースカラーを設定したい

@@ -22,7 +22,7 @@ import type {
   SquareMatrixProps,
 } from '../components/SquareMatrix';
 import type { UnitAnimationProps, UnitProps } from '../components/Unit';
-import type { GameProgressType } from '../immutable/constants';
+import type { GameProgressType } from '../constants';
 import type {
   AppState,
   BulletState,
@@ -43,7 +43,7 @@ const {
   LANDFORM_TYPES,
   PARAMETERS,
   STYLES,
-} = require('../immutable/constants');
+} = require('../constants');
 const bulletMethods = require('../state-models/bullet');
 const effectMethods = require('../state-models/effect');
 const placementMethods = require('../state-models/placement');

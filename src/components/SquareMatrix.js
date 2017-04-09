@@ -14,7 +14,7 @@ import type { UnitProps } from './Unit';
 const React = require('react');
 const ReactCSSTransitionGroup = require('react-addons-css-transition-group');
 
-const { STYLES } = require('../immutable/constants');
+const { STYLES } = require('../constants');
 const { locationToCoordinate } = require('../state-models/geometric-apis');
 const { createNewLocationState } = require('../state-models/location');
 const Bullet = require('./Bullet');

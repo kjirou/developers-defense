@@ -12,7 +12,7 @@
 
 
 /*::
-import type { LandformType } from '../immutable/constants';
+import type { LandformType } from '../constants';
 import type { UnitProps } from './Unit';
  */
 

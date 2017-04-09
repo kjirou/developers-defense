@@ -6,7 +6,7 @@ const {
   actList,
   acts,
 } = require('../../src/immutable/acts');
-const { ACT_EFFECT_RANGE_TYPES, EFFECT_DIRECTIONS } = require('../../src/immutable/constants');
+const { ACT_EFFECT_RANGE_TYPES, EFFECT_DIRECTIONS } = require('../../src/constants');
 
 
 describe('immutable/acts', () => {

@@ -3,7 +3,7 @@
 const { createStore, applyMiddleware } = require('redux');
 const thunkMiddleware = require('redux-thunk').default;
 
-const { ACTION_TYPES } =  require('../immutable/constants');
+const { ACTION_TYPES } =  require('../constants');
 const reducer =  require('../reducers');
 
 

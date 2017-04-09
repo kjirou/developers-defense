@@ -4,7 +4,7 @@ const { baseAct } = require('../../src/immutable/acts');
 const {
   ACT_AIM_RANGE_TYPES, ACT_EFFECT_RANGE_TYPES, ACTION_TYPES, BOARD_TYPES,
   FACTION_TYPES, FRIENDSHIP_TYPES,
-} = require('../../src/immutable/constants');
+} = require('../../src/constants');
 const reducer = require('../../src/reducers');
 const boardMethods = require('../../src/state-models/board');
 const coordinateMethods = require('../../src/state-models/coordinate');

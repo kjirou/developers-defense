@@ -4,7 +4,7 @@
 import type {
   FactionType,
   FriendshipType,
-} from '../immutable/constants';
+} from '../constants';
 import type { ActImmutableObject } from '../immutable/acts';
 import type {
   BoardState,
@@ -32,7 +32,7 @@ const {
   FRIENDSHIP_TYPES,
   STYLES,
   UNIT_STATE_CHANGE_LOG_TYPES,
-} = require('../immutable/constants');
+} = require('../constants');
 const { expandReachToRelativeCoordinates } = require('../lib/core');
 const bulletMethods = require('./bullet');
 const coordinateMethods = require('./coordinate');

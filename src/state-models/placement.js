@@ -1,14 +1,14 @@
 // @flow
 
 /*::
-import type { BoardType } from '../immutable/constants';
+import type { BoardType } from '../constants';
 import type { CoordinateState, PlacementState } from '../types/states';
  */
 
 
 const uuidV4 = require('uuid').v4;
 
-const { BOARD_TYPES } = require('../immutable/constants');
+const { BOARD_TYPES } = require('../constants');
 const { areSameCoordinates, createNewCoordinateState } = require('./coordinate');
 
 

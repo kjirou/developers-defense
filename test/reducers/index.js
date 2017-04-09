@@ -1,6 +1,6 @@
 const assert = require('power-assert');
 
-const { ACTION_TYPES } = require('../../src/immutable/constants');
+const { ACTION_TYPES } = require('../../src/constants');
 const reducer = require('../../src/reducers');
 
 

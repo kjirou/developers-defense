@@ -8,7 +8,7 @@ import type { UnitState } from '../types/states';
 const clamp = require('lodash.clamp');
 const uuidV4 = require('uuid').v4;
 
-const { FACTION_TYPES, FRIENDSHIP_TYPES, PARAMETERS } = require('../immutable/constants');
+const { FACTION_TYPES, FRIENDSHIP_TYPES, PARAMETERS } = require('../constants');
 const { ACT_IDS, acts } = require('../immutable/acts');
 const { JOB_IDS, jobs } = require('../immutable/jobs');
 const parameters = require('../lib/parameters');

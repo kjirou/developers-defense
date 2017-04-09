@@ -5,7 +5,7 @@ import type { CoordinateState, RectangleState, SquareMatrixState, SquareState } 
  */
 
 
-const { LANDFORM_TYPES, PARAMETERS } = require('../immutable/constants');
+const { LANDFORM_TYPES, PARAMETERS } = require('../constants');
 const { areSameSizeMatrices } = require('../lib/core');
 const { createNewCoordinateState } = require('./coordinate');
 const { createNewRectangleState } = require('./rectangle');

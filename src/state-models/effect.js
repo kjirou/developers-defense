@@ -1,7 +1,7 @@
 // @flow
 
 /*::
-import type { AnimationDestinationType, FactionType } from '../immutable/constants';
+import type { AnimationDestinationType, FactionType } from '../constants';
 import type { CoordinateState, EffectState, LocationState, RectangleState } from '../types/states';
  */
 
@@ -9,7 +9,7 @@ import type { CoordinateState, EffectState, LocationState, RectangleState } from
 const uuidV4 = require('uuid').v4;
 
 const { ANIMATION_IDS } = require('../immutable/animations');
-const { ACT_EFFECT_RANGE_TYPES, ANIMATION_DESTINATION_TYPES, PARAMETERS } = require('../immutable/constants');
+const { ACT_EFFECT_RANGE_TYPES, ANIMATION_DESTINATION_TYPES, PARAMETERS } = require('../constants');
 const { addCoordinates, createNewCoordinateState, isCoordinateInRange } = require('./coordinate');
 const { coordinateToRectangle, locationToCoordinate } = require('./geometric-apis');
 

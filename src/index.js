@@ -8,7 +8,7 @@ const config =  require('./config');
 const App =  require('./containers/App');
 const acts =  require('./immutable/acts');
 const animations =  require('./immutable/animations');
-const constants =  require('./immutable/constants');
+const constants =  require('./constants');
 const jobs =  require('./immutable/jobs');
 const { configureStore } =  require('./store');
 
@@ -18,10 +18,10 @@ window.document.addEventListener('DOMContentLoaded', () => {
 
   // For development on your browser
   window._config = config;
+  window._constants = constants;
   window._immutable = {
     acts,
     animations,
-    constants,
     jobs,
   };
   window._store = store;

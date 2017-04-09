@@ -5,7 +5,7 @@ const {
   animationList,
   animations,
 } = require('../../src/immutable/animations');
-const {} = require('../../src/immutable/constants');
+const {} = require('../../src/constants');
 
 
 describe('immutable/animations', () => {

@@ -2,7 +2,7 @@
 
 const rpgparameter = require('rpgparameter');
 
-const { PARAMETERS } = require('../immutable/constants');
+const { PARAMETERS } = require('../constants');
 
 
 const maxHitPoints = rpgparameter.createIntegerParameterShape({

@@ -1,14 +1,14 @@
 // @flow
 
 /*::
-import type { ActionType } from '../immutable/constants';
+import type { ActionType } from '../constants';
 
 import type { PlacementState } from '../types/states';
  */
 
 const randomWeightedChoice = require('random-weighted-choice');
 
-const { ACTION_TYPES, BOARD_TYPES, PARAMETERS, STYLES } = require('../immutable/constants');
+const { ACTION_TYPES, BOARD_TYPES, PARAMETERS, STYLES } = require('../constants');
 const { JOB_IDS } = require('../immutable/jobs');
 const complexApisMethods = require('../state-models/complex-apis');
 const coordinateMethods = require('../state-models/coordinate');

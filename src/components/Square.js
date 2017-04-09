@@ -1,12 +1,12 @@
 // @flow
 
 /*::
-import type { LandformType } from '../immutable/constants';
+import type { LandformType } from '../constants';
  */
 
 const React = require('react');
 
-const { LANDFORM_TYPES, STYLES } = require('../immutable/constants');
+const { LANDFORM_TYPES, STYLES } = require('../constants');
 
 
 /*::

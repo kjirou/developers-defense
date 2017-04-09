@@ -6,7 +6,7 @@ import type {
   FriendshipType,
   LandformType,
   UnitStateChangeType,
-} from '../immutable/constants';
+} from '../constants';
 
 
 //

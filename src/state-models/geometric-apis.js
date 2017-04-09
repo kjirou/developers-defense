@@ -7,7 +7,7 @@ import type { CoordinateState, LocationState, RectangleState } from '../types/st
 
 const { areBoxesOverlapping } = require('box-overlap');
 
-const { STYLES } = require('../immutable/constants');
+const { STYLES } = require('../constants');
 const { expandReachToRelativeCoordinates } = require('../lib/core');
 const coordinateMethods = require('./coordinate');
 const locationMethods = require('./location');

@@ -1,6 +1,6 @@
 const assert = require('power-assert');
 
-const { ACTION_TYPES, PARAMETERS } = require('../../src/immutable/constants');
+const { ACTION_TYPES, PARAMETERS } = require('../../src/constants');
 const {
   _createInitialState,
   reduceAllies,

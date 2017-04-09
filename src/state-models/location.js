@@ -6,7 +6,7 @@ import type { LocationState } from '../types/states';
 
 const angles = require('angles');
 
-const { EFFECT_DIRECTIONS, STYLES } = require('../immutable/constants');
+const { EFFECT_DIRECTIONS, STYLES } = require('../constants');
 
 
 const createNewLocationState = (y/*:number*/, x/*:number*/)/*:LocationState*/ => {

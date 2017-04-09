@@ -4,7 +4,7 @@ const assert = require('power-assert');
 const React = require('react');
 
 const { createRootProps } = require('../../src/containers/connections');
-const { ACTION_TYPES } = require('../../src/immutable/constants');
+const { ACTION_TYPES } = require('../../src/constants');
 const reducer =  require('../../src/reducers');
 
 

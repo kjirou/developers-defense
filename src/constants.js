@@ -1,4 +1,5 @@
 // @flow
+
 const ACT_AIM_RANGE_TYPES = {
   CONE: 'CONE',
   LINE: 'LINE',

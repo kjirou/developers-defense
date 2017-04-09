@@ -1,6 +1,6 @@
 const assert = require('power-assert');
 
-const { STYLES } = require('../../src/immutable/constants');
+const { STYLES } = require('../../src/constants');
 const coordinateMethods = require('../../src/state-models/coordinate');
 const locationMethods = require('../../src/state-models/location');
 const {

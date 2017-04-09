@@ -1,7 +1,7 @@
 // @flow
 
 /*::
-import type { BoardType } from '../immutable/constants';
+import type { BoardType } from '../constants';
 import type { BoardState } from '../types/states';
  */
 

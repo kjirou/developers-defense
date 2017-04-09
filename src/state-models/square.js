@@ -7,7 +7,7 @@ import type { CoordinateState, SquareState } from '../types/states';
 
 const uuidV4 = require('uuid').v4;
 
-const { LANDFORM_TYPES } = require('../immutable/constants');
+const { LANDFORM_TYPES } = require('../constants');
 const { createNewCoordinateState } = require('./coordinate');
 
 

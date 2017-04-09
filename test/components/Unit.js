@@ -4,7 +4,7 @@ const assert = require('power-assert');
 const React = require('react');
 
 const Unit = require('../../src/components/Unit');
-const { UNIT_STATE_CHANGE_LOG_TYPES } = require('../../src/immutable/constants');
+const { UNIT_STATE_CHANGE_LOG_TYPES } = require('../../src/constants');
 const { createNewUnitStateChangeLogState } = require('../../src/state-models/unit-state-change-log');
 
 

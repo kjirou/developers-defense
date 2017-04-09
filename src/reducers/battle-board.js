@@ -2,7 +2,7 @@
 
 const { createReducer } = require('redux-create-reducer');
 
-const { ACTION_TYPES, BOARD_TYPES, PARAMETERS } = require('../immutable/constants');
+const { ACTION_TYPES, BOARD_TYPES, PARAMETERS } = require('../constants');
 const { createNewBoardState } = require('../state-models/board');
 const { extendSquareMatrix } = require('../state-models/square-matrix');
 

@@ -1,7 +1,7 @@
 // @flow
 
 /*::
-import type { UnitStateChangeType } from '../immutable/constants';
+import type { UnitStateChangeType } from '../constants';
 import type { UnitStateChangeLogState } from '../types/states';
  */
 

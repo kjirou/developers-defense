@@ -1,13 +1,13 @@
 // @flow
 
 /*::
-import type { AnimationDestinationType, FriendshipType } from './constants';
+import type { AnimationDestinationType, FriendshipType } from '../constants';
  */
 
 const keyBy = require('lodash.keyby');
 const keymirror = require('keymirror');
 
-const { ACT_EFFECT_RANGE_TYPES, EFFECT_DIRECTIONS } = require('./constants');
+const { ACT_EFFECT_RANGE_TYPES, EFFECT_DIRECTIONS } = require('../constants');
 const { expandReachToRelativeCoordinates } = require('../lib/core');
 
 

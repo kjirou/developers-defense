@@ -77,20 +77,31 @@ const createUnitProps = (
   animations/*:UnitAnimationProps[]*/,
   unitStateChangeLogs/*:UnitStateChangeLogState[]*/
 )/*:UnitProps*/ => {
+  const isAlly = unit.factionType === FACTION_TYPES.ALLY;
+
   let top = 0;
   let left = 0;
-  const additionalClassNames = [];
-
   if (unit.location) {
     top = unit.location.y;
     left = unit.location.x;
-    additionalClassNames.push('square-matrix__unit--layer-two');
   } else if (unit.placement) {
     top = STYLES.SQUARE_HEIGHT * unit.placement.coordinate.rowIndex;
     left = STYLES.SQUARE_WIDTH * unit.placement.coordinate.columnIndex;
-    additionalClassNames.push('square-matrix__unit--layer-one');
   } else {
     throw new Error('The unit always has `location` or `placement`');
+  }
+
+  const classNames = [
+    isAlly ? 'unit--ally' : 'unit--enemy',
+    'square-matrix__unit',
+  ];
+  if (unitMethods.isAlive(unit)) {
+    classNames.push('square-matrix__unit--is-alive');
+  }
+  if (unit.location) {
+    classNames.push('square-matrix__unit--layer-two');
+  } else if (unit.placement) {
+    classNames.push('square-matrix__unit--layer-one');
   }
 
   const stateChanges = unitStateChangeLogs
@@ -104,14 +115,9 @@ const createUnitProps = (
     })
   ;
 
-  return {
+  const props = {
     animations,
-    classNames: [
-      unit.factionType === FACTION_TYPES.ALLY ? 'unit--ally' : 'unit--enemy',
-      'square-matrix__unit',
-      ...(unitMethods.isAlive(unit) ? ['square-matrix__unit--is-alive'] : []),
-      ...additionalClassNames,
-    ],
+    classNames,
     iconId: unitMethods.getIconId(unit),
     hitPointsRate: unitMethods.getHitPointsRate(unit),
     left,
@@ -119,6 +125,8 @@ const createUnitProps = (
     top,
     uid: unit.uid,
   };
+
+  return props;
 };
 
 const createSerialSquarePropsList = (squareMatrix/*:SquareMatrixState*/)/*:SquareProps[]*/ => {

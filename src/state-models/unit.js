@@ -27,7 +27,7 @@ const createNewUnitState = ()/*:UnitState*/ => {
     hitPoints: parameters.maxHitPoints.min,
     fixedMaxHitPoints: null,
     movePoints: 0,
-    maxMovePoints: PARAMETERS.NECESSARY_MOVE_POINTS,
+    maxMovePoints: PARAMETERS.NECESSARY_MOVE_POINTS * 5,
     movePointsRecovery: 1,
     actionPoints: 0,
     maxActionPoints: 20,  // TODO: Temporary setting

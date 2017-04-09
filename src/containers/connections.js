@@ -118,9 +118,10 @@ const createUnitProps = (
   const props = {
     animations,
     classNames,
-    iconId: unitMethods.getIconId(unit),
     hitPointsRate: unitMethods.getHitPointsRate(unit),
+    iconId: unitMethods.getIconId(unit),
     left,
+    movableDistance: isAlly ? unitMethods.calculateMovableDistance(unit) : null,
     stateChanges,
     top,
     uid: unit.uid,

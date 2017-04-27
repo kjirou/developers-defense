@@ -11,6 +11,15 @@
 // https://github.com/facebook/flow/blob/master/lib/react.js
 // https://github.com/facebook/flow/issues/218
 // https://github.com/facebook/flow/issues/3058
+//
+// ----
+//
+// Real answer?
+// https://flow.org/en/docs/frameworks/react/#toc-adding-types-for-react-events
+//
+// ```
+// event: Event & { currentTarget: HTMLButtonElement }
+// ```
 export class ModifiedSyntheticTouchEvent extends SyntheticTouchEvent {
   target: HTMLElement;
 }

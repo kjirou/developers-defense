@@ -11,7 +11,6 @@ const uuidV4 = require('uuid').v4;
 const { FACTION_TYPES, FRIENDSHIP_TYPES, PARAMETERS } = require('../constants');
 const { ACT_IDS, acts } = require('../immutable/acts');
 const { JOB_IDS, jobs } = require('../immutable/jobs');
-const parameters = require('../lib/parameters');
 const { areSameLocations, performPseudoVectorAddition } = require('./location');
 
 
@@ -24,7 +23,7 @@ const createNewUnitState = ()/*:UnitState*/ => {
     destinations: [],
     destinationIndex: 0,
     jobId: JOB_IDS.NONE,
-    hitPoints: parameters.maxHitPoints.min,
+    hitPoints: PARAMETERS.MIN_MAX_HIT_POINTS,
     fixedMaxHitPoints: null,
     movePoints: 0,
     maxMovePoints: PARAMETERS.NECESSARY_MOVE_POINTS * 5,
